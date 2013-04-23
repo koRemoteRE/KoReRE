@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		5125DCBA17268C9B00EC4945 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5125DCB917268C9B00EC4945 /* main.cpp */; };
 		5125DCBC17268C9B00EC4945 /* ReRe_Client.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5125DCBB17268C9B00EC4945 /* ReRe_Client.1 */; };
+		5125DCC417268FEF00EC4945 /* RemoteNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5125DCC217268FEF00EC4945 /* RemoteNetwork.cpp */; };
+		5125DCC71726901200EC4945 /* PreRendering.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5125DCC51726901200EC4945 /* PreRendering.cpp */; };
+		5125DCCA1726903600EC4945 /* SceneManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5125DCC81726903600EC4945 /* SceneManager.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -28,6 +31,12 @@
 		5125DCB617268C9B00EC4945 /* ReRe-Client */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "ReRe-Client"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5125DCB917268C9B00EC4945 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		5125DCBB17268C9B00EC4945 /* ReRe_Client.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ReRe_Client.1; sourceTree = "<group>"; };
+		5125DCC217268FEF00EC4945 /* RemoteNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteNetwork.cpp; sourceTree = "<group>"; };
+		5125DCC317268FEF00EC4945 /* RemoteNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteNetwork.h; sourceTree = "<group>"; };
+		5125DCC51726901200EC4945 /* PreRendering.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PreRendering.cpp; sourceTree = "<group>"; };
+		5125DCC61726901200EC4945 /* PreRendering.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreRendering.h; sourceTree = "<group>"; };
+		5125DCC81726903600EC4945 /* SceneManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SceneManager.cpp; sourceTree = "<group>"; };
+		5125DCC91726903600EC4945 /* SceneManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SceneManager.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,7 +70,13 @@
 			isa = PBXGroup;
 			children = (
 				5125DCB917268C9B00EC4945 /* main.cpp */,
+				5125DCC51726901200EC4945 /* PreRendering.cpp */,
+				5125DCC61726901200EC4945 /* PreRendering.h */,
+				5125DCC81726903600EC4945 /* SceneManager.cpp */,
+				5125DCC91726903600EC4945 /* SceneManager.h */,
 				5125DCBB17268C9B00EC4945 /* ReRe_Client.1 */,
+				5125DCC217268FEF00EC4945 /* RemoteNetwork.cpp */,
+				5125DCC317268FEF00EC4945 /* RemoteNetwork.h */,
 			);
 			path = "ReRe-Client";
 			sourceTree = "<group>";
@@ -118,6 +133,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				5125DCBA17268C9B00EC4945 /* main.cpp in Sources */,
+				5125DCC417268FEF00EC4945 /* RemoteNetwork.cpp in Sources */,
+				5125DCC71726901200EC4945 /* PreRendering.cpp in Sources */,
+				5125DCCA1726903600EC4945 /* SceneManager.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -216,6 +234,7 @@
 				5125DCC117268C9B00EC4945 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
