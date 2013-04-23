@@ -11,4 +11,10 @@
 
 #include <iostream>
 
+class CRemoteNetwork
+{
+    CRemoteNetwork();
+    ~CRemoteNetwork();
+};
+
 #endif /* defined(__ReRe_Client__RemoteNetwork__) */

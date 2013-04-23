@@ -11,4 +11,10 @@
 
 #include <iostream>
 
+class CPreRendering
+{
+    CPreRendering();
+    ~CPreRendering();
+};
+
 #endif /* defined(__ReRe_Client__PreRendering__) */
