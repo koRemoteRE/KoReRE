@@ -12,6 +12,7 @@
 		5125DCC417268FEF00EC4945 /* RemoteNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5125DCC217268FEF00EC4945 /* RemoteNetwork.cpp */; };
 		5125DCC71726901200EC4945 /* PreRendering.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5125DCC51726901200EC4945 /* PreRendering.cpp */; };
 		5125DCCA1726903600EC4945 /* CSceneManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5125DCC81726903600EC4945 /* CSceneManager.cpp */; };
+		5125DCCD1726A05A00EC4945 /* SceneNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5125DCCB1726A05A00EC4945 /* SceneNode.cpp */; };
 		7D054559172695C200BE3F48 /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D054557172695C200BE3F48 /* Camera.cpp */; };
 /* End PBXBuildFile section */
 
@@ -38,6 +39,8 @@
 		5125DCC61726901200EC4945 /* PreRendering.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreRendering.h; sourceTree = "<group>"; };
 		5125DCC81726903600EC4945 /* CSceneManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSceneManager.cpp; sourceTree = "<group>"; };
 		5125DCC91726903600EC4945 /* CSceneManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSceneManager.h; sourceTree = "<group>"; };
+		5125DCCB1726A05A00EC4945 /* SceneNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SceneNode.cpp; sourceTree = "<group>"; };
+		5125DCCC1726A05A00EC4945 /* SceneNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SceneNode.h; sourceTree = "<group>"; };
 		7D054557172695C200BE3F48 /* Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Camera.cpp; sourceTree = "<group>"; };
 		7D054558172695C200BE3F48 /* Camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Camera.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -73,6 +76,8 @@
 			isa = PBXGroup;
 			children = (
 				5125DCB917268C9B00EC4945 /* main.cpp */,
+				5125DCCB1726A05A00EC4945 /* SceneNode.cpp */,
+				5125DCCC1726A05A00EC4945 /* SceneNode.h */,
 				5125DCC51726901200EC4945 /* PreRendering.cpp */,
 				5125DCC61726901200EC4945 /* PreRendering.h */,
 				5125DCC81726903600EC4945 /* CSceneManager.cpp */,
@@ -142,6 +147,7 @@
 				5125DCC71726901200EC4945 /* PreRendering.cpp in Sources */,
 				5125DCCA1726903600EC4945 /* CSceneManager.cpp in Sources */,
 				7D054559172695C200BE3F48 /* Camera.cpp in Sources */,
+				5125DCCD1726A05A00EC4945 /* SceneNode.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
