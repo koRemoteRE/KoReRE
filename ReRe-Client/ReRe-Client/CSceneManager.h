@@ -11,10 +11,23 @@
 
 #include <iostream>
 
+#include "CSceneNode.h"
+#include "CCamera.h"
+
 class CSceneManager
 {
+public:
     CSceneManager();
     ~CSceneManager();
+    
+    CCamera* createCameraNode();
+    CCamera* returnCameraNode();
+    
+    CSceneNode* createRootSceneNode();
+    CSceneNode* returnRootSceneNode();
+    
+    CLight* createLight();
+    CLight* returnLight();
 };
 
 #endif /* defined(__ReRe_Client__SceneManager__) */
