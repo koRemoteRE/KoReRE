@@ -12,8 +12,10 @@
 #include <iostream>
 
 
-class CCamera{
-
+class CCamera
+{
+    CCamera();
+    ~CCamera();
 };
 
 

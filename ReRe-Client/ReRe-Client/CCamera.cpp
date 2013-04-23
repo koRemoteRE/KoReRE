@@ -13,3 +13,5 @@
 #include <vector>
 
 
+CCamera::CCamera()
+{}
