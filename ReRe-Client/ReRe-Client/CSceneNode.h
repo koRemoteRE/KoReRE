@@ -15,7 +15,15 @@ class CSceneNode
 {
     CSceneNode();
     ~CSceneNode();
+    
+    CSceneNode* createChild();
+    CSceneNode* returnChild();
+};
 
+class CLight
+{
+    CLight();
+    ~CLight();
 };
 
 #endif /* defined(__ReRe_Client__SceneNode__) */

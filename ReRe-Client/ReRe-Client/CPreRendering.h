@@ -11,6 +11,9 @@
 
 #include <iostream>
 
+#include "CSceneManager.h"
+#include "CRemoteNetwork.h"
+
 class CPreRendering
 {
     CPreRendering();
