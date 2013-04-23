@@ -11,4 +11,13 @@
 
 #include <iostream>
 
+
+class CCamera{
+
+};
+
+
+
+
+
 #endif /* defined(__ReRe_Client__Camera__) */
