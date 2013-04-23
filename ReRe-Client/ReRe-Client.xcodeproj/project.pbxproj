@@ -13,7 +13,6 @@
 		5125DCC71726901200EC4945 /* CPreRendering.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5125DCC51726901200EC4945 /* CPreRendering.cpp */; };
 		5125DCCA1726903600EC4945 /* CSceneManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5125DCC81726903600EC4945 /* CSceneManager.cpp */; };
 		5125DCCD1726A05A00EC4945 /* CSceneNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5125DCCB1726A05A00EC4945 /* CSceneNode.cpp */; };
-		5125DCCF1726AFD200EC4945 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5125DCCE1726AFD200EC4945 /* OpenGL.framework */; };
 		5125DDFA1726B73C00EC4945 /* dummy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5125DD131726B73B00EC4945 /* dummy.cpp */; };
 		5125DDFB1726B73C00EC4945 /* libassimp.3.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5125DDF21726B73C00EC4945 /* libassimp.3.0.0.dylib */; };
 		5125DDFC1726B73C00EC4945 /* libassimp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5125DDF31726B73C00EC4945 /* libassimp.a */; };
@@ -345,7 +344,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5125DCCF1726AFD200EC4945 /* OpenGL.framework in Frameworks */,
 				5125DDFB1726B73C00EC4945 /* libassimp.3.0.0.dylib in Frameworks */,
 				5125DDFC1726B73C00EC4945 /* libassimp.a in Frameworks */,
 				5125DDFD1726B73C00EC4945 /* libassimpd.a in Frameworks */,
