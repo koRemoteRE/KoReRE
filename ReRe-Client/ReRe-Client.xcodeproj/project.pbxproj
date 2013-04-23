@@ -12,6 +12,7 @@
 		5125DCC417268FEF00EC4945 /* RemoteNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5125DCC217268FEF00EC4945 /* RemoteNetwork.cpp */; };
 		5125DCC71726901200EC4945 /* PreRendering.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5125DCC51726901200EC4945 /* PreRendering.cpp */; };
 		5125DCCA1726903600EC4945 /* SceneManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5125DCC81726903600EC4945 /* SceneManager.cpp */; };
+		7D0545561726938900BE3F48 /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D0545541726938900BE3F48 /* Camera.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -37,6 +38,8 @@
 		5125DCC61726901200EC4945 /* PreRendering.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreRendering.h; sourceTree = "<group>"; };
 		5125DCC81726903600EC4945 /* SceneManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SceneManager.cpp; sourceTree = "<group>"; };
 		5125DCC91726903600EC4945 /* SceneManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SceneManager.h; sourceTree = "<group>"; };
+		7D0545541726938900BE3F48 /* Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Camera.cpp; sourceTree = "<group>"; };
+		7D0545551726938900BE3F48 /* Camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Camera.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +72,8 @@
 		5125DCB817268C9B00EC4945 /* ReRe-Client */ = {
 			isa = PBXGroup;
 			children = (
+				7D0545541726938900BE3F48 /* Camera.cpp */,
+				7D0545551726938900BE3F48 /* Camera.h */,
 				5125DCB917268C9B00EC4945 /* main.cpp */,
 				5125DCC51726901200EC4945 /* PreRendering.cpp */,
 				5125DCC61726901200EC4945 /* PreRendering.h */,
@@ -136,6 +141,7 @@
 				5125DCC417268FEF00EC4945 /* RemoteNetwork.cpp in Sources */,
 				5125DCC71726901200EC4945 /* PreRendering.cpp in Sources */,
 				5125DCCA1726903600EC4945 /* SceneManager.cpp in Sources */,
+				7D0545561726938900BE3F48 /* Camera.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
