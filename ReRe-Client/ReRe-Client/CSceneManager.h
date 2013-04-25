@@ -9,25 +9,33 @@
 #ifndef __ReRe_Client__SceneManager__
 #define __ReRe_Client__SceneManager__
 
-#include <iostream>
-
 #include "CSceneNode.h"
 #include "CCamera.h"
 
+using namespace std;
+
 class CSceneManager
 {
+private:
+    CSceneNode* sn_p_rootSceneNode;
+    vector<CCamera*> l_cameraNode;
+    vector<CLight*> l_lightNode;
+    
 public:
     CSceneManager();
-    ~CSceneManager();
     
-    CCamera* createCameraNode();
-    CCamera* returnCameraNode();
-    
-    CSceneNode* createRootSceneNode();
+    //
     CSceneNode* returnRootSceneNode();
     
-    CLight* createLight();
-    CLight* returnLight();
+    //
+    CCamera* createCameraNode();
+    void deleteCameraNode(int i_cameraNodeID = 0);
+    CCamera* returnCameraNode(int i_cameraNodeID = 0);
+    
+    //
+    CLight* createLightNode();
+    void deleteLightNode(int i_lightNodeID = 0);
+    CLight* returnLightNode(int i_lightNodeID = 0);
 };
 
 #endif /* defined(__ReRe_Client__SceneManager__) */

@@ -9,7 +9,44 @@
 #include "CSceneManager.h"
 
 CSceneManager::CSceneManager()
-{}
+{
+    sn_p_rootSceneNode = new CSceneNode();
+}
 
-CSceneManager::~CSceneManager()
-{}
+CSceneNode* CSceneManager::returnRootSceneNode()
+{
+    return sn_p_rootSceneNode;
+}
+
+CCamera* CSceneManager::createCameraNode()
+{
+    l_cameraNode.push_back(new CCamera());
+    return l_cameraNode.back();
+}
+
+void CSceneManager::deleteCameraNode(int i_cameraNodeID)
+{
+    
+}
+
+CCamera* CSceneManager::returnCameraNode(int i_cameraNodeID)
+{
+    return NULL;
+}
+
+//
+CLight* CSceneManager::createLightNode()
+{
+    l_lightNode.push_back(new CLight(new int()));
+    return l_lightNode.back();
+}
+
+void CSceneManager::deleteLightNode(int i_lightNodeID)
+{
+    
+}
+
+CLight* CSceneManager::returnLightNode(int i_lightNodeID)
+{
+    return NULL;
+}
