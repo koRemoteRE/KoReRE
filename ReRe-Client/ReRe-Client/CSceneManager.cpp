@@ -11,6 +11,7 @@
 CSceneManager::CSceneManager()
 {
     sn_p_rootSceneNode = new CSceneNode();
+    ais_asScene = imp_asImporter.ReadFile("XXX", aiProcess_SortByPType);
 }
 
 CSceneNode* CSceneManager::returnRootSceneNode()

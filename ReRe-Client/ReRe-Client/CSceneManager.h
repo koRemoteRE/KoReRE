@@ -9,6 +9,10 @@
 #ifndef __ReRe_Client__SceneManager__
 #define __ReRe_Client__SceneManager__
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 #include "CSceneNode.h"
 #include "CCamera.h"
 
@@ -17,6 +21,9 @@ using namespace std;
 class CSceneManager
 {
 private:
+    Assimp::Importer imp_asImporter;
+    const aiScene* ais_asScene;
+    
     CSceneNode* sn_p_rootSceneNode;
     vector<CCamera*> l_cameraNode;
     vector<CLight*> l_lightNode;
