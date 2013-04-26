@@ -21,6 +21,10 @@
 		51C47FFF172AAC3200CDC32D /* libGLEW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 51C47FF8172AAC3200CDC32D /* libGLEW.a */; settings = {ATTRIBUTES = (Weak, ); }; };
 		51C48000172AAC3200CDC32D /* libglfw.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 51C47FF9172AAC3200CDC32D /* libglfw.a */; settings = {ATTRIBUTES = (Weak, ); }; };
 		51C48001172AAC3200CDC32D /* libglfw.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 51C47FFA172AAC3200CDC32D /* libglfw.dylib */; settings = {ATTRIBUTES = (Weak, ); }; };
+		5B776B0B172AE713000270DF /* CDepthImage.frag in Sources */ = {isa = PBXBuildFile; fileRef = 5B776B07172AE713000270DF /* CDepthImage.frag */; };
+		5B776B0C172AE713000270DF /* CDepthImage.vert in Sources */ = {isa = PBXBuildFile; fileRef = 5B776B08172AE713000270DF /* CDepthImage.vert */; };
+		5B776B0D172AE713000270DF /* CDiffuseImage.frag in Sources */ = {isa = PBXBuildFile; fileRef = 5B776B09172AE713000270DF /* CDiffuseImage.frag */; };
+		5B776B0E172AE713000270DF /* CDiffuseImage.vert in Sources */ = {isa = PBXBuildFile; fileRef = 5B776B0A172AE713000270DF /* CDiffuseImage.vert */; };
 		7D054559172695C200BE3F48 /* CCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D054557172695C200BE3F48 /* CCamera.cpp */; };
 /* End PBXBuildFile section */
 
@@ -334,6 +338,10 @@
 		51C47FF8172AAC3200CDC32D /* libGLEW.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGLEW.a; path = MacLibs/libGLEW.a; sourceTree = "<group>"; };
 		51C47FF9172AAC3200CDC32D /* libglfw.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libglfw.a; path = MacLibs/libglfw.a; sourceTree = "<group>"; };
 		51C47FFA172AAC3200CDC32D /* libglfw.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.dylib; path = MacLibs/libglfw.dylib; sourceTree = "<group>"; };
+		5B776B07172AE713000270DF /* CDepthImage.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = CDepthImage.frag; sourceTree = "<group>"; };
+		5B776B08172AE713000270DF /* CDepthImage.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = CDepthImage.vert; sourceTree = "<group>"; };
+		5B776B09172AE713000270DF /* CDiffuseImage.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = CDiffuseImage.frag; sourceTree = "<group>"; };
+		5B776B0A172AE713000270DF /* CDiffuseImage.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = CDiffuseImage.vert; sourceTree = "<group>"; };
 		7D054557172695C200BE3F48 /* CCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CCamera.cpp; sourceTree = "<group>"; };
 		7D054558172695C200BE3F48 /* CCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCamera.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -716,6 +724,7 @@
 		5125DCAD17268C9B00EC4945 = {
 			isa = PBXGroup;
 			children = (
+				5B776B06172AE6D9000270DF /* Shader */,
 				51C48002172AAE1200CDC32D /* MacLibs */,
 				512444651729A84E00606740 /* ext */,
 				5125DE021726B74700EC4945 /* Framework */,
@@ -771,6 +780,17 @@
 				51C47FFA172AAC3200CDC32D /* libglfw.dylib */,
 			);
 			name = MacLibs;
+			sourceTree = "<group>";
+		};
+		5B776B06172AE6D9000270DF /* Shader */ = {
+			isa = PBXGroup;
+			children = (
+				5B776B07172AE713000270DF /* CDepthImage.frag */,
+				5B776B08172AE713000270DF /* CDepthImage.vert */,
+				5B776B09172AE713000270DF /* CDiffuseImage.frag */,
+				5B776B0A172AE713000270DF /* CDiffuseImage.vert */,
+			);
+			path = Shader;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -830,6 +850,10 @@
 				5125DCCA1726903600EC4945 /* CSceneManager.cpp in Sources */,
 				7D054559172695C200BE3F48 /* CCamera.cpp in Sources */,
 				5125DCCD1726A05A00EC4945 /* CSceneNode.cpp in Sources */,
+				5B776B0B172AE713000270DF /* CDepthImage.frag in Sources */,
+				5B776B0C172AE713000270DF /* CDepthImage.vert in Sources */,
+				5B776B0D172AE713000270DF /* CDiffuseImage.frag in Sources */,
+				5B776B0E172AE713000270DF /* CDiffuseImage.vert in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
