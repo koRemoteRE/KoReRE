@@ -25,24 +25,26 @@ private:
     const aiScene* ais_asScene;
     
     CSceneNode* sn_p_rootSceneNode;
-    vector<CCamera*> l_cameraNode;
-    vector<CLight*> l_lightNode;
+    CCamera* c_cameraNode;
+    vector<CLight*> v_lightNode;
     
 public:
-    CSceneManager();
+    CSceneManager();                                // Konstruktor
     
     //
-    CSceneNode* returnRootSceneNode();
+    CSceneNode* returnRootSceneNode();              // Gibt den Wurzelknoten des Szenegraphen zurück
     
     //
-    CCamera* createCameraNode();
-    void deleteCameraNode(int i_cameraNodeID = 0);
-    CCamera* returnCameraNode(int i_cameraNodeID = 0);
+    CCamera* createCameraNode();                    // Legt eine Kamera an
+    void deleteCameraNode();                        // Löscht die Kamera
+    CCamera* returnCameraNode();                    // Gibt die Kamera zurück
     
     //
-    CLight* createLightNode();
-    void deleteLightNode(int i_lightNodeID = 0);
-    CLight* returnLightNode(int i_lightNodeID = 0);
+    CLight* createLightNode();                      // Legt eine neue Lichtquelle an
+    void deleteLightNode(int i_lightNodeID = 0);    // Löscht Lichtquelle anhand der ID
+    CLight* returnLightNode(int i_lightNodeID = 0); // Gibt Lichtquelle anhand der ID zurück
+    int returnLightNodeSize();                      // Gibt die Anzahl der Lichtquellen zurück
+    vector<CLight*>* returnLightVector();           // Gibt Pointer auf Vector mit allen Lichtquellen zurück
 };
 
 #endif /* defined(__ReRe_Client__SceneManager__) */
