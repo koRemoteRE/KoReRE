@@ -9,25 +9,42 @@
 #ifndef __ReRe_Client__SceneManager__
 #define __ReRe_Client__SceneManager__
 
-#include <iostream>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 #include "CSceneNode.h"
 #include "CCamera.h"
 
+using namespace std;
+
 class CSceneManager
 {
+private:
+    Assimp::Importer imp_asImporter;
+    const aiScene* ais_asScene;
+    
+    CSceneNode* sn_p_rootSceneNode;
+    CCamera* c_cameraNode;
+    vector<CLight*> v_lightNode;
+    
 public:
-    CSceneManager();
-    ~CSceneManager();
+    CSceneManager();                                // Konstruktor
     
-    CCamera* createCameraNode();
-    CCamera* returnCameraNode();
+    //
+    CSceneNode* returnRootSceneNode();              // Gibt den Wurzelknoten des Szenegraphen zurück
     
-    CSceneNode* createRootSceneNode();
-    CSceneNode* returnRootSceneNode();
+    //
+    CCamera* createCameraNode();                    // Legt eine Kamera an
+    void deleteCameraNode();                        // Löscht die Kamera
+    CCamera* returnCameraNode();                    // Gibt die Kamera zurück
     
-    CLight* createLight();
-    CLight* returnLight();
+    //
+    CLight* createLightNode();                      // Legt eine neue Lichtquelle an
+    void deleteLightNode(int i_lightNodeID = 0);    // Löscht Lichtquelle anhand der ID
+    CLight* returnLightNode(int i_lightNodeID = 0); // Gibt Lichtquelle anhand der ID zurück
+    int returnLightNodeSize();                      // Gibt die Anzahl der Lichtquellen zurück
+    vector<CLight*>* returnLightVector();           // Gibt Pointer auf Vector mit allen Lichtquellen zurück
 };
 
 #endif /* defined(__ReRe_Client__SceneManager__) */
