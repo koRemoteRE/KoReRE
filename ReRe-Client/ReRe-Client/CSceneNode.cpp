@@ -104,7 +104,18 @@ CLight::CLight()
 
 }
 
-CLight::CLight(int* i_p_lightNodeID)
+CLight::CLight(aiLight ail_asLight)
 {
-    i_p_lightID = i_p_lightNodeID;
+    
+}
+
+glm::vec3* CLight::getPosition()
+{
+    return v_p_lightPosition;
+}
+
+
+glm::vec3* CLight::getDiffuse()
+{
+    return v_p_lightDiffuse;
 }

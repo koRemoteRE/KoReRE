@@ -52,13 +52,15 @@ public:
 class CLight
 {
 private:
-    int* i_p_lightID;
+    glm::vec3* v_p_lightPosition;
+    glm::vec3* v_p_lightDiffuse;
     
 public:
     CLight();
-    CLight(int* i_p_lightNodeID);
+    CLight(aiLight ail_asLight);
     
-    int* getID();
+    glm::vec3* getPosition();
+    glm::vec3* getDiffuse();
 };
 
 #endif /* defined(__ReRe_Client__SceneNode__) */
