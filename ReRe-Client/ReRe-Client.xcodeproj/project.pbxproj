@@ -864,7 +864,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -897,7 +897,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -924,6 +924,8 @@
 			buildSettings = {
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/ext\"";
 				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/MacLibs\"";
+				OTHER_LDFLAGS = /Users/inaschroder/Documents/Uni/SS2013/Forschungspraktikum/KoRE_Demo/MacLibs/libglfw.a;
+				"OTHER_LDFLAGS[arch=*]" = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -933,6 +935,8 @@
 			buildSettings = {
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/ext\"";
 				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/MacLibs\"";
+				OTHER_LDFLAGS = /Users/inaschroder/Documents/Uni/SS2013/Forschungspraktikum/KoRE_Demo/MacLibs/libglfw.a;
+				"OTHER_LDFLAGS[arch=*]" = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
