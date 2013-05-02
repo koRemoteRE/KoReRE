@@ -29,7 +29,7 @@ private:
     vector<CLight*> v_lightNode;
     
 public:
-    CSceneManager();                                // Konstruktor
+    CSceneManager(std::string st_filename);         // Konstruktor
     
     //
     CSceneNode* returnRootSceneNode();              // Gibt den Wurzelknoten des Szenegraphen zurück

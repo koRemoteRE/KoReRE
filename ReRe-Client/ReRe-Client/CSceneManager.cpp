@@ -8,10 +8,21 @@
 
 #include "CSceneManager.h"
 
-CSceneManager::CSceneManager()
+CSceneManager::CSceneManager(std::string st_filename)
 {
-    ais_asScene = imp_asImporter.ReadFile("XXX", aiProcess_SortByPType);
-    sn_p_rootSceneNode = new CSceneNode();
+    if (st_filename.substr(st_filename.find_last_of('.')) == ".dae")
+    {
+    
+        ais_asScene = imp_asImporter.ReadFile(st_filename,  aiProcess_CalcTangentSpace |
+                                                            aiProcess_Triangulate |
+                                                            aiProcess_JoinIdenticalVertices |
+                                                            aiProcess_SortByPType);
+        sn_p_rootSceneNode = new CSceneNode(ais_asScene->mRootNode);
+    }
+    else
+    {
+        std::cout << ".dae-Datei benoetigt" << std::endl;
+    }
 }
 
 CSceneNode* CSceneManager::returnRootSceneNode()

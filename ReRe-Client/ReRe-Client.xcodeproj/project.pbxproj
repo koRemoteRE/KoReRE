@@ -16,11 +16,10 @@
 		5125DCCD1726A05A00EC4945 /* CSceneNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5125DCCB1726A05A00EC4945 /* CSceneNode.cpp */; };
 		51C47FFB172AAC3200CDC32D /* libassimp.3.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 51C47FF4172AAC3200CDC32D /* libassimp.3.0.0.dylib */; settings = {ATTRIBUTES = (Weak, ); }; };
 		51C47FFC172AAC3200CDC32D /* libassimp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 51C47FF5172AAC3200CDC32D /* libassimp.a */; settings = {ATTRIBUTES = (Weak, ); }; };
-		51C47FFD172AAC3200CDC32D /* libassimpd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 51C47FF6172AAC3200CDC32D /* libassimpd.a */; settings = {ATTRIBUTES = (Weak, ); }; };
 		51C47FFE172AAC3200CDC32D /* libGLEW.1.9.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 51C47FF7172AAC3200CDC32D /* libGLEW.1.9.0.dylib */; settings = {ATTRIBUTES = (Weak, ); }; };
 		51C47FFF172AAC3200CDC32D /* libGLEW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 51C47FF8172AAC3200CDC32D /* libGLEW.a */; settings = {ATTRIBUTES = (Weak, ); }; };
 		51C48000172AAC3200CDC32D /* libglfw.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 51C47FF9172AAC3200CDC32D /* libglfw.a */; settings = {ATTRIBUTES = (Weak, ); }; };
-		51C48001172AAC3200CDC32D /* libglfw.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 51C47FFA172AAC3200CDC32D /* libglfw.dylib */; settings = {ATTRIBUTES = (Weak, ); }; };
+		51CDC28F1732BC83008D7F14 /* libglfw.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 51CDC28E1732BC83008D7F14 /* libglfw.dylib */; };
 		5B776B0B172AE713000270DF /* CDepthImage.frag in Sources */ = {isa = PBXBuildFile; fileRef = 5B776B07172AE713000270DF /* CDepthImage.frag */; };
 		5B776B0C172AE713000270DF /* CDepthImage.vert in Sources */ = {isa = PBXBuildFile; fileRef = 5B776B08172AE713000270DF /* CDepthImage.vert */; };
 		5B776B0D172AE713000270DF /* CDiffuseImage.frag in Sources */ = {isa = PBXBuildFile; fileRef = 5B776B09172AE713000270DF /* CDiffuseImage.frag */; };
@@ -337,7 +336,7 @@
 		51C47FF7172AAC3200CDC32D /* libGLEW.1.9.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libGLEW.1.9.0.dylib; path = MacLibs/libGLEW.1.9.0.dylib; sourceTree = "<group>"; };
 		51C47FF8172AAC3200CDC32D /* libGLEW.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGLEW.a; path = MacLibs/libGLEW.a; sourceTree = "<group>"; };
 		51C47FF9172AAC3200CDC32D /* libglfw.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libglfw.a; path = MacLibs/libglfw.a; sourceTree = "<group>"; };
-		51C47FFA172AAC3200CDC32D /* libglfw.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.dylib; path = MacLibs/libglfw.dylib; sourceTree = "<group>"; };
+		51CDC28E1732BC83008D7F14 /* libglfw.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.dylib; path = MacLibs/libglfw.dylib; sourceTree = "<group>"; };
 		5B776B07172AE713000270DF /* CDepthImage.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = CDepthImage.frag; sourceTree = "<group>"; };
 		5B776B08172AE713000270DF /* CDepthImage.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = CDepthImage.vert; sourceTree = "<group>"; };
 		5B776B09172AE713000270DF /* CDiffuseImage.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = CDiffuseImage.frag; sourceTree = "<group>"; };
@@ -353,11 +352,10 @@
 			files = (
 				51C47FFB172AAC3200CDC32D /* libassimp.3.0.0.dylib in Frameworks */,
 				51C47FFC172AAC3200CDC32D /* libassimp.a in Frameworks */,
-				51C47FFD172AAC3200CDC32D /* libassimpd.a in Frameworks */,
 				51C47FFE172AAC3200CDC32D /* libGLEW.1.9.0.dylib in Frameworks */,
 				51C47FFF172AAC3200CDC32D /* libGLEW.a in Frameworks */,
+				51CDC28F1732BC83008D7F14 /* libglfw.dylib in Frameworks */,
 				51C48000172AAC3200CDC32D /* libglfw.a in Frameworks */,
-				51C48001172AAC3200CDC32D /* libglfw.dylib in Frameworks */,
 				512445841729A87200606740 /* OpenGL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -776,8 +774,8 @@
 				51C47FF6172AAC3200CDC32D /* libassimpd.a */,
 				51C47FF7172AAC3200CDC32D /* libGLEW.1.9.0.dylib */,
 				51C47FF8172AAC3200CDC32D /* libGLEW.a */,
+				51CDC28E1732BC83008D7F14 /* libglfw.dylib */,
 				51C47FF9172AAC3200CDC32D /* libglfw.a */,
-				51C47FFA172AAC3200CDC32D /* libglfw.dylib */,
 			);
 			name = MacLibs;
 			sourceTree = "<group>";
@@ -922,6 +920,7 @@
 		5125DCC017268C9B00EC4945 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/ext\"";
 				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/MacLibs\"";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -931,6 +930,7 @@
 		5125DCC117268C9B00EC4945 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/ext\"";
 				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/MacLibs\"";
 				PRODUCT_NAME = "$(TARGET_NAME)";
