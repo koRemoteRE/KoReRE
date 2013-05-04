@@ -27,11 +27,24 @@ public:
   void stop();
 
 private:
+  AVStream *add_stream(AVFormatContext *oc, AVCodec **codec, enum AVCodecID codec_id);
+  void open_video(AVFormatContext *oc, AVCodec *codec, AVStream *st);
+ 
+
   uint8_t* buffer;
   glm::ivec2 renderResolution;
   GLenum 	lastBuffer;
   AVCodec* codec;
   AVCodecContext* codecContext;
+ 
+  AVOutputFormat* fmt;
+  AVFormatContext* fc;
+  AVStream *videoStream;
+  AVFrame *frame;
+  AVPicture src_picture, dst_picture;
+  int frame_count;
+  int ret;
+
   AVFrame* picRGB;
   AVFrame* picYUV;
   struct SwsContext* sws_context;
@@ -43,6 +56,9 @@ private:
   int out_size;
   int size;
   int frameno;
+
+  double video_pts;
+
   bool _recording;
   bool _initialized;
 };

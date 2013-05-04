@@ -436,6 +436,10 @@ int main(void) {
     if (glfwGetKey(GLFW_KEY_F2)) {
       encoder->stop();
     }
+    if (glfwGetKey(GLFW_KEY_F3)) {
+      encoder->finish();
+    }
+
     oldMouseX = mouseX;
     oldMouseY = mouseY;
 
