@@ -9,13 +9,31 @@
 #ifndef __ReRe_Client__PreRendering__
 #define __ReRe_Client__PreRendering__
 
+#include <GL/glew.h>
 #include <iostream>
+#include <fstream>
 
 #include "CSceneManager.h"
 #include "CRemoteNetwork.h"
 
+using namespace std;
+
 class CPreRendering
 {
+private:
+    void printShaderInfoLog(GLuint shader);
+    void printProgramInfoLog(GLuint program);
+    string readFile(string fileName);
+    
+    void initGLSL();
+    
+    void createTextures();
+    void createFBO();
+    void writeToFBO();
+    
+    void checkFrameBuffer();
+    
+public:
     CPreRendering();
     ~CPreRendering();
 };
