@@ -41,8 +41,7 @@ public:
     
     //
     CLight* createLightNode();                      // Legt eine neue Lichtquelle an
-    void deleteLightNode(int i_lightNodeID = 0);    // Löscht Lichtquelle anhand der ID
-    CLight* returnLightNode(int i_lightNodeID = 0); // Gibt Lichtquelle anhand der ID zurück
+    CLight* returnLightNode();                      // Gibt Lichtquelle anhand der ID zurück
     int returnLightNodeSize();                      // Gibt die Anzahl der Lichtquellen zurück
     vector<CLight*>* returnLightVector();           // Gibt Pointer auf Vector mit allen Lichtquellen zurück
 };
