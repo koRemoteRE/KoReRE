@@ -14,12 +14,12 @@
 		5125DCC71726901200EC4945 /* CPreRendering.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5125DCC51726901200EC4945 /* CPreRendering.cpp */; };
 		5125DCCA1726903600EC4945 /* CSceneManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5125DCC81726903600EC4945 /* CSceneManager.cpp */; };
 		5125DCCD1726A05A00EC4945 /* CSceneNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5125DCCB1726A05A00EC4945 /* CSceneNode.cpp */; };
+		518FE1451736E9760020169E /* libglfw.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 51C47FF9172AAC3200CDC32D /* libglfw.a */; settings = {ATTRIBUTES = (Weak, ); }; };
+		518FE1461736E9760020169E /* libglfw.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 51CDC28E1732BC83008D7F14 /* libglfw.dylib */; settings = {ATTRIBUTES = (Weak, ); }; };
 		51C47FFB172AAC3200CDC32D /* libassimp.3.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 51C47FF4172AAC3200CDC32D /* libassimp.3.0.0.dylib */; settings = {ATTRIBUTES = (Weak, ); }; };
 		51C47FFC172AAC3200CDC32D /* libassimp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 51C47FF5172AAC3200CDC32D /* libassimp.a */; settings = {ATTRIBUTES = (Weak, ); }; };
 		51C47FFE172AAC3200CDC32D /* libGLEW.1.9.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 51C47FF7172AAC3200CDC32D /* libGLEW.1.9.0.dylib */; settings = {ATTRIBUTES = (Weak, ); }; };
 		51C47FFF172AAC3200CDC32D /* libGLEW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 51C47FF8172AAC3200CDC32D /* libGLEW.a */; settings = {ATTRIBUTES = (Weak, ); }; };
-		51C48000172AAC3200CDC32D /* libglfw.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 51C47FF9172AAC3200CDC32D /* libglfw.a */; settings = {ATTRIBUTES = (Weak, ); }; };
-		51CDC28F1732BC83008D7F14 /* libglfw.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 51CDC28E1732BC83008D7F14 /* libglfw.dylib */; };
 		5B776B0B172AE713000270DF /* CDepthImage.frag in Sources */ = {isa = PBXBuildFile; fileRef = 5B776B07172AE713000270DF /* CDepthImage.frag */; };
 		5B776B0C172AE713000270DF /* CDepthImage.vert in Sources */ = {isa = PBXBuildFile; fileRef = 5B776B08172AE713000270DF /* CDepthImage.vert */; };
 		5B776B0D172AE713000270DF /* CDiffuseImage.frag in Sources */ = {isa = PBXBuildFile; fileRef = 5B776B09172AE713000270DF /* CDiffuseImage.frag */; };
@@ -330,6 +330,7 @@
 		5125DCCB1726A05A00EC4945 /* CSceneNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSceneNode.cpp; sourceTree = "<group>"; };
 		5125DCCC1726A05A00EC4945 /* CSceneNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSceneNode.h; sourceTree = "<group>"; };
 		5125DCCE1726AFD200EC4945 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		518FE1471736E9F70020169E /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		51C47FF4172AAC3200CDC32D /* libassimp.3.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libassimp.3.0.0.dylib; path = MacLibs/libassimp.3.0.0.dylib; sourceTree = "<group>"; };
 		51C47FF5172AAC3200CDC32D /* libassimp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libassimp.a; path = MacLibs/libassimp.a; sourceTree = "<group>"; };
 		51C47FF6172AAC3200CDC32D /* libassimpd.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libassimpd.a; path = MacLibs/libassimpd.a; sourceTree = "<group>"; };
@@ -354,8 +355,8 @@
 				51C47FFC172AAC3200CDC32D /* libassimp.a in Frameworks */,
 				51C47FFE172AAC3200CDC32D /* libGLEW.1.9.0.dylib in Frameworks */,
 				51C47FFF172AAC3200CDC32D /* libGLEW.a in Frameworks */,
-				51CDC28F1732BC83008D7F14 /* libglfw.dylib in Frameworks */,
-				51C48000172AAC3200CDC32D /* libglfw.a in Frameworks */,
+				518FE1451736E9760020169E /* libglfw.a in Frameworks */,
+				518FE1461736E9760020169E /* libglfw.dylib in Frameworks */,
 				512445841729A87200606740 /* OpenGL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -722,6 +723,7 @@
 		5125DCAD17268C9B00EC4945 = {
 			isa = PBXGroup;
 			children = (
+				518FE1471736E9F70020169E /* Cocoa.framework */,
 				5B776B06172AE6D9000270DF /* Shader */,
 				51C48002172AAE1200CDC32D /* MacLibs */,
 				512444651729A84E00606740 /* ext */,
@@ -881,12 +883,15 @@
 					"$(inherited)",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LD_DYLIB_INSTALL_NAME = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "";
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -908,11 +913,14 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LD_DYLIB_INSTALL_NAME = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				OTHER_LDFLAGS = "";
 				SDKROOT = macosx;
 			};
 			name = Release;
