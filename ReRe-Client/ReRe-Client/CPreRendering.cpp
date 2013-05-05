@@ -162,14 +162,14 @@ void CPreRendering::createFBO()
     // Attach textures to FBO
     glFramebufferTexture2DEXT(
         GL_FRAMEBUFFER_EXT,
-        GL_COLOR_ATTACHMENT0_EXT
+        GL_COLOR_ATTACHMENT0_EXT,
         GL_TEXTURE_2D,
         texturePosition,
         0);
 
     glFramebufferTexture2DEXT(
         GL_FRAMEBUFFER_EXT,
-        GL_COLOR_ATTACHMENT1_EXT
+        GL_COLOR_ATTACHMENT1_EXT,
         GL_TEXTURE_2D,
         textureNormal,
         0);
