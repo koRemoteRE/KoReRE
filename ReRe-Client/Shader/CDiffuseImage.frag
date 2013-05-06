@@ -1,4 +1,4 @@
-#version 330
+#version 320
 
 in vec4 f_position;
 in vec3 f_normal;
@@ -9,7 +9,8 @@ uniform sampler2D texture;
 uniform vec3 diffuseFrontMaterial;
 uniform vec3 diffuseLightColor;
 
-out vec4 out_color;
+layout (location = 0) out vec4 out_diffColor;
+layout (location = 1) out vec4 out_depthColor;
 
 void main()
 {
@@ -18,5 +19,7 @@ void main()
     
     vec4 diffuseReflection = vec4( diffuseFrontMaterial * diffuseLightColor * cosinus, 1.0f);
     
-    out_color = texel * diffuseReflection;
+    out_diffColor = texel * diffuseReflection;
+    
+    // TODO: Calculate Depth Color
 }

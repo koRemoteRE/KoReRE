@@ -13,7 +13,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <vector>
-#include "ext.hpp"
+#include "glm/ext.hpp"
 
 class CCamera
 {

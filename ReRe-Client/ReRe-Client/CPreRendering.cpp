@@ -13,17 +13,20 @@ GLuint diffImgVertexShader;
 GLuint diffImgFragmentShader;
 GLuint diffImgShaderProgram;
 
-GLuint texturePosition;
-GLuint textureNormal;
+GLuint texturePosition0;
+GLuint texturePosition1;
+//GLuint texturePosition2;
+//GLuint texturePosition3;
+//GLuint texturePosition4;
 
 GLuint diffImgFBO;
 GLuint depthBuffer;
-
+ 
 // TODO: Update Window size
 
 // Window size
-int width = 512;
-int height = 512;
+int width = 1024;
+int height = 768;
 
 CPreRendering::CPreRendering()
 {
@@ -125,35 +128,65 @@ void CPreRendering::initGLSL()
 
 void CPreRendering::createTextures()
 {
-    // TODO: How many textures? 2+3*i ( i = #savedServerImages)
-    //       = currentImg + currentDepthImg +
-    //         i * ( serverImage + properClientImg + properDepthImg )
-    
+    // Current DiffImg
     // Create texture and bind to texture unit 0
 	glActiveTexture(GL_TEXTURE0);
-	glGenTextures(1, &texturePosition);
-	glBindTexture(GL_TEXTURE_2D, texturePosition);
+	glGenTextures(1, &texturePosition0);
+	glBindTexture(GL_TEXTURE_2D, texturePosition0);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F_ARB, width, height, 0,
                  GL_RGBA, GL_FLOAT, NULL);
     
+    // Current DepthImg
 	// Create texture and bind to texture unit 1
 	glActiveTexture(GL_TEXTURE1);
-	glGenTextures(1, &textureNormal);
-	glBindTexture(GL_TEXTURE_2D, textureNormal);
+	glGenTextures(1, &texturePosition1);
+	glBindTexture(GL_TEXTURE_2D, texturePosition1);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F_ARB, width, height, 0,
                  GL_RGBA, GL_FLOAT, NULL);
     
+    // Todo: Where to save the following images?
+    /*
+    // Sent DiffImg
+	// Create texture and bind to texture unit 2
+	glActiveTexture(GL_TEXTURE2);
+	glGenTextures(1, &texturePosition2);
+	glBindTexture(GL_TEXTURE_2D, texturePosition2);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F_ARB, width, height, 0,
+                 GL_RGBA, GL_FLOAT, NULL);
+    
+    // Sent DepthImg
+	// Create texture and bind to texture unit 3
+	glActiveTexture(GL_TEXTURE3);
+	glGenTextures(1, &texturePosition3);
+	glBindTexture(GL_TEXTURE_2D, texturePosition3);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F_ARB, width, height, 0,
+                 GL_RGBA, GL_FLOAT, NULL);
+    
+    // Latest ServerImg
+	// Create texture and bind to texture unit 4
+	glActiveTexture(GL_TEXTURE4);
+	glGenTextures(1, &texturePosition4);
+	glBindTexture(GL_TEXTURE_2D, texturePosition4);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F_ARB, width, height, 0,
+                 GL_RGBA, GL_FLOAT, NULL);
+    */
 	// Texture unit 0 should be active again
 	glActiveTexture(GL_TEXTURE0);
 }
 
 void CPreRendering::createFBO()
 {
-    // TODO: Extension needed?
+    // --- Extensions can be removed when using OpenGL >= 3.0
     
     // Create FBO
     glGenFramebuffersEXT(1, &diffImgFBO);
@@ -164,14 +197,14 @@ void CPreRendering::createFBO()
         GL_FRAMEBUFFER_EXT,
         GL_COLOR_ATTACHMENT0_EXT,
         GL_TEXTURE_2D,
-        texturePosition,
+        texturePosition0,
         0);
 
     glFramebufferTexture2DEXT(
         GL_FRAMEBUFFER_EXT,
         GL_COLOR_ATTACHMENT1_EXT,
         GL_TEXTURE_2D,
-        textureNormal,
+        texturePosition1,
         0);
     
     // Attach depth buffer
@@ -190,8 +223,6 @@ void CPreRendering::createFBO()
 
 void CPreRendering::writeToFBO()
 {
-    // TODO: How to create and handle depth images?
-    
     // Bind framebuffer
     glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, diffImgFBO);
     checkFrameBuffer();
@@ -209,8 +240,10 @@ void CPreRendering::writeToFBO()
     
     // Clear content of FBO
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+       
+    // TODO: Draw DiffImg - Buffers[0]
     
-    // TODO: Draw
+    // TODO: Draw DepthImg - Buffers[1]
     
     // Stop rendering to FBO
     glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
@@ -251,4 +284,9 @@ void CPreRendering::checkFrameBuffer()
         default:
             cout << "Unknown ERROR\n";	  
 	}
+    
+    // ----- Softwaretesting ----------------------------------------------------
+    
+    // Todo: Show images for testing
+    
 }

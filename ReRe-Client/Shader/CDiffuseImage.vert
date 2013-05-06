@@ -1,4 +1,4 @@
-#version 330
+#version 320
 
 in vec3 v_position;
 in vec3 v_normal;

@@ -12,8 +12,8 @@
 #include <iostream>
 #include <vector>
 
-#include "scene.h"
-#include "glm.hpp"
+#include "assimp/scene.h"
+#include "glm/glm.hpp"
 
 
 using namespace std;
