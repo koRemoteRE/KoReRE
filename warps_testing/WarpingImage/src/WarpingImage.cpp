@@ -27,11 +27,13 @@ GLuint progTexture, vertTexture, fragTexture;
 GLuint boxBuffer[3], recBuffer[3], txtQuadBuffer[2];
 GLuint firstFrameTexture, firstFrameFBO;
 
-GLuint vao[3];
+GLuint vao[4];
 
-glm::vec3 pos(0.0f,0.0f, 0.0f);
+glm::vec3 pos(0.0f, 0.0f, 0.0f);
 float rot = 0.0f;
 
+glm::mat4 projMatrix, modelMatrix;
+glm::mat4 firstProjMatrix, firstModelMatrix;
 
 void displayFirstFrame();
 void display();
@@ -62,8 +64,8 @@ int main(int argc, char **argv) {
 
 	utl->generateProgram("shaders\\min.vert", "shaders\\min.frag", vert, frag,
 			prog);
-	utl->generateProgram("shaders\\texture.vert", "shaders\\texture.frag", vertTxt, fragTxt,
-				progTxt);
+	utl->generateProgram("shaders\\texture.vert", "shaders\\texture.frag",
+			vertTxt, fragTxt, progTxt);
 	utl->generateProgram("shaders\\norm.vert", "shaders\\norm.frag", vertNorm,
 			fragNorm, progNorm);
 
@@ -84,68 +86,100 @@ void displayFirstFrame() {
 	matState->matrixMode(matState->PROJECTION);
 	matState->loadIdentity();
 	matState->perspective(45.0f, 1.0f, 0.1f, 50.0f);
+	firstProjMatrix = matState->getCurrentMatrix();
 
+	std::cout << "FirstProj: ";
+	for (int i = 0; i < 16; i++) {
+		std::cout << glm::value_ptr(firstProjMatrix)[i] << " ";
+	}
+	std::cout << std::endl;
 	matState->matrixMode(matState->VIEW);
 	matState->loadIdentity();
-	matState->lookAt(0.0f,0.0f,15.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
-	matState->translate(pos.x,pos.y,pos.z);
-	matState->rotate(rot,0.0f,1.0f,0.0f);
-
+	matState->lookAt(0.0f, 0.0f, 15.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+	matState->translate(pos.x, pos.y, pos.z);
+	matState->rotate(rot, 0.0f, 1.0f, 0.0f);
+	firstModelMatrix = matState->getCurrentMatrix();
+	std::cout << "FirstModel: ";
+	for (int i = 0; i < 16; i++) {
+		std::cout << glm::value_ptr(firstModelMatrix)[i] << " " ;
+	}
+	std::cout << std::endl;
 	glUseProgram(prog);
 
-	matState->matrixMode(matState->MODEL);
-	matState->loadIdentity();
-	matState->translate(0.0f,-1.0f,0.0f);
-	matState->scale(100.0f,1.0f,100.0f);
-	matState->rotate(90.0f,1.0f,0.0f,0.0f);
-
+//	matState->matrixMode(matState->MODEL);
+//	matState->loadIdentity();
+//	matState->translate(0.0f,-1.0f,0.0f);
+//	matState->scale(100.0f,1.0f,100.0f);
+//	matState->rotate(90.0f,1.0f,0.0f,0.0f);
 
 	matState->sendMatrices(prog);
 
 	glBindVertexArray(vao[0]);
-	glDrawElements(GL_TRIANGLES,sizeof(rectangleIndices), GL_UNSIGNED_SHORT, 0);
-
-
+	glDrawElements(GL_TRIANGLES, sizeof(rectangleIndices), GL_UNSIGNED_SHORT,
+			0);
 
 	glUseProgram(prog);
 
-	matState->matrixMode(matState->MODEL);
-	matState->loadIdentity();
+//	matState->matrixMode(matState->MODEL);
+//	matState->loadIdentity();
 
 	matState->sendMatrices(prog);
 
 	glBindVertexArray(vao[1]);
-	glDrawElements(GL_TRIANGLES,sizeof(boxIndices), GL_UNSIGNED_SHORT, 0);
+	glDrawElements(GL_TRIANGLES, sizeof(boxIndices), GL_UNSIGNED_SHORT, 0);
 
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 
 	glutSwapBuffers();
 
-
 	glutDisplayFunc(display);
 	glutIdleFunc(display);
 }
 
-void display(){
+void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glUseProgram(progTxt);
+	matState->matrixMode(matState->PROJECTION);
+	matState->loadIdentity();
+	matState->perspective(45.0f, 1.0f, 0.1f, 50.0f);
+	projMatrix = matState->getCurrentMatrix();
 
+	std::cout << "Proj: ";
+	for (int i = 0; i < 16; i++) {
+		std::cout << glm::value_ptr(projMatrix)[i] << " " ;
+	}
+	std::cout << std::endl;
+	matState->matrixMode(matState->VIEW);
+	matState->loadIdentity();
+	matState->lookAt(0.0f, 0.0f, 15.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+	matState->translate(pos.x, pos.y, pos.z);
+	matState->rotate(rot, 0.0f, 1.0f, 0.0f);
+	modelMatrix = matState->getCurrentMatrix();
+	std::cout << "Model: ";
+	for (int i = 0; i < 16; i++) {
+		std::cout << glm::value_ptr(modelMatrix)[i] << " " ;
+	}
+	std::cout << std::endl;
+	glUseProgram(progNorm);
+	matState->sendMatrices(progNorm);
+	glUniformMatrix4fv(glGetUniformLocation(progNorm, "oldProjMatrix"), 1,
+			false, glm::value_ptr(firstProjMatrix));
+	glUniformMatrix4fv(glGetUniformLocation(progNorm, "oldViewMatrix"), 1,
+			false, glm::value_ptr(firstModelMatrix));
 	glActiveTextureARB(GL_TEXTURE0_ARB);
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, firstFrameTexture);
-	glUniform1i(glGetUniformLocation(progTxt, "frameTex"), 0);
+	glUniform1i(glGetUniformLocation(progNorm, "frameTex"), 0);
 
-	glBindVertexArray(vao[2]);
-	glDrawElements(GL_TRIANGLES,sizeof(rectangleIndices), GL_UNSIGNED_SHORT, 0);
+	glBindVertexArray(vao[3]);
+	glDrawElements(GL_TRIANGLES, sizeof(boxIndices), GL_UNSIGNED_SHORT, 0);
 
 	glutSwapBuffers();
 }
 
-
 void setupBuffers() {
 
-	glGenVertexArrays(3, vao);
+	glGenVertexArrays(4, vao);
 
 	// Boden
 	glBindVertexArray(vao[0]);
@@ -153,20 +187,24 @@ void setupBuffers() {
 	glGenBuffers(3, recBuffer);
 
 	glBindBuffer(GL_ARRAY_BUFFER, recBuffer[0]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(rectangleVertices), rectangleVertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(rectangleVertices), rectangleVertices,
+			GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, recBuffer[1]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(rectangleIndices), rectangleIndices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(rectangleIndices),
+			rectangleIndices, GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(glGetAttribLocation(prog, "position"));
-	glVertexAttribPointer(glGetAttribLocation(prog, "position"), 4, GL_FLOAT, 0, 0, 0);
+	glVertexAttribPointer(glGetAttribLocation(prog, "position"), 4, GL_FLOAT, 0,
+			0, 0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, recBuffer[2]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(rectangleColor), rectangleColor, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(rectangleColor), rectangleColor,
+			GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(glGetAttribLocation(prog, "color"));
-	glVertexAttribPointer(glGetAttribLocation(prog, "color"), 4, GL_FLOAT, 0, 0, 0);
-
+	glVertexAttribPointer(glGetAttribLocation(prog, "color"), 4, GL_FLOAT, 0, 0,
+			0);
 
 	// Box
 	glBindVertexArray(vao[1]);
@@ -174,10 +212,12 @@ void setupBuffers() {
 	glGenBuffers(3, boxBuffer);
 
 	glBindBuffer(GL_ARRAY_BUFFER, boxBuffer[0]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(boxVertices), boxVertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(boxVertices), boxVertices,
+			GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, boxBuffer[1]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(boxIndices), boxIndices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(boxIndices), boxIndices,
+			GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(glGetAttribLocation(prog, "position"));
 	glVertexAttribPointer(glGetAttribLocation(prog, "position"), 4, GL_FLOAT, 0,
@@ -188,23 +228,36 @@ void setupBuffers() {
 
 	glEnableVertexAttribArray(glGetAttribLocation(prog, "color"));
 	glVertexAttribPointer(glGetAttribLocation(prog, "color"), 4, GL_FLOAT, 0, 0,
-				0);
+			0);
 
 	glBindVertexArray(0);
 
 	// Screenspace Quad
 	glBindVertexArray(vao[2]);
 
-	glGenBuffers(2,txtQuadBuffer);
+	glGenBuffers(2, txtQuadBuffer);
 
 	glBindBuffer(GL_ARRAY_BUFFER, txtQuadBuffer[0]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(rectangleVertices), rectangleVertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(rectangle2DVertices),
+			rectangle2DVertices, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, txtQuadBuffer[1]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(rectangleIndices), rectangleIndices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(rectangleIndices),
+			rectangleIndices, GL_STATIC_DRAW);
 
-	glEnableVertexAttribArray(glGetAttribLocation(progTexture, "position"));
-	glVertexAttribPointer(glGetAttribLocation(progTexture, "position"), 4, GL_FLOAT, 0, 0, 0);
+	glEnableVertexAttribArray(glGetAttribLocation(progTxt, "position"));
+	glVertexAttribPointer(glGetAttribLocation(progTxt, "position"), 2, GL_FLOAT,
+			0, 0, 0);
+
+	// Box
+	glBindVertexArray(vao[3]);
+	glBindBuffer(GL_ARRAY_BUFFER, boxBuffer[0]);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, boxBuffer[1]);
+
+	glEnableVertexAttribArray(glGetAttribLocation(progNorm, "position"));
+	glVertexAttribPointer(glGetAttribLocation(progNorm, "position"), 4,
+			GL_FLOAT, 0, 0, 0);
+
 	glBindVertexArray(0);
 
 	// Texture for the framebuffer to hold the first frame
@@ -216,40 +269,39 @@ void setupBuffers() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, WINDOW_WIDTH, WINDOW_HEIGHT, 0,
 			GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	// FBO for first frame
 	glGenFramebuffersEXT(1, &firstFrameFBO);
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, firstFrameFBO);
-
 	glReadBuffer(GL_NONE);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0_EXT);
 	// Texture for the FBO
 	glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
-			GL_TEXTURE_2D, firstFrameFBO, 0);
-	glBindTexture(GL_TEXTURE_2D, 0);
+			GL_TEXTURE_2D, firstFrameTexture, 0);
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 }
 
-void keyAction(unsigned char key, int x, int y){
+void keyAction(unsigned char key, int x, int y) {
 	switch (key) {
-		case 'w':
-			pos += glm::vec3(0.0f,0.0f,1.0f);
-			break;
-		case 'a':
-			pos += glm::vec3(1.0f,0.0f,0.0f);
-			break;
-		case 'd':
-			pos += glm::vec3(-1.0f,0.0f,0.0f);
-			break;
-		case 's':
-			pos += glm::vec3(0.0f,0.0f, -1.0f);
-			break;
-		case 'r':
-			pos = glm::vec3(0.0f,0.0f,0.0f);
-			break;
-		case 'q':
-			exit(1);
-		default:
-			break;
+	case 'w':
+		pos += glm::vec3(0.0f, 0.0f, 1.0f);
+		break;
+	case 'a':
+		pos += glm::vec3(1.0f, 0.0f, 0.0f);
+		break;
+	case 'd':
+		pos += glm::vec3(-1.0f, 0.0f, 0.0f);
+		break;
+	case 's':
+		pos += glm::vec3(0.0f, 0.0f, -1.0f);
+		break;
+	case 'r':
+		pos = glm::vec3(0.0f, 0.0f, 0.0f);
+		break;
+	case 'q':
+		exit(1);
+	default:
+		break;
 	}
 }
