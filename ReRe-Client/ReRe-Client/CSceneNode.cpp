@@ -5,6 +5,7 @@
 //  Created by Thomas Kipshagen on 23.04.13.
 //  Copyright (c) 2013 Thomas Kipshagen. All rights reserved.
 //
+// Knotensortierung(Pseudocode): assimp.sourceforge.net
 
 #include "CSceneNode.h"
 
@@ -52,6 +53,21 @@ CSceneNode::CSceneNode(aiNode* ain_asNode, CSceneNode* sn_parentNode, glm::mat4x
     findNextMeshNode(ain_asNode, *m_sceneNodeTransform);
 }
 
+CSceneNode* CSceneNode::returnChildren()
+{
+    return sn_p_sceneNodeChildren;
+}
+
+unsigned int* CSceneNode::returnMeshIndex()
+{
+    return i_p_nodeMesh;
+}
+
+int* CSceneNode::returnNumberOfMesh()
+{
+    return &i_nodeMeshNum;
+}
+
 void CSceneNode::findNextMeshNode(aiNode* ain_asNode, glm::mat4x4 m_nextTransform)
 {
     // Überprüfen wie viele Kinder es gibt
@@ -76,23 +92,6 @@ void CSceneNode::findNextMeshNode(aiNode* ain_asNode, glm::mat4x4 m_nextTransfor
     }
 }
 
-CSceneNode* CSceneNode::returnChildren()
-{
-    return sn_p_sceneNodeChildren;
-}
-
-unsigned int* CSceneNode::returnMeshIndex()
-{
-    return i_p_nodeMesh;
-}
-
-int* CSceneNode::returnMeshNum()
-{
-    return &i_nodeMeshNum;
-}
-
-
-
 
 
 
@@ -104,9 +103,15 @@ CLight::CLight()
 
 }
 
-CLight::CLight(aiLight ail_asLight)
+CLight::CLight(aiLight* ail_asLight)
 {
+    v_p_lightDiffuse->r = ail_asLight->mColorDiffuse.r;
+    v_p_lightDiffuse->g = ail_asLight->mColorDiffuse.g;
+    v_p_lightDiffuse->b = ail_asLight->mColorDiffuse.b;
     
+    v_p_lightPosition->x = ail_asLight->mPosition.x;
+    v_p_lightPosition->y = ail_asLight->mPosition.y;
+    v_p_lightPosition->z = ail_asLight->mPosition.z;
 }
 
 glm::vec3* CLight::getPosition()
