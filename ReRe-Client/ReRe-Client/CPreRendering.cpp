@@ -25,11 +25,10 @@ int height = 768;
 
 CPreRendering::CPreRendering()
 {
-    sceneMgr = new CSceneManager("cube.dae");
+    sceneMgr = new CSceneManager("../Assets/cube.dae");
     
     // --- Just Testing! TODO: Delete!
-    unsigned int i = *sceneMgr->returnRootSceneNode()->returnMeshIndex();
-    cout << i << endl;
+    sceneMgr->returnRootSceneNode();
     // ---------------------------------------
     
     createTextures();

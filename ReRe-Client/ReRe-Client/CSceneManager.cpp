@@ -26,13 +26,16 @@ CSceneManager::CSceneManager(std::string st_filename)
         aim_p_asMesh = ais_asScene->mMeshes;
         aim_p_asMaterial = ais_asScene->mMaterials;
         ait_p_mTexture = ais_asScene->mTextures;
+        
+        i_p_numMesh = new int;
+        i_p_numMaterial = new int;
+        i_p_numTexture = new int;
+        
         *i_p_numMesh = ais_asScene->mNumMeshes;
         *i_p_numMaterial = ais_asScene->mNumMaterials;
         *i_p_numTexture = ais_asScene->mNumTextures;
         
         bindVAO();
-        
-        delete ais_asScene;
     }
     else
     {
@@ -66,7 +69,7 @@ CCamera* CSceneManager::returnCameraNode()
 
 CLight* CSceneManager::returnLightNode()
 {
-    return cl_p_lightNode;
+    return v_p_lightNode.back();
 }
 
 int* CSceneManager::returnLightNodeSize()
@@ -158,8 +161,8 @@ CLight* CSceneManager::createLightNode()
 {
     for (int i_numLightSource = 0; i_numLightSource < ais_asScene->mNumLights; i_numLightSource++)
     {
-        cl_p_lightNode[i_numLightSource] = CLight(ais_asScene->mLights[i_numLightSource]);
+        v_p_lightNode.push_back(new CLight(ais_asScene->mLights[i_numLightSource]));
     }
-    return cl_p_lightNode;
+    return v_p_lightNode.back();
 }
 

@@ -36,7 +36,7 @@ CSceneNode::CSceneNode(aiNode* ain_asNode)
     findNextMeshNode(ain_asNode, *m_sceneNodeTransform);
 }
 
-CSceneNode::CSceneNode(aiNode* ain_asNode, CSceneNode* sn_parentNode, glm::mat4x4 m_parnetTransform)
+CSceneNode::CSceneNode(aiNode* ain_asNode, glm::mat4x4 m_parnetTransform)
 {
     // Mesh speichern
     i_p_nodeMesh = ain_asNode->mMeshes;
@@ -53,9 +53,9 @@ CSceneNode::CSceneNode(aiNode* ain_asNode, CSceneNode* sn_parentNode, glm::mat4x
     findNextMeshNode(ain_asNode, *m_sceneNodeTransform);
 }
 
-CSceneNode* CSceneNode::returnChildren()
+vector<CSceneNode*> CSceneNode::returnChildren()
 {
-    return sn_p_sceneNodeChildren;
+    return v_p_sceneNodeChildren;
 }
 
 unsigned int* CSceneNode::returnMeshIndex()
@@ -77,7 +77,7 @@ void CSceneNode::findNextMeshNode(aiNode* ain_asNode, glm::mat4x4 m_nextTransfor
         // Überprüfen, ob Mesh in Kind vorhanden
         // Wenn ja: Neuen SceneNode anlegen und (Assimp-)Kind mitgeben
         if (ain_asNode->mChildren[i_childNum]->mNumMeshes > 0)
-            sn_p_sceneNodeChildren[i_childNum] = CSceneNode(ain_asNode->mChildren[i_childNum], this, *m_sceneNodeTransform);
+            v_p_sceneNodeChildren.push_back(new CSceneNode(ain_asNode->mChildren[i_childNum], *m_sceneNodeTransform));
         
         // Wenn Nein: Merke Transformation und gehe Unterkinder durch
         else
@@ -105,10 +105,12 @@ CLight::CLight()
 
 CLight::CLight(aiLight* ail_asLight)
 {
+    v_p_lightDiffuse = new glm::vec3;
     v_p_lightDiffuse->r = ail_asLight->mColorDiffuse.r;
     v_p_lightDiffuse->g = ail_asLight->mColorDiffuse.g;
     v_p_lightDiffuse->b = ail_asLight->mColorDiffuse.b;
     
+    v_p_lightPosition = new glm::vec3;
     v_p_lightPosition->x = ail_asLight->mPosition.x;
     v_p_lightPosition->y = ail_asLight->mPosition.y;
     v_p_lightPosition->z = ail_asLight->mPosition.z;
