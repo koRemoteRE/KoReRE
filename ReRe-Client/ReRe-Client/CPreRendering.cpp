@@ -270,7 +270,10 @@ void CPreRendering::checkFrameBuffer()
         default:
             cout << "Unknown ERROR\n";	  
 	}
-    
-    // TODO: Softwaretesting 
+}
+
+// TODO: Softwaretesting
+void CPreRendering::testDraw()
+{
     
 }
