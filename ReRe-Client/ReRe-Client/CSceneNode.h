@@ -32,10 +32,12 @@ public:
     CSceneNode(aiNode* ain_asNode);
     CSceneNode(aiNode* ain_asNode, CSceneNode* sn_parentNode, glm::mat4x4 m_parnetTransform);
     
-    void findNextMeshNode(aiNode* ain_asNode, glm::mat4x4 m_parnetTransform);
     CSceneNode* returnChildren();
     unsigned int* returnMeshIndex();
-    int* returnMeshNum();
+    int* returnNumberOfMesh();
+    
+private:
+    void findNextMeshNode(aiNode* ain_asNode, glm::mat4x4 m_parnetTransform);
 };
 
 
@@ -57,7 +59,7 @@ private:
     
 public:
     CLight();
-    CLight(aiLight ail_asLight);
+    CLight(aiLight* ail_asLight);
     
     glm::vec3* getPosition();
     glm::vec3* getDiffuse();
