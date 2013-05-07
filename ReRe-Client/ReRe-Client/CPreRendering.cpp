@@ -25,6 +25,13 @@ int height = 768;
 
 CPreRendering::CPreRendering()
 {
+    sceneMgr = new CSceneManager("cube.dae");
+    
+    // --- Just Testing! TODO: Delete!
+    unsigned int i = *sceneMgr->returnRootSceneNode()->returnMeshIndex();
+    cout << i << endl;
+    // ---------------------------------------
+    
     createTextures();
     createFBO();
     initGLSL();
@@ -219,8 +226,9 @@ void CPreRendering::writeToFBO()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
        
     // TODO: Draw DiffImg - Buffers[0]
-    
     // TODO: Draw DepthImg - Buffers[1]
+    
+    sceneMgr->drawScene();
     
     // Stop rendering to FBO
     glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);

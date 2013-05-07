@@ -50,7 +50,9 @@ int main(int argc, const char * argv[])
         }
         
         glfwSetWindowTitle( "Hello World!" );
-        
+    
+        CPreRendering* renderer = new CPreRendering();
+    
         // Ensure we can capture the escape key being pressed below
         glfwEnable( GLFW_STICKY_KEYS );
         

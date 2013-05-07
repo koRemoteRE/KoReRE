@@ -34,6 +34,10 @@ private:
     
     void checkFrameBuffer();
     
+    void testDraw(); // Just Testing! TODO: Delete!
+    
+    CSceneManager* sceneMgr;
+    
 public:
     CPreRendering();
     ~CPreRendering();
