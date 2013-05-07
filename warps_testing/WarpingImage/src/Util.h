@@ -1,7 +1,8 @@
 #ifndef UTIL_H_
 #define UTIL_H_
-
+#define GLEW_STATIC
 #include <GL/glew.h>
+#include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>

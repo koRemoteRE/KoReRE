@@ -7,6 +7,7 @@
 
 #ifndef MATRIXSTATES_H_
 #define MATRIXSTATES_H_
+#define GLEW_STATIC
 #include <GL/glew.h>
 #include <vector>
 #include <glm/glm.hpp>

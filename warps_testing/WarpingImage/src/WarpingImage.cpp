@@ -13,8 +13,10 @@
 #include "Box.h"
 #include "Rectangle.h"
 
-const int WINDOW_HEIGHT = 1024;
-const int WINDOW_WIDTH = 768;
+const int WINDOW_HEIGHT = 768;
+const int WINDOW_WIDTH = 1024;
+const int TEXTURE_HEIGHT = 1024;
+const int TEXTURE_WIDTH = 1024;
 
 Util* utl;
 MatrixState* matState;
@@ -23,12 +25,13 @@ GLuint prog, vert, frag;
 GLuint progNorm, vertNorm, fragNorm;
 GLuint progTxt, vertTxt, fragTxt;
 
+float aspect = (float) (WINDOW_WIDTH) / WINDOW_HEIGHT;
+float textureAspect = (float) (TEXTURE_WIDTH) / TEXTURE_HEIGHT;
 GLuint progTexture, vertTexture, fragTexture;
 GLuint boxBuffer[3], recBuffer[3], txtQuadBuffer[2];
 GLuint firstFrameTexture, firstFrameFBO;
 
 GLuint vao[4];
-
 glm::vec3 pos(0.0f, 0.0f, 0.0f);
 float rot = 0.0f;
 
@@ -43,7 +46,7 @@ void keyAction(unsigned char key, int x, int y);
 int main(int argc, char **argv) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
-	glutInitWindowSize(WINDOW_HEIGHT, WINDOW_WIDTH);
+	glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 	glutInitWindowPosition(200, 100);
 	glutCreateWindow("Wapring Image");
 
@@ -82,10 +85,10 @@ void displayFirstFrame() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, firstFrameFBO);
-
+	glViewport(0, 0, (GLsizei) TEXTURE_WIDTH, (GLsizei) TEXTURE_HEIGHT);
 	matState->matrixMode(matState->PROJECTION);
 	matState->loadIdentity();
-	matState->perspective(45.0f, 1.0f, 0.1f, 50.0f);
+	matState->perspective(45.0f, textureAspect, 0.1f, 50.0f);
 	firstProjMatrix = matState->getCurrentMatrix();
 
 	std::cout << "FirstProj: ";
@@ -101,9 +104,10 @@ void displayFirstFrame() {
 	firstModelMatrix = matState->getCurrentMatrix();
 	std::cout << "FirstModel: ";
 	for (int i = 0; i < 16; i++) {
-		std::cout << glm::value_ptr(firstModelMatrix)[i] << " " ;
+		std::cout << glm::value_ptr(firstModelMatrix)[i] << " ";
 	}
 	std::cout << std::endl;
+
 	glUseProgram(prog);
 
 //	matState->matrixMode(matState->MODEL);
@@ -112,19 +116,22 @@ void displayFirstFrame() {
 //	matState->scale(100.0f,1.0f,100.0f);
 //	matState->rotate(90.0f,1.0f,0.0f,0.0f);
 
-	matState->sendMatrices(prog);
-
+	glUniformMatrix4fv(glGetUniformLocation(prog, "projMatrix"), 1, false,
+			glm::value_ptr(firstProjMatrix));
+	glUniformMatrix4fv(glGetUniformLocation(prog, "viewMatrix"), 1, false,
+			glm::value_ptr(firstModelMatrix));
 	glBindVertexArray(vao[0]);
 	glDrawElements(GL_TRIANGLES, sizeof(rectangleIndices), GL_UNSIGNED_SHORT,
 			0);
 
-	glUseProgram(prog);
-
 //	matState->matrixMode(matState->MODEL);
 //	matState->loadIdentity();
 
-	matState->sendMatrices(prog);
-
+//	matState->sendMatrices(prog);
+	glUniformMatrix4fv(glGetUniformLocation(prog, "projMatrix"), 1, false,
+			glm::value_ptr(firstProjMatrix));
+	glUniformMatrix4fv(glGetUniformLocation(prog, "viewMatrix"), 1, false,
+			glm::value_ptr(firstModelMatrix));
 	glBindVertexArray(vao[1]);
 	glDrawElements(GL_TRIANGLES, sizeof(boxIndices), GL_UNSIGNED_SHORT, 0);
 
@@ -138,16 +145,13 @@ void displayFirstFrame() {
 
 void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+//
+	glViewport(0, 0, (GLsizei) WINDOW_WIDTH, (GLsizei) WINDOW_HEIGHT);
 	matState->matrixMode(matState->PROJECTION);
 	matState->loadIdentity();
-	matState->perspective(45.0f, 1.0f, 0.1f, 50.0f);
+	matState->perspective(45.0f, aspect, 0.1f, 50.0f);
 	projMatrix = matState->getCurrentMatrix();
 
-	std::cout << "Proj: ";
-	for (int i = 0; i < 16; i++) {
-		std::cout << glm::value_ptr(projMatrix)[i] << " " ;
-	}
 	std::cout << std::endl;
 	matState->matrixMode(matState->VIEW);
 	matState->loadIdentity();
@@ -155,13 +159,13 @@ void display() {
 	matState->translate(pos.x, pos.y, pos.z);
 	matState->rotate(rot, 0.0f, 1.0f, 0.0f);
 	modelMatrix = matState->getCurrentMatrix();
-	std::cout << "Model: ";
-	for (int i = 0; i < 16; i++) {
-		std::cout << glm::value_ptr(modelMatrix)[i] << " " ;
-	}
-	std::cout << std::endl;
+
 	glUseProgram(progNorm);
-	matState->sendMatrices(progNorm);
+//	matState->sendMatrices(progNorm);
+	glUniformMatrix4fv(glGetUniformLocation(progNorm, "projMatrix"), 1, false,
+			glm::value_ptr(projMatrix));
+	glUniformMatrix4fv(glGetUniformLocation(progNorm, "viewMatrix"), 1, false,
+			glm::value_ptr(modelMatrix));
 	glUniformMatrix4fv(glGetUniformLocation(progNorm, "oldProjMatrix"), 1,
 			false, glm::value_ptr(firstProjMatrix));
 	glUniformMatrix4fv(glGetUniformLocation(progNorm, "oldViewMatrix"), 1,
@@ -175,6 +179,20 @@ void display() {
 	glDrawElements(GL_TRIANGLES, sizeof(boxIndices), GL_UNSIGNED_SHORT, 0);
 
 	glutSwapBuffers();
+//
+//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//
+//	glUseProgram(progTxt);
+//	glBindVertexArray(vao[2]);
+//	glEnable(GL_TEXTURE_2D);
+//	glBindTexture(GL_TEXTURE_2D, firstFrameTexture);
+//	glUniform1i(glGetUniformLocation(progTxt, "frameTex"), 0);
+//
+//	glDrawElements(GL_TRIANGLES, sizeof(rectangle2DVertices), GL_UNSIGNED_SHORT,
+//			0);
+//	glUseProgram(0);
+//	glutSwapBuffers();
+
 }
 
 void setupBuffers() {
@@ -263,11 +281,11 @@ void setupBuffers() {
 	// Texture for the framebuffer to hold the first frame
 	glGenTextures(1, &firstFrameTexture);
 	glBindTexture(GL_TEXTURE_2D, firstFrameTexture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, WINDOW_WIDTH, WINDOW_HEIGHT, 0,
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, TEXTURE_WIDTH, TEXTURE_HEIGHT, 0,
 			GL_RGB, GL_UNSIGNED_BYTE, NULL);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
