@@ -38,7 +38,7 @@ private:
     CSceneNode* sn_p_rootSceneNode;
     CCamera* c_cameraNode;
     
-    CLight* cl_p_lightNode;
+    vector<CLight*> v_p_lightNode;
     int* i_p_numLightNode;
     
     aiMesh** aim_p_asMesh;

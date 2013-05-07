@@ -22,7 +22,7 @@ using namespace std;
 class CSceneNode
 {
 private:
-    CSceneNode* sn_p_sceneNodeChildren;     // Liste aller Kinder eines Knotens
+    vector<CSceneNode*> v_p_sceneNodeChildren;     // Liste aller Kinder eines Knotens
     glm::mat4x4* m_sceneNodeTransform;      // Transformation des Knoten
     unsigned int* i_p_nodeMesh;             // Index auf Mesh
     int i_nodeMeshNum;                      // Anzahl an Meshes
@@ -30,9 +30,9 @@ private:
 public:
     CSceneNode();
     CSceneNode(aiNode* ain_asNode);
-    CSceneNode(aiNode* ain_asNode, CSceneNode* sn_parentNode, glm::mat4x4 m_parnetTransform);
+    CSceneNode(aiNode* ain_asNode, glm::mat4x4 m_parnetTransform);
     
-    CSceneNode* returnChildren();
+    vector<CSceneNode*> returnChildren();
     unsigned int* returnMeshIndex();
     int* returnNumberOfMesh();
     

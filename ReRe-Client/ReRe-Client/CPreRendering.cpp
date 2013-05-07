@@ -28,8 +28,7 @@ CPreRendering::CPreRendering()
     sceneMgr = new CSceneManager("cube.dae");
     
     // --- Just Testing! TODO: Delete!
-    unsigned int i = *sceneMgr->returnRootSceneNode()->returnMeshIndex();
-    cout << i << endl;
+    sceneMgr->returnRootSceneNode();
     // ---------------------------------------
     
     createTextures();
