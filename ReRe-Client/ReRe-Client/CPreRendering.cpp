@@ -104,7 +104,7 @@ void CPreRendering::initGLSL()
     currentImgVertexShader = glCreateShader(GL_VERTEX_SHADER);
     
     // Read vertex shader source
-    string shaderSource = readFile("Shader/CDiffuseImage.vert");
+    string shaderSource = readFile("../Shader/CDiffuseImage.vert");
     const char* sourcePtr = shaderSource.c_str();
     
     // Attach shader code
@@ -118,7 +118,7 @@ void CPreRendering::initGLSL()
     currentImgFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     
     // Read fragment shader source
-    shaderSource = readFile("Shader/CDiffuseImage.frag");
+    shaderSource = readFile("../Shader/CDiffuseImage.frag");
     sourcePtr = shaderSource.c_str();
     
     // Attach shader code
@@ -224,9 +224,7 @@ void CPreRendering::writeToFBO()
     // Clear content of FBO
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
        
-    // TODO: Draw DiffImg - Buffers[0]
-    // TODO: Draw DepthImg - Buffers[1]
-    
+    // Draw Scene
     sceneMgr->drawScene();
     
     // Stop rendering to FBO
@@ -269,7 +267,10 @@ void CPreRendering::checkFrameBuffer()
         default:
             cout << "Unknown ERROR\n";	  
 	}
-    
-    // TODO: Softwaretesting 
+}
+
+// TODO: Softwaretesting
+void CPreRendering::testDraw()
+{
     
 }
