@@ -55,7 +55,7 @@ public:
     CSceneNode* returnRootSceneNode();              // Gibt den Wurzelknoten des Szenegraphen zurück
     
     //
-    void drawScene();
+    void drawScene(CSceneNode* sn_p_drawNode);
     
     //
     CCamera* returnCameraNode();                    // Gibt die Kamera zurück
