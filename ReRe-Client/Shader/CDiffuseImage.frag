@@ -1,4 +1,5 @@
-#version 320
+#version 150
+#extension GL_ARB_explicit_attrib_location : enable
 
 in vec4 f_position;
 in vec3 f_normal;
@@ -15,11 +16,12 @@ layout (location = 1) out vec4 out_depthColor;
 void main()
 {
     float cosinus = max(0.0f, dot(f_normal, f_lightVec));
-    vec4 texel = texture2D(texture, f_texture.st);
+    vec4 texel = texture(texture, f_texture.st);
     
     vec4 diffuseReflection = vec4( diffuseFrontMaterial * diffuseLightColor * cosinus, 1.0f);
     
     out_diffColor = texel * diffuseReflection;
     
-    // TODO: Calculate Depth Color???
+    // TODO: Depth Color Calculation needed???
+    out_depthColor = vec4(f_position.z, f_position.z, f_position.z, 1.0f);
 }
