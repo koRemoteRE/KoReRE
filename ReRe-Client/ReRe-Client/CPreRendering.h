@@ -34,7 +34,13 @@ private:
     
     void checkFrameBuffer();
     
-    void testDraw(); // Just Testing! TODO: Delete!
+    // --- Just Testing --- TODO: Delete! ----------------
+    
+    void initGLSLforTesting();
+    void testDraw();
+    void drawFullScreenQuad();
+    
+    // ---------------------------------------------------
     
     CSceneManager* sceneMgr;
     

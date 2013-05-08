@@ -23,17 +23,30 @@ GLuint depthBuffer;
 int width = 1024;
 int height = 768;
 
+// --- Variables for testing --- TODO: Delete! ------------
+
+GLuint showImgVertexShader;
+GLuint showImgFragmentShader;
+GLuint showImgShaderProgram;
+
+// --------------------------------------------------------
+
+
 CPreRendering::CPreRendering()
 {
-    sceneMgr = new CSceneManager("../Assets/cube.dae");
-    
-    // --- Just Testing! TODO: Delete!
-    sceneMgr->returnRootSceneNode();
-    // ---------------------------------------
-    
     createTextures();
     createFBO();
     initGLSL();
+    
+    sceneMgr = new CSceneManager("../Assets/cube.dae");
+    
+    // --- Just Testing --- TODO: Delete! -------------
+    
+    sceneMgr->returnRootSceneNode();
+    
+    initGLSLforTesting();
+
+    // ------------------------------------------------
 }
 
 CPreRendering::~CPreRendering()
@@ -136,10 +149,10 @@ void CPreRendering::initGLSL()
     glAttachShader(currentImgShaderProgram, currentImgFragmentShader);
     
     // TODO: Compare to VertexAttributePointers!!!
-    glBindAttribLocation(currentImgShaderProgram, 0, "v_position");
-    glBindAttribLocation(currentImgShaderProgram, 1, "v_normal");
-    glBindAttribLocation(currentImgShaderProgram, 2, "v_texture");
-    glBindAttribLocation(currentImgShaderProgram, 3, "v_lightPos");
+    glBindAttribLocation(currentImgShaderProgram, 0, "v_lightPos");
+    glBindAttribLocation(currentImgShaderProgram, 1, "v_position");
+    glBindAttribLocation(currentImgShaderProgram, 2, "v_normal");
+    //glBindAttribLocation(currentImgShaderProgram, 3, "v_texture");
     
     // Link program
     glLinkProgram(currentImgShaderProgram);
@@ -169,7 +182,7 @@ void CPreRendering::createTextures()
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0,
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0,
                  GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 
 	// Texture unit 0 should be active again
@@ -269,8 +282,80 @@ void CPreRendering::checkFrameBuffer()
 	}
 }
 
-// TODO: Softwaretesting
+// --- TODO: Softwaretesting --- TODO: Delete! -------------------
+
+void CPreRendering::initGLSLforTesting()
+{
+    // Create shader which shows the content of the textures
+	// attached to the FBO
+    
+	// Create empty shader object (vertex shader)
+	showImgVertexShader = glCreateShader(GL_VERTEX_SHADER);
+    
+	// Read vertex shader source
+	string shaderSource = readFile("../Shader/CShowFBOforTesting.vert");
+	const char* sourcePtr = shaderSource.c_str();
+    
+	// Attach shader code
+	glShaderSource(showImgVertexShader, 1, &sourcePtr, NULL);
+    
+	// Compile
+	glCompileShader(showImgVertexShader);
+	printShaderInfoLog(showImgVertexShader);
+    
+	// Create empty shader object (fragment shader)
+	showImgFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    
+	// Read vertex shader source
+	shaderSource = readFile("../Shader/CShowFBOforTesting.frag");
+	sourcePtr = shaderSource.c_str();
+    
+	// Attach shader code
+	glShaderSource(showImgFragmentShader, 1, &sourcePtr, NULL);
+    
+	// Compile
+	glCompileShader(showImgFragmentShader);
+	printShaderInfoLog(showImgFragmentShader);
+    
+	// Create shader program
+	showImgShaderProgram = glCreateProgram();
+    
+	// Attach shader
+	glAttachShader(showImgShaderProgram, showImgVertexShader);
+	glAttachShader(showImgShaderProgram,showImgFragmentShader);
+    
+	// Link program
+	glLinkProgram(showImgShaderProgram);
+	printProgramInfoLog(showImgShaderProgram);
+}
+
 void CPreRendering::testDraw()
 {
     
+}
+
+void CPreRendering::drawFullScreenQuad()
+{
+	glDisable(GL_DEPTH_TEST);
+	glPushAttrib(GL_VIEWPORT_BIT);
+	glViewport(0, 0, width, height);
+    
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix(); glLoadIdentity();
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix(); glLoadIdentity();
+    
+	glBegin(GL_QUADS);
+	glTexCoord2f(0,0); glVertex3f(-1, -1, 0.0f);
+	glTexCoord2f(1,0); glVertex3f(1, -1, 0.0f);
+	glTexCoord2f(1,1); glVertex3f(1, 1, 0.0f);
+	glTexCoord2f(0,1);glVertex3f(-1, 1, 0.0f);
+	glEnd();
+    
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+    
+	glEnable(GL_DEPTH_TEST);
+	glPopAttrib();
 }
