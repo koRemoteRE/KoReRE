@@ -16,6 +16,21 @@ Encoder::Encoder(void)
 
 Encoder::~Encoder(void)
 {
+  av_write_trailer(fc);
+  // Close each codec. 
+  if (videoStream){
+    avcodec_close(videoStream->codec);
+    //av_free(src_picture.data[0]);
+    //av_free(dst_picture.data[0]);
+    av_free(picRGB);
+    av_free(picYUV);
+  }
+  if (!(fmt->flags & AVFMT_NOFILE))
+    // Close the output file. 
+      avio_close(fc->pb);
+
+  // free the stream 
+  avformat_free_context(fc);
 }
 
 AVStream *Encoder::add_stream(AVFormatContext *oc, AVCodec **codec,
@@ -306,23 +321,7 @@ void Encoder::encodeFrame()
 
 void Encoder::finish()
 {
-  av_write_trailer(fc);
-  // Close each codec. 
-  if (videoStream){
-    avcodec_close(videoStream->codec);
-    //av_free(src_picture.data[0]);
-    //av_free(dst_picture.data[0]);
-    av_free(picRGB);
-    av_free(picYUV);
-  }
-  if (!(fmt->flags & AVFMT_NOFILE))
-    // Close the output file. 
-      avio_close(fc->pb);
 
-  // free the stream 
-  avformat_free_context(fc);
-  
-  
 /*
   //delayed frames
   for(; out_size; ++frameno){
@@ -347,6 +346,7 @@ void Encoder::finish()
   av_free(codecContext);*/
   //av_free(picRGB);
   //av_free(picYUV);
+
   _recording=false;
 }
 

@@ -55,6 +55,11 @@
 #include "Kore/Operations/OperationFactory.h"
 #include "encoder.h"
 
+#include "live555/BasicUsageEnvironment.hh"
+#include "live555/GroupsockHelper.hh"
+#include "live555/liveMedia.hh"
+#include "Streamer.h"
+
 kore::SceneNode* rotationNode = NULL;
 kore::SceneNode* lightNode = NULL;
 kore::Camera* pCamera = NULL;
@@ -218,11 +223,9 @@ void setUpNMRendering(kore::SceneNode* renderNode,
         programPass->addNodePass(nodePass);
 }
 
-int main(void) {
 
-  int running = GL_TRUE;
-
-  // Initialize GLFW
+void init(){
+   // Initialize GLFW
   if (!glfwInit()) {
     kore::Log::getInstance()->write("[ERROR] could not load window manager\n");
     exit(EXIT_FAILURE);
@@ -280,7 +283,9 @@ int main(void) {
     ->write("GLEW version: %s\n",
             reinterpret_cast<const char*>(
             glewGetString(GLEW_VERSION)));
+}
 
+void initScene(){
   // enable culling and depthtest
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_CULL_FACE);
@@ -290,23 +295,23 @@ int main(void) {
   // load shader
   kore::ShaderProgram* simpleShader = new kore::ShaderProgram;
   simpleShader->loadShader("./assets/shader/normalColor.vp",
-                          GL_VERTEX_SHADER);
+    GL_VERTEX_SHADER);
   simpleShader->loadShader("./assets/shader/normalColor.fp",
-                          GL_FRAGMENT_SHADER);
+    GL_FRAGMENT_SHADER);
   simpleShader->init();
   simpleShader->setName("cooler Shader");
 
   kore::ShaderProgram* nmShader = new kore::ShaderProgram;
   nmShader->loadShader("./assets/shader/normalmapping.vert", 
-                        GL_VERTEX_SHADER);
+    GL_VERTEX_SHADER);
   nmShader->loadShader("./assets/shader/normalmapping.frag",
-                        GL_FRAGMENT_SHADER);
+    GL_FRAGMENT_SHADER);
   nmShader->init();
   simpleShader->setName("normal mapping Shader");
   // load resources
   kore::ResourceManager::getInstance()
     ->loadScene("./assets/meshes/TestEnv.dae");
-    //->loadScene("./assets/meshes/triangle.dae");
+  //->loadScene("./assets/meshes/triangle.dae");
 
   // texture loading
   kore::Texture* testTexture =
@@ -325,7 +330,7 @@ int main(void) {
   kore::SceneNode* pCameraNode = kore::SceneManager::getInstance()
     ->getSceneNodeByComponent(kore::COMPONENT_CAMERA);
   pCamera = static_cast<kore::Camera*>(
-            pCameraNode->getComponent(kore::COMPONENT_CAMERA));
+    pCameraNode->getComponent(kore::COMPONENT_CAMERA));
 
   // find light
   lightNode = kore::SceneManager::getInstance()
@@ -336,15 +341,15 @@ int main(void) {
   // select render nodes
   std::vector<kore::SceneNode*> vRenderNodes;
   kore::SceneManager::getInstance()->
-                  getSceneNodesByComponent(kore::COMPONENT_MESH, vRenderNodes);
+    getSceneNodesByComponent(kore::COMPONENT_MESH, vRenderNodes);
 
 
   GLenum drawBuffers[] = {GL_COLOR_ATTACHMENT0};
   kore::FrameBufferStage* backBufferStage = new kore::FrameBufferStage;
   backBufferStage->setFrameBuffer(kore::FrameBuffer::BACKBUFFER,
-                                  GL_FRAMEBUFFER,
-                                  drawBuffers,
-                                  1);
+    GL_FRAMEBUFFER,
+    drawBuffers,
+    1);
 
   kore::ShaderProgramPass* shaderProgPass = new kore::ShaderProgramPass;
   //shaderProgPass->setShaderProgram(simpleShader);
@@ -352,9 +357,9 @@ int main(void) {
 
   // init operations
   for (uint i = 0; i < vRenderNodes.size(); ++i) {
-   
-      //setUpSimpleRendering(vRenderNodes[i],shaderProgPass,testTexture,pLight);
-      setUpNMRendering(vRenderNodes[i],shaderProgPass,stoneTexture,stoneNormalmap,pLight);
+
+    //setUpSimpleRendering(vRenderNodes[i],shaderProgPass,testTexture,pLight);
+    setUpNMRendering(vRenderNodes[i],shaderProgPass,stoneTexture,stoneNormalmap,pLight);
 
   }
 
@@ -368,33 +373,69 @@ int main(void) {
   rotationNode = vBigCubeNodes[0]; 
 
   glClearColor(1.0f,1.0f,1.0f,1.0f);
+}
+
+UsageEnvironment* env;
+char const* inputFileName = "slamtv60.264";
+H264VideoStreamFramer* videoSource;
+RTPSink* videoSink;
+
+void play(); // forward
+
+void afterPlaying(void* /*clientData*/) {
+  *env << "...done reading from file\n";
+  videoSink->stopPlaying();
+  Medium::close(videoSource);
+  // Note that this also closes the input file that this source read from.
+
+  // Start playing once again:
+  play();
+}
+
+void play() {
+  // Open the input file as a 'byte-stream file source':
+  ByteStreamFileSource* fileSource
+    = ByteStreamFileSource::createNew(*env, inputFileName);
+  if (fileSource == NULL) {
+    *env << "Unable to open file \"" << inputFileName
+      << "\" as a byte-stream file source\n";
+    exit(1);
+  }
+
+  FramedSource* videoES = fileSource;
+
+  // Create a framer for the Video Elementary Stream:
+  videoSource = H264VideoStreamFramer::createNew(*env, videoES);
+
+  // Finally, start playing:
+  *env << "Beginning to read from file...\n";
+  videoSink->startPlaying(*videoSource, afterPlaying, videoSink);
+}
+
+int main(void) {
+
+  int running = GL_TRUE;
+  
+  init();
+  initScene();
+
+  
 
   kore::Timer the_timer;
   the_timer.start();
   double time = 0;
   float cameraMoveSpeed = 4.0f;
-  
+
   int oldMouseX = 0;
   int oldMouseY = 0;
   glfwGetMousePos(&oldMouseX,&oldMouseY);
-
-  /*
-  //Event-tests
-  kore::ResourceManager* resourceManager = kore::ResourceManager::getInstance();
-
-  resourceManager->_fboDeleteEvent.add(backBufferStage, &kore::FrameBufferStage::onFrameBufferDelete);
-  resourceManager->_fboDeleteEvent.add(shaderProgPass, &kore::ShaderProgramPass::onFrameBufferDelete);
-  resourceManager->_fboDeleteEvent.raiseEvent(NULL);
-  resourceManager->_fboDeleteEvent.remove(shaderProgPass, &kore::ShaderProgramPass::onFrameBufferDelete);
-  resourceManager->_fboDeleteEvent.raiseEvent(NULL);
-
-  //////////////////////////////////////////////////////////////////////////
-  //*/
-
   
   Encoder* encoder = new Encoder();
-  encoder->init("test.mp4",800,600);
+  encoder->init("test.h264",800,600);
   
+  
+  Streamer* streamer = Streamer::getInstance();
+
   // Main loop
   while (running) {
     time = the_timer.timeSinceLastCall();
@@ -437,7 +478,72 @@ int main(void) {
       encoder->stop();
     }
     if (glfwGetKey(GLFW_KEY_F3)) {
-      encoder->finish();
+      streamer->startStreaming();
+      //encoder->finish();
+    }
+
+    if (glfwGetKey(GLFW_KEY_F4)) {
+      // Begin by setting up our usage environment:
+      TaskScheduler* scheduler = BasicTaskScheduler::createNew();
+      env = BasicUsageEnvironment::createNew(*scheduler);
+
+      // Create 'groupsocks' for RTP and RTCP:
+      struct in_addr destinationAddress;
+      destinationAddress.s_addr = chooseRandomIPv4SSMAddress(*env);
+      // Note: This is a multicast address.  If you wish instead to stream
+      // using unicast, then you should use the "testOnDemandRTSPServer"
+      // test program - not this test program - as a model.
+
+      const unsigned short rtpPortNum = 18888;
+      const unsigned short rtcpPortNum = rtpPortNum+1;
+      const unsigned char ttl = 255;
+
+      const Port rtpPort(rtpPortNum);
+      const Port rtcpPort(rtcpPortNum);
+
+      Groupsock rtpGroupsock(*env, destinationAddress, rtpPort, ttl);
+      rtpGroupsock.multicastSendOnly(); // we're a SSM source
+      Groupsock rtcpGroupsock(*env, destinationAddress, rtcpPort, ttl);
+      rtcpGroupsock.multicastSendOnly(); // we're a SSM source
+
+      // Create a 'H264 Video RTP' sink from the RTP 'groupsock':
+      OutPacketBuffer::maxSize = 400000;
+      videoSink = H264VideoRTPSink::createNew(*env, &rtpGroupsock, 96);
+
+      // Create (and start) a 'RTCP instance' for this RTP sink:
+      const unsigned estimatedSessionBandwidth = 500; // in kbps; for RTCP b/w share
+      const unsigned maxCNAMElen = 100;
+      unsigned char CNAME[maxCNAMElen+1];
+      gethostname((char*)CNAME, maxCNAMElen);
+      CNAME[maxCNAMElen] = '\0'; // just in case
+      RTCPInstance* rtcp
+        = RTCPInstance::createNew(*env, &rtcpGroupsock,
+        estimatedSessionBandwidth, CNAME,
+        videoSink, NULL /* we're a server */,
+        True /* we're a SSM source */);
+      // Note: This starts RTCP running automatically
+
+      RTSPServer* rtspServer = RTSPServer::createNew(*env, 8554);
+      if (rtspServer == NULL) {
+        *env << "Failed to create RTSP server: " << env->getResultMsg() << "\n";
+        exit(1);
+      }
+      ServerMediaSession* sms
+        = ServerMediaSession::createNew(*env, "testStream", inputFileName,
+        "Session streamed by \"testH264VideoStreamer\"",
+        True /*SSM*/);
+      sms->addSubsession(PassiveServerMediaSubsession::createNew(*videoSink, rtcp));
+      rtspServer->addServerMediaSession(sms);
+
+      char* url = rtspServer->rtspURL(sms);
+      *env << "Play this stream using the URL \"" << url << "\"\n";
+      delete[] url;
+
+      // Start the streaming:
+      *env << "Beginning streaming...\n";
+      play();
+
+      env->taskScheduler().doEventLoop(); // does not return
     }
 
     oldMouseX = mouseX;
@@ -462,7 +568,10 @@ int main(void) {
 
   // Test XML writing
   kore::ResourceManager::getInstance()->saveProject("xmltest.kore");
-  encoder->finish();
+  
+
+  delete encoder;
+
   // Close window and terminate GLFW
   glfwTerminate();
 
