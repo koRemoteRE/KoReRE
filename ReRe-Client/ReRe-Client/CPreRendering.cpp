@@ -28,7 +28,7 @@ CPreRendering::CPreRendering()
     sceneMgr = new CSceneManager("../Assets/cube.dae");
     
     // --- Just Testing! TODO: Delete!
-    sceneMgr->returnRootSceneNode();
+    sceneMgr->drawScene();
     // ---------------------------------------
     
     createTextures();

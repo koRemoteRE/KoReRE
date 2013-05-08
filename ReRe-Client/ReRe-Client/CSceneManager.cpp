@@ -51,10 +51,12 @@ CSceneNode* CSceneManager::returnRootSceneNode()
 void CSceneManager::drawScene()
 {
     //TODO: Vertexliste zeichnen
-    for (unsigned int numMesh = 0; numMesh < *sn_p_rootSceneNode->returnNumberOfMesh(); numMesh++)
+    //TODO: Für alle Knoten zeichnen
+    
+    for (unsigned int numMesh = 0; numMesh <  *sn_p_rootSceneNode->returnChildren()[0]->returnNumberOfMesh(); numMesh++)
     {
-        glBindVertexArray(stm_meshList[sn_p_rootSceneNode->returnMeshIndex()[numMesh]].glui_vaoBuffer);
-        glDrawElements(GL_TRIANGLES,stm_meshList[sn_p_rootSceneNode->returnMeshIndex()[numMesh]].glui_numFace*3, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(stm_meshList[sn_p_rootSceneNode->returnChildren()[0]->returnMeshIndex()[numMesh]].glui_vaoBuffer);
+        glDrawElements(GL_TRIANGLES,stm_meshList[sn_p_rootSceneNode->returnChildren()[0]->returnMeshIndex()[numMesh]].glui_numFace*3, GL_UNSIGNED_INT, 0);
     }
 }
 
@@ -153,7 +155,7 @@ void CSceneManager::bindVAO()
 
 CCamera* CSceneManager::createCameraNode()
 {
-    c_cameraNode = new CCamera();    
+    c_cameraNode = new CCamera();
     return c_cameraNode;
 }
 
