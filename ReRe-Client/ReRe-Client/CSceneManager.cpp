@@ -48,13 +48,21 @@ CSceneNode* CSceneManager::returnRootSceneNode()
     return sn_p_rootSceneNode;
 }
 
-void CSceneManager::drawScene()
+void CSceneManager::drawScene(CSceneNode* sn_p_drawNode)
 {
     //TODO: Vertexliste zeichnen
-    for (unsigned int numMesh = 0; numMesh < *sn_p_rootSceneNode->returnNumberOfMesh(); numMesh++)
+    //TODO: Für alle Knoten zeichnen
+    
+    for (unsigned int ui_numMesh = 0; ui_numMesh <  *(sn_p_drawNode->returnNumberOfMesh()); ui_numMesh++)
     {
-        glBindVertexArray(stm_meshList[sn_p_rootSceneNode->returnMeshIndex()[numMesh]].glui_vaoBuffer);
-        glDrawElements(GL_TRIANGLES,stm_meshList[sn_p_rootSceneNode->returnMeshIndex()[numMesh]].glui_numFace*3, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(stm_meshList[sn_p_drawNode->returnMeshIndex()[ui_numMesh]].glui_vaoBuffer);
+        glDrawElements(GL_TRIANGLES,stm_meshList[sn_p_drawNode->returnMeshIndex()[ui_numMesh]].glui_numFace*3, GL_UNSIGNED_INT, 0);
+    }
+    
+    //Rekursiv alle Kinderknoten aufrufen und zeichnen
+    for (unsigned int ui_numNode = 0; ui_numNode < sn_p_drawNode->returnChildren().size(); ui_numNode++)
+    {
+        drawScene(sn_p_drawNode->returnChildren()[ui_numNode]);
     }
 }
 
@@ -153,7 +161,8 @@ void CSceneManager::bindVAO()
 
 CCamera* CSceneManager::createCameraNode()
 {
-    c_cameraNode = new CCamera();    
+    c_cameraNode = new CCamera();
+    
     return c_cameraNode;
 }
 
