@@ -290,7 +290,7 @@ void Encoder::encodeFrame()
     AVPacket pkt = { 0 };
     int got_packet;
     av_init_packet(&pkt);
-
+    
     // encode the image 
     ret = avcodec_encode_video2(codecContext, &pkt, picYUV, &got_packet);
     if (ret < 0) {
