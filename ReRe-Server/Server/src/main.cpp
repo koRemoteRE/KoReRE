@@ -59,6 +59,7 @@
 #include "live555/GroupsockHelper.hh"
 #include "live555/liveMedia.hh"
 #include "Streamer.h"
+#include "RTSPOnDemandServer.h"
 
 kore::SceneNode* rotationNode = NULL;
 kore::SceneNode* lightNode = NULL;
@@ -431,11 +432,11 @@ int main(void) {
   glfwGetMousePos(&oldMouseX,&oldMouseY);
   
   Encoder* encoder = new Encoder();
-  encoder->init("test2.h264",800,600);
+  encoder->init("test.h264",800,600);
   
   
-  Streamer* streamer = Streamer::getInstance();
-
+ // Streamer* streamer = Streamer::getInstance();
+  RTSPOnDemandServer server = RTSPOnDemandServer();
   // Main loop
   while (running) {
     time = the_timer.timeSinceLastCall();
@@ -478,7 +479,8 @@ int main(void) {
       encoder->stop();
     }
     if (glfwGetKey(GLFW_KEY_F3)) {
-      streamer->startStreaming();
+      server.startStreaming();
+      //streamer->startStreaming();
       //encoder->finish();
     }
 
@@ -560,6 +562,7 @@ int main(void) {
 
     glfwSwapBuffers();
     encoder->encodeFrame();
+    server.streamFrame();
     kore::GLerror::gl_ErrorCheckFinish("Main Loop");
 
     // Check if ESC key was pressed or window was closed

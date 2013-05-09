@@ -1,9 +1,10 @@
 #include "Encoder.h"
-
 #include <iostream>
-
 #include "KoRE\RenderManager.h"
 
+extern "C"{
+  #include "libavutil/opt.h"
+};
 
 Encoder::Encoder(void)
   :buffer(NULL),
@@ -80,6 +81,9 @@ AVStream *Encoder::add_stream(AVFormatContext *oc, AVCodec **codec,
     c->mb_decision = 2;
     
   }
+
+  /*av_opt_set(c->priv_data, "preset", "ultrafast", 0);
+  av_opt_set(c->priv_data, "tune", "zerolatency", 0);*/
 
   // Some formats want stream headers to be separate.
   if (oc->oformat->flags & AVFMT_GLOBALHEADER)
@@ -290,7 +294,7 @@ void Encoder::encodeFrame()
     AVPacket pkt = { 0 };
     int got_packet;
     av_init_packet(&pkt);
-    
+
     // encode the image 
     ret = avcodec_encode_video2(codecContext, &pkt, picYUV, &got_packet);
     if (ret < 0) {

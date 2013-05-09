@@ -15,7 +15,10 @@
     <ClCompile Include="src\Streamer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ffmpegFramedSource.cpp">
+    <ClCompile Include="src\RTSPOnDemandServer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\H264FramedSource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -26,7 +29,10 @@
     <ClInclude Include="src\Streamer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ffmpegFramedSource.h">
+    <ClInclude Include="src\RTSPOnDemandServer.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\H264FramedSource.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
