@@ -431,7 +431,7 @@ int main(void) {
   glfwGetMousePos(&oldMouseX,&oldMouseY);
   
   Encoder* encoder = new Encoder();
-  encoder->init("test.h264",800,600);
+  encoder->init("test2.h264",800,600);
   
   
   Streamer* streamer = Streamer::getInstance();

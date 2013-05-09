@@ -13,7 +13,7 @@ Streamer::~Streamer(void)
 
 void Streamer::startStreaming()
 {
-  inputFileName = "slamtv60.264";
+  inputFileName = "test.h264";
 
   // Begin by setting up our usage environment:
   TaskScheduler* scheduler = BasicTaskScheduler::createNew();

@@ -287,11 +287,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Encoder.cpp" />
+    <ClCompile Include="src\ffmpegFramedSource.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Streamer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Encoder.h" />
+    <ClInclude Include="src\ffmpegFramedSource.h" />
     <ClInclude Include="src\Streamer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
