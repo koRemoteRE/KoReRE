@@ -307,6 +307,7 @@ void Encoder::encodeFrame()
       pkt.stream_index = videoStream->index;
 
       // Write the compressed frame to the media file. 
+        currPacket = &pkt;
         ret = av_write_frame(fc, &pkt);
     } else {
       ret = 0;

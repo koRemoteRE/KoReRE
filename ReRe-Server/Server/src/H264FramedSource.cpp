@@ -1,4 +1,3 @@
-
 #include "H264FramedSource.h"
 #include "live555/GroupsockHelper.hh" // for "gettimeofday()"
 

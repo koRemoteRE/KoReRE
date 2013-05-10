@@ -21,6 +21,9 @@
     <ClCompile Include="src\H264LiveVideoSubsession.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Streamer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Encoder.h">
@@ -33,6 +36,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="src\H264LiveVideoSubsession.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Streamer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

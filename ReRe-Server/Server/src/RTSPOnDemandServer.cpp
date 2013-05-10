@@ -20,7 +20,7 @@ RTSPOnDemandServer::RTSPOnDemandServer(void)
     = ServerMediaSession::createNew(*env, streamName, streamName);
   //sms->addSubsession(H264LiveVideoSubsession
   //  ::createNew(*env, inputFileName, true));
-
+  
   sms->addSubsession(H264VideoFileServerMediaSubsession
     ::createNew(*env, inputFileName, true));
 
@@ -32,7 +32,7 @@ RTSPOnDemandServer::RTSPOnDemandServer(void)
   //env->taskScheduler().createEventTrigger()
 }
 void RTSPOnDemandServer::streamFrame(){
- // env->taskScheduler().triggerEvent();
+//   env->taskScheduler().triggerEvent();
 }
 
 void RTSPOnDemandServer::startStreaming(char* watch){

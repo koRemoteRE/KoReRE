@@ -291,12 +291,14 @@
     <ClCompile Include="src\H264LiveVideoSubsession.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\RTSPOnDemandServer.cpp" />
+    <ClCompile Include="src\Streamer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Encoder.h" />
     <ClInclude Include="src\H264FramedSource.h" />
     <ClInclude Include="src\H264LiveVideoSubsession.h" />
     <ClInclude Include="src\RTSPOnDemandServer.h" />
+    <ClInclude Include="src\Streamer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

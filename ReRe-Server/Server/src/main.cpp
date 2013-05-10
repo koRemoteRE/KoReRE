@@ -509,6 +509,7 @@ int main(void) {
 
     glfwSwapBuffers();
     encoder->encodeFrame();
+
     //server.streamFrame();
     kore::GLerror::gl_ErrorCheckFinish("Main Loop");
 

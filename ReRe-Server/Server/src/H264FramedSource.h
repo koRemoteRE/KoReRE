@@ -14,7 +14,6 @@ class DeviceParameters {
 class H264FramedSource: public FramedSource {
 public:
   static H264FramedSource* createNew(UsageEnvironment& env);
-
 public:
   static EventTriggerId eventTriggerId;
   // Note that this is defined here to be a static class variable, because this code is intended to illustrate how to
