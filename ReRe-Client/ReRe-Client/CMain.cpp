@@ -121,7 +121,7 @@ int main(int argc, const char * argv[])
     //obigen X-Teil ersetzen
     
     // the current packet of data
-    Packet packet;
+    Packet packet; //versuche AVPacket statt packet
     // data in the packet of data already processed
     size_t offsetInData = 0;
     
@@ -148,9 +148,6 @@ int main(int argc, const char * argv[])
         AVCodec* videocodec = NULL;
         for (int i = 0; i < avFormat->nb_streams; i++)
         {
-            //std::cout << i << std::endl;
-            //Schleife wird nur 1* ausgeführt, i wird nicht erhöht
-            //nur 1 Stream, da kein Audio?
             switch (avFormat->streams[i]->codec->codec_type)
             {
                 case AVMEDIA_TYPE_VIDEO:
@@ -184,8 +181,6 @@ int main(int argc, const char * argv[])
         //PROBLEM HIER
         //Anmerkung: kein Argument ist nullptr -> überprüft
         const int processedLength = avcodec_decode_video2(avVideoCodec.get(), avFrame.get(), &isFrameAvailable, &packetToSend);
-        
-      //  const int processedLength = avcodec_decode_video2(videoStream->codec, avFrame.get(), &isFrameAvailable, &packetToSend);
         
         std::cout << "do we finally get here?!" << std::endl;
     
@@ -225,6 +220,9 @@ int main(int argc, const char * argv[])
     avpicture_free(&pic);
     
 //_____________________________________________________________________________
+    
+    //Decoder second try
+    
     
     
         // Initialise GLFW
