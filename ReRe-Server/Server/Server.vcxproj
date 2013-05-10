@@ -86,7 +86,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <AdditionalOptions> /Zm1000 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(SolutionDir)ext/include;$(SolutionDir)../../KoRE/src;$(ProjectDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\SDKs\boost_1_53_0;$(SolutionDir)ext/include;$(SolutionDir)../../KoRE/src;$(ProjectDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <CompileAs>CompileAsCpp</CompileAs>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -115,8 +115,8 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>..\ext\lib\tinyxml.lib;kernel32.lib;ws2_32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;$(SolutionDir)lib\Debug\KoRE.lib;OpenGL32.lib;$(SolutionDir)ext\lib\msvc100\GLFW.lib;..\ext\lib\glew32.lib;..\ext\lib\assimp_release-dll_win32\assimp.lib;..\ext\lib\avcodec.lib;..\ext\lib\swscale.lib;..\ext\lib\avformat.lib;..\ext\lib\avutil.lib;..\ext\lib\live555\libUsageEnvironment.lib;..\ext\lib\live555\libBasicUsageEnvironment.lib;..\ext\lib\live555\libgroupsock.lib;..\ext\lib\live555\libliveMedia.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>..\ext\lib\tinyxml.lib;kernel32.lib;ws2_32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;$(SolutionDir)lib\Debug\KoRE.lib;OpenGL32.lib;$(SolutionDir)ext\lib\msvc100\GLFW.lib;..\ext\lib\glew32.lib;..\ext\lib\assimp_release-dll_win32\assimp.lib;..\ext\lib\avcodec.lib;..\ext\lib\swscale.lib;..\ext\lib\avformat.lib;..\ext\lib\avutil.lib;..\ext\lib\live555\libUsageEnvironment.lib;..\ext\lib\live555\libBasicUsageEnvironment.lib;..\ext\lib\live555\libgroupsock.lib;..\ext\lib\live555\libliveMedia.lib;boost_thread-vc110-mt-gd-1_53.lib;boost_system-vc110-mt-gd-1_53.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\SDKs\boost_1_53_0\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ImportLibrary>
       </ImportLibrary>
@@ -288,15 +288,15 @@
   <ItemGroup>
     <ClCompile Include="src\Encoder.cpp" />
     <ClCompile Include="src\H264FramedSource.cpp" />
+    <ClCompile Include="src\H264LiveVideoSubsession.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\RTSPOnDemandServer.cpp" />
-    <ClCompile Include="src\Streamer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Encoder.h" />
     <ClInclude Include="src\H264FramedSource.h" />
+    <ClInclude Include="src\H264LiveVideoSubsession.h" />
     <ClInclude Include="src\RTSPOnDemandServer.h" />
-    <ClInclude Include="src\Streamer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

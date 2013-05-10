@@ -5,17 +5,16 @@
 EventTriggerId H264FramedSource::eventTriggerId = 0;
 unsigned H264FramedSource::referenceCount = 0;
 
-H264FramedSource* H264FramedSource::createNew(UsageEnvironment& env, DeviceParameters params) {
-  return new H264FramedSource(env, params);
+H264FramedSource* H264FramedSource::createNew(UsageEnvironment& env) {
+  return new H264FramedSource(env);
 }
 
-H264FramedSource::H264FramedSource(UsageEnvironment& env,
-                                   DeviceParameters params)
-                                  : FramedSource(env), 
-                                    fParams(params) {
+H264FramedSource::H264FramedSource(UsageEnvironment& env)
+                                  : FramedSource(env)
+                                  {
   if (referenceCount == 0) {
-    // Any global initialization of the device would be done here:
-    //%%% TO BE WRITTEN %%%
+    //encoder = Encoder::getInstance();
+    //encoder->init("test.h264",800,600);
   }
   ++referenceCount;
 
@@ -44,7 +43,7 @@ H264FramedSource::~H264FramedSource() {
   if (referenceCount == 0) {
     // Any global 'destruction' (i.e., resetting) of the device would be done here:
     //%%% TO BE WRITTEN %%%
-
+    //delete encoder;
     // Reclaim our 'event trigger'
     envir().taskScheduler().deleteEventTrigger(eventTriggerId);
     eventTriggerId = 0;
@@ -98,8 +97,10 @@ void H264FramedSource::deliverFrame() {
 
   if (!isCurrentlyAwaitingData()) return; // we're not ready for the data yet
 
-  u_int8_t* newFrameDataStart = (u_int8_t*)0xDEADBEEF; //%%% TO BE WRITTEN %%%
-  unsigned newFrameSize = 0; //%%% TO BE WRITTEN %%%
+  AVPacket* currPacket = Encoder::getInstance()->getCurrentPacket();
+
+  u_int8_t* newFrameDataStart = currPacket->data + 4; //+4 skip startcode
+  unsigned newFrameSize = currPacket->size;
 
   // Deliver the data here:
   if (newFrameSize > fMaxSize) {

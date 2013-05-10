@@ -18,19 +18,25 @@ extern "C" {
 class Encoder
 {
 public:
-  Encoder(void);
+  static Encoder* getInstance(){
+    static Encoder instance; 
+    return &instance;}
   ~Encoder(void);
+ 
   bool init(char* Filename, int width, int height);
   void encodeFrame();
+  AVPacket* getCurrentPacket();
   void finish();
   void start();
   void stop();
 
 private:
+  Encoder(void);
+
   AVStream *add_stream(AVFormatContext *oc, AVCodec **codec, enum AVCodecID codec_id);
   void open_video(AVFormatContext *oc, AVCodec *codec, AVStream *st);
  
-
+  AVPacket* currPacket;
   uint8_t* buffer;
   glm::ivec2 renderResolution;
   GLenum 	lastBuffer;

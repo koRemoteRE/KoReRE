@@ -9,7 +9,7 @@ class RTSPOnDemandServer
 public:
   RTSPOnDemandServer(void);
   ~RTSPOnDemandServer(void);
-  void startStreaming();
+  void startStreaming(char* watch);
   void streamFrame();
 private:
   UsageEnvironment* env;

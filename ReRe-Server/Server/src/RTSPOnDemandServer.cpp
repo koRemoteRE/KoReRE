@@ -1,4 +1,6 @@
 #include "RTSPOnDemandServer.h"
+#include "H264LiveVideoSubsession.h"
+
 
 
 RTSPOnDemandServer::RTSPOnDemandServer(void)
@@ -16,9 +18,11 @@ RTSPOnDemandServer::RTSPOnDemandServer(void)
   char const* inputFileName = "test.h264";
   ServerMediaSession* sms
     = ServerMediaSession::createNew(*env, streamName, streamName);
+  //sms->addSubsession(H264LiveVideoSubsession
+  //  ::createNew(*env, inputFileName, true));
+
   sms->addSubsession(H264VideoFileServerMediaSubsession
     ::createNew(*env, inputFileName, true));
-
 
   
   rtspServer->addServerMediaSession(sms);
@@ -28,12 +32,13 @@ RTSPOnDemandServer::RTSPOnDemandServer(void)
   //env->taskScheduler().createEventTrigger()
 }
 void RTSPOnDemandServer::streamFrame(){
-  env->taskScheduler().triggerEvent(0);
+ // env->taskScheduler().triggerEvent();
 }
 
-void RTSPOnDemandServer::startStreaming(){
+void RTSPOnDemandServer::startStreaming(char* watch){
 
-  env->taskScheduler().doEventLoop(); // does not return
+  env->taskScheduler().doEventLoop(watch); // does not return
+
 }
 
 

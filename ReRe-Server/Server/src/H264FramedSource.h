@@ -4,6 +4,7 @@
 #ifndef _FRAMED_SOURCE_HH
 #include "live555/FramedSource.hh"
 #endif
+#include "Encoder.h"
 
 // The following class can be used to define specific encoder parameters
 class DeviceParameters {
@@ -12,8 +13,7 @@ class DeviceParameters {
 
 class H264FramedSource: public FramedSource {
 public:
-  static H264FramedSource* createNew(UsageEnvironment& env,
-         DeviceParameters params);
+  static H264FramedSource* createNew(UsageEnvironment& env);
 
 public:
   static EventTriggerId eventTriggerId;
@@ -22,7 +22,7 @@ public:
   // You can, however, redefine this to be a non-static member variable.
 
 protected:
-  H264FramedSource(UsageEnvironment& env, DeviceParameters params);
+  H264FramedSource(UsageEnvironment& env);
   // called only by createNew(), or by subclass constructors
   virtual ~H264FramedSource();
 
@@ -37,7 +37,6 @@ private:
 
 private:
   static unsigned referenceCount; // used to count how many instances of this class currently exist
-  DeviceParameters fParams;
 };
 
 #endif

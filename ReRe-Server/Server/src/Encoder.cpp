@@ -318,6 +318,7 @@ void Encoder::encodeFrame()
   }
   frame_count++;
   picYUV->pts += av_rescale_q(1, videoStream->codec->time_base, videoStream->time_base);
+
   //out_size = avcodec_encode_video(codecContext,outbuf,outbuf_size,picYUV);
   //std::cout << "encoding Frame " << ++frameno << "(size ="<<out_size <<")" << std::endl;
   //fwrite(outbuf, 1, out_size, file);
@@ -373,4 +374,14 @@ void Encoder::stop()
   else{
     std::cerr <<  "Encoder is not recording!" << std::endl;
   }*/
+}
+
+AVPacket* Encoder::getCurrentPacket()
+{
+  if (_initialized && currPacket!=NULL){
+   return currPacket;
+  }
+  else{
+    std::cerr <<  "Encoder is not initialized or no frame encoded!" << std::endl;
+  }
 }

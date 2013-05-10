@@ -12,13 +12,13 @@
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Streamer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\RTSPOnDemandServer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\H264FramedSource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\H264LiveVideoSubsession.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -26,13 +26,13 @@
     <ClInclude Include="src\Encoder.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Streamer.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\RTSPOnDemandServer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="src\H264FramedSource.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\H264LiveVideoSubsession.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

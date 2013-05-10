@@ -31,6 +31,8 @@
 #include <ctime>
 #include <vector>
 
+#include <boost/thread/thread.hpp>
+
 #include "KoRE/GLerror.h"
 #include "KoRE/ShaderProgram.h"
 #include "KoRE/Components/MeshComponent.h"
@@ -60,6 +62,7 @@
 #include "live555/liveMedia.hh"
 #include "Streamer.h"
 #include "RTSPOnDemandServer.h"
+
 
 kore::SceneNode* rotationNode = NULL;
 kore::SceneNode* lightNode = NULL;
@@ -413,6 +416,14 @@ void play() {
   videoSink->startPlaying(*videoSource, afterPlaying, videoSink);
 }
 
+
+  
+void RTSPThread(){
+  char* watch = NULL;
+  RTSPOnDemandServer server = RTSPOnDemandServer();
+  server.startStreaming(watch);
+}
+
 int main(void) {
 
   int running = GL_TRUE;
@@ -431,15 +442,16 @@ int main(void) {
   int oldMouseY = 0;
   glfwGetMousePos(&oldMouseX,&oldMouseY);
   
-  Encoder* encoder = new Encoder();
+  Encoder* encoder = Encoder::getInstance();
   encoder->init("test.h264",800,600);
   
-  
- // Streamer* streamer = Streamer::getInstance();
-  RTSPOnDemandServer server = RTSPOnDemandServer();
+  boost::thread serverThread = boost::thread(RTSPThread);
+ 
+  //RTSPOnDemandServer server = RTSPOnDemandServer();
   // Main loop
   while (running) {
     time = the_timer.timeSinceLastCall();
+
     kore::SceneManager::getInstance()->update();
 
     if (glfwGetKey(GLFW_KEY_UP) || glfwGetKey('W')) {
@@ -479,73 +491,8 @@ int main(void) {
       encoder->stop();
     }
     if (glfwGetKey(GLFW_KEY_F3)) {
-      server.startStreaming();
-      //streamer->startStreaming();
+      //server.startStreaming();
       //encoder->finish();
-    }
-
-    if (glfwGetKey(GLFW_KEY_F4)) {
-      // Begin by setting up our usage environment:
-      TaskScheduler* scheduler = BasicTaskScheduler::createNew();
-      env = BasicUsageEnvironment::createNew(*scheduler);
-
-      // Create 'groupsocks' for RTP and RTCP:
-      struct in_addr destinationAddress;
-      destinationAddress.s_addr = chooseRandomIPv4SSMAddress(*env);
-      // Note: This is a multicast address.  If you wish instead to stream
-      // using unicast, then you should use the "testOnDemandRTSPServer"
-      // test program - not this test program - as a model.
-
-      const unsigned short rtpPortNum = 18888;
-      const unsigned short rtcpPortNum = rtpPortNum+1;
-      const unsigned char ttl = 255;
-
-      const Port rtpPort(rtpPortNum);
-      const Port rtcpPort(rtcpPortNum);
-
-      Groupsock rtpGroupsock(*env, destinationAddress, rtpPort, ttl);
-      rtpGroupsock.multicastSendOnly(); // we're a SSM source
-      Groupsock rtcpGroupsock(*env, destinationAddress, rtcpPort, ttl);
-      rtcpGroupsock.multicastSendOnly(); // we're a SSM source
-
-      // Create a 'H264 Video RTP' sink from the RTP 'groupsock':
-      OutPacketBuffer::maxSize = 400000;
-      videoSink = H264VideoRTPSink::createNew(*env, &rtpGroupsock, 96);
-
-      // Create (and start) a 'RTCP instance' for this RTP sink:
-      const unsigned estimatedSessionBandwidth = 500; // in kbps; for RTCP b/w share
-      const unsigned maxCNAMElen = 100;
-      unsigned char CNAME[maxCNAMElen+1];
-      gethostname((char*)CNAME, maxCNAMElen);
-      CNAME[maxCNAMElen] = '\0'; // just in case
-      RTCPInstance* rtcp
-        = RTCPInstance::createNew(*env, &rtcpGroupsock,
-        estimatedSessionBandwidth, CNAME,
-        videoSink, NULL /* we're a server */,
-        True /* we're a SSM source */);
-      // Note: This starts RTCP running automatically
-
-      RTSPServer* rtspServer = RTSPServer::createNew(*env, 8554);
-      if (rtspServer == NULL) {
-        *env << "Failed to create RTSP server: " << env->getResultMsg() << "\n";
-        exit(1);
-      }
-      ServerMediaSession* sms
-        = ServerMediaSession::createNew(*env, "testStream", inputFileName,
-        "Session streamed by \"testH264VideoStreamer\"",
-        True /*SSM*/);
-      sms->addSubsession(PassiveServerMediaSubsession::createNew(*videoSink, rtcp));
-      rtspServer->addServerMediaSession(sms);
-
-      char* url = rtspServer->rtspURL(sms);
-      *env << "Play this stream using the URL \"" << url << "\"\n";
-      delete[] url;
-
-      // Start the streaming:
-      *env << "Beginning streaming...\n";
-      play();
-
-      env->taskScheduler().doEventLoop(); // does not return
     }
 
     oldMouseX = mouseX;
@@ -562,7 +509,7 @@ int main(void) {
 
     glfwSwapBuffers();
     encoder->encodeFrame();
-    server.streamFrame();
+    //server.streamFrame();
     kore::GLerror::gl_ErrorCheckFinish("Main Loop");
 
     // Check if ESC key was pressed or window was closed
@@ -573,7 +520,7 @@ int main(void) {
   kore::ResourceManager::getInstance()->saveProject("xmltest.kore");
   
 
-  delete encoder;
+ 
 
   // Close window and terminate GLFW
   glfwTerminate();
