@@ -23,17 +23,30 @@ GLuint depthBuffer;
 int width = 1024;
 int height = 768;
 
+// --- Variables for Testing ------------------------------
+
+GLuint showImgVertexShader;
+GLuint showImgFragmentShader;
+GLuint showImgShaderProgram;
+
+GLuint textureToShow = 0;   // 0 = diffImg; 1 = depthImg
+
+// --------------------------------------------------------
+
+
 CPreRendering::CPreRendering()
 {
-    sceneMgr = new CSceneManager("../Assets/cube.dae");
-    
-    // --- Just Testing! TODO: Delete!
-    sceneMgr->drawScene();
-    // ---------------------------------------
-    
     createTextures();
     createFBO();
     initGLSL();
+    
+    sceneMgr = new CSceneManager("../Assets/cube.dae");
+    
+    // --- Just Testing -------------------------------
+    
+    initGLSLforTesting();
+
+    // ------------------------------------------------
 }
 
 CPreRendering::~CPreRendering()
@@ -135,11 +148,11 @@ void CPreRendering::initGLSL()
     glAttachShader(currentImgShaderProgram, currentImgVertexShader);
     glAttachShader(currentImgShaderProgram, currentImgFragmentShader);
     
-    // TODO: Compare to VertexAttributePointers!!!
-    glBindAttribLocation(currentImgShaderProgram, 0, "v_position");
-    glBindAttribLocation(currentImgShaderProgram, 1, "v_normal");
-    glBindAttribLocation(currentImgShaderProgram, 2, "v_texture");
-    glBindAttribLocation(currentImgShaderProgram, 3, "v_lightPos");
+    // Bind Attributes - TODO: Compare to VertexAttributePointers!
+    glBindAttribLocation(currentImgShaderProgram, 0, "v_lightPos");
+    glBindAttribLocation(currentImgShaderProgram, 1, "v_position");
+    glBindAttribLocation(currentImgShaderProgram, 2, "v_normal");
+    //glBindAttribLocation(currentImgShaderProgram, 3, "v_texture");
     
     // Link program
     glLinkProgram(currentImgShaderProgram);
@@ -169,7 +182,7 @@ void CPreRendering::createTextures()
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0,
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0,
                  GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 
 	// Texture unit 0 should be active again
@@ -219,13 +232,13 @@ void CPreRendering::writeToFBO()
     // Use FBO shader
     glUseProgram(currentImgShaderProgram);
     
-    // TODO: Attach Uniform Variables
+    // TODO: Add Uniform Variables (matrices)
     
     // Clear content of FBO
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
        
     // Draw Scene
-    sceneMgr->drawScene();
+    sceneMgr->drawScene(sceneMgr->returnRootSceneNode());
     
     // Stop rendering to FBO
     glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
@@ -269,8 +282,164 @@ void CPreRendering::checkFrameBuffer()
 	}
 }
 
-// TODO: Softwaretesting
+// --- Just Testing ----------------------------------------------------
+
+void CPreRendering::initGLSLforTesting()
+{
+    // Create shader which shows the content of the textures
+	// attached to the FBO
+    
+	// Create empty shader object (vertex shader)
+	showImgVertexShader = glCreateShader(GL_VERTEX_SHADER);
+    
+	// Read vertex shader source
+	string shaderSource = readFile("../Shader/CShowFBOforTesting.vert");
+	const char* sourcePtr = shaderSource.c_str();
+    
+	// Attach shader code
+	glShaderSource(showImgVertexShader, 1, &sourcePtr, NULL);
+    
+	// Compile
+	glCompileShader(showImgVertexShader);
+	printShaderInfoLog(showImgVertexShader);
+    
+	// Create empty shader object (fragment shader)
+	showImgFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    
+	// Read vertex shader source
+	shaderSource = readFile("../Shader/CShowFBOforTesting.frag");
+	sourcePtr = shaderSource.c_str();
+    
+	// Attach shader code
+	glShaderSource(showImgFragmentShader, 1, &sourcePtr, NULL);
+    
+	// Compile
+	glCompileShader(showImgFragmentShader);
+	printShaderInfoLog(showImgFragmentShader);
+    
+	// Create shader program
+	showImgShaderProgram = glCreateProgram();
+    
+	// Attach shader
+	glAttachShader(showImgShaderProgram, showImgVertexShader);
+	glAttachShader(showImgShaderProgram,showImgFragmentShader);
+    
+    // BindAttributes
+    glBindAttribLocation(showImgShaderProgram, 4, "v_position");
+    glBindAttribLocation(showImgShaderProgram, 5, "v_texture");
+    
+	// Link program
+	glLinkProgram(showImgShaderProgram);
+	printProgramInfoLog(showImgShaderProgram);
+}
+
 void CPreRendering::testDraw()
 {
+    // Show content of FBO
+	// Clear "normal" framebuffer
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	// Show content of FBO textures
+	glUseProgram(showImgShaderProgram);
     
+	// Set uniforms
+	// Texture "position" is bound
+	// to texture unit 0 (see createEmptyTextures())
+	GLint hUniform = glGetUniformLocation(showImgShaderProgram,"diffImgTexture");
+	glUniform1i(hUniform, 0);
+    
+	// Texture "normal" is bound
+	// to texture unit 1
+	hUniform = glGetUniformLocation(showImgShaderProgram,"depthImgTexture");
+	glUniform1i(hUniform, 1);
+    
+	// Tell the shader which texture to show
+	hUniform = glGetUniformLocation(showImgShaderProgram,"textureToShow");
+	glUniform1i(hUniform, textureToShow);
+    
+    // TODO: Add uniform variables (matrices)
+    
+	// Invoke the shader
+	drawFullScreenQuad();
+    
+	// Swap display buffers
+    glfwSwapBuffers();
 }
+
+void CPreRendering::drawFullScreenQuad()
+{
+	glDisable(GL_DEPTH_TEST);
+	glPushAttrib(GL_VIEWPORT_BIT);
+	glViewport(0, 0, width, height);
+    
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix(); glLoadIdentity();
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix(); glLoadIdentity();
+    
+    // Allocate memory
+    GLsizei sizeOfVerts = 3 * 4 * sizeof(float);
+    GLsizei sizeOfFaces = 3 * 2 * sizeof(int);
+    GLsizei sizeOfTexCoords = 2 * 4 * sizeof(float);
+    
+    float* Verts = (float*) malloc (sizeOfVerts);
+    int* Faces = (int*) malloc (sizeOfFaces);
+    float* TexCoords = (float*) malloc (sizeOfTexCoords);
+
+    // Generate Vertices
+    Verts[0] = -1; Verts[1] = -1; Verts[2] = 0.0f;
+    Verts[3] = 1; Verts[4] = -1; Verts[5] = 0.0f;
+    Verts[6] = 1; Verts[7] = 1; Verts[8] = 0.0f;
+    Verts[9] = -1; Verts[10] = 1; Verts[11] = 0.0f;
+    
+    // Generate Faces
+    Faces[0] = 0; Faces[1] = 3; Faces[2] = 1;
+    Faces[3] = 3; Faces[4] = 2; Faces[5] = 1;
+    
+    // Generate TexCoords
+    TexCoords[0] = 0; TexCoords[1] = 0;
+    TexCoords[2] = 1; TexCoords[3] = 0;
+    TexCoords[4] = 1; TexCoords[5] = 1;
+    TexCoords[6] = 0; TexCoords[7] = 1;
+    
+    // Create the VAO:
+    glGenVertexArrays(1, &cube);
+    glBindVertexArray(cube);
+    
+    // Create the VBO for positions:
+    GLuint positions;
+    glGenBuffers(1, &positions);
+    glBindBuffer(GL_ARRAY_BUFFER, positions);
+    glBufferData(GL_ARRAY_BUFFER, sizeOfVerts, Verts, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    
+    // Create the VBO for indices:
+    GLuint indices;
+    glGenBuffers(1, &indices);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeOfFaces, Faces, GL_STATIC_DRAW);
+    
+    // Create the VBO for texture coordinates
+    GLuint texCoords;
+    glGenBuffers(1, &texCoords);
+    glBindBuffer(GL_ARRAY_BUFFER, texCoords);
+    glBufferData(GL_ARRAY_BUFFER, sizeOfTexCoords, TexCoords, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(5, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+    // Draw VAO
+    GLfloat color[] = {1.0f, 0.0f, 0.0f, 1.0f};
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, color);
+	glDrawElements(GL_TRIANGLES, sizeOfFaces/sizeof(int), GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
+    
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+    
+	glEnable(GL_DEPTH_TEST);
+	glPopAttrib();
+}
+
+// -------------------------------------------------------------------
