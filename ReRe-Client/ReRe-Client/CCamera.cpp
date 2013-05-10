@@ -1,5 +1,5 @@
 //
-//   CCamera.cpp
+//   Camera.cpp
 //  ReRe-Client
 //
 //  Created by Ina Schröder on 23.04.13.
@@ -8,19 +8,14 @@
 
 #include "CCamera.h"
 
-#include <iostream>
-#include <math.h>
-#include <vector>
-
-CCamera::CCamera()
-:_fMovementSpeed(50.0f),
+Camera::Camera()
+:_matView(1.0f),
+_matViewInverse(1.0f),
+_matProjection(1.0f),
+_matViewProj(1.0f),
 _fFovDeg(0.0f),
 _fFar(0.0f),
 _fNear(0.0f),
-_matView(1.0f),
-_matProjection(1.0f),
-_matViewInverse(1.0f),
-_matViewProj(1.0f),
 _fFocalLength(0.0f),
 _bIsOrtho(false),
 _fWidth(1.0f),
@@ -28,33 +23,33 @@ _fHeight(1.0),
 _name("")
 {}
 
-CCamera::~CCamera() {
+Camera::~Camera() {
 }
 
 
-glm::vec3 CCamera::getSide() const {
+glm::vec3 Camera::getSide() const {
     // Note: assume the camera's view matrix is not scaled
     // (otherwise the return-vec would have to be normalized)
     return glm::vec3(_matViewInverse[ 0 ]);
 }
 
-glm::vec3 CCamera::getUp() const {
+glm::vec3 Camera::getUp() const {
     // Note: assume the camera's view matrix is not scaled
     // (otherwise the return-vec would have to be normalized)
     return glm::vec3(_matViewInverse[ 1 ]);
 }
 
-glm::vec3 CCamera::getForward() const {
+glm::vec3 Camera::getForward() const {
     // Note: assume the camera's view matrix is not scaled
     // (otherwise the return-vec would have to be normalized)
     return glm::vec3(_matViewInverse[ 2 ]);
 }
 
-glm::vec3 CCamera::getPosition() const {
+glm::vec3 Camera::getPosition() const {
     return glm::vec3(_matViewInverse[ 3 ]);
 }
 
-void CCamera::setProjectionOrtho(float fLeft, float fRight, float fBottom,
+void Camera::setProjectionOrtho(float fLeft, float fRight, float fBottom,
                                       float fTop, float fNear, float fFar) {
     _matProjection = glm::ortho(fLeft, fRight, fBottom, fTop, fNear, fFar);
     _fFar = fFar;
@@ -65,7 +60,7 @@ void CCamera::setProjectionOrtho(float fLeft, float fRight, float fBottom,
     paramsChanged();
 }
 
-void CCamera::setProjectionPersp(float yFov_deg, float fWidth,
+void Camera::setProjectionPersp(float yFov_deg, float fWidth,
                                       float fHeight, float fNear, float fFar) {
   
     _matProjection = glm::perspectiveFov(yFov_deg, fWidth,
@@ -85,7 +80,7 @@ void CCamera::setProjectionPersp(float yFov_deg, float fWidth,
     paramsChanged();
 }
 
-void CCamera::setProjectionPersp(float yFov_deg, float fAspect,
+void Camera::setProjectionPersp(float yFov_deg, float fAspect,
                                       float fNear, float fFar) {
     float fWidth = 1.0f;
     float fHeight = fWidth / fAspect;
@@ -106,13 +101,13 @@ void CCamera::setProjectionPersp(float yFov_deg, float fAspect,
     paramsChanged();
 }
 
-void CCamera::paramsChanged() {
+void Camera::paramsChanged() {
     _matViewProj = _matProjection * _matView;
     updateFrustumPlanes();
 }
 
 
-void CCamera::rotateFromMouseMove(float dx, float dy) {
+void Camera::rotateFromMouseMove(float dx, float dy) {
     // Ugly hack incoming here...
     static bool bFistTime = true;
     
@@ -125,19 +120,19 @@ void CCamera::rotateFromMouseMove(float dx, float dy) {
     rotateViewQuat(dy, getSide());
 }
 
-void CCamera::rotateViewQuat(const float angle, const glm::vec3 v3Axis) {
+void Camera::rotateViewQuat(const float angle, const glm::vec3 v3Axis) {
 //to do
 }
 
-void CCamera::moveForward(float fSpeed) {
+void Camera::moveForward(float fSpeed) {
 // to do
 }
 
-void CCamera::moveSideways(float fSpeed) {
+void Camera::moveSideways(float fSpeed) {
 // to do
 }
 
-std::vector<glm::vec3> CCamera::getWSfrustumCorners() {
+std::vector<glm::vec3> Camera::getWSfrustumCorners() {
     glm::mat4 matViewInv = getViewInv();
     // calculate frustum corner coordinates
     float fFov2 = getFovRad() / 2.0f;
@@ -177,7 +172,7 @@ std::vector<glm::vec3> CCamera::getWSfrustumCorners() {
     return vReturnCorners;
 }
 
-void CCamera::updateFrustumPlanes() {
+void Camera::updateFrustumPlanes() {
     // If the camera's projection matrix is an orthogonal projection,
     // the frustum planes have to be derived
     // from the general projection matrix
@@ -230,7 +225,7 @@ void CCamera::updateFrustumPlanes() {
     }
 }
 
-bool CCamera::
+bool Camera::
 isVisible(const glm::vec3& rSphereCenterWS, const float fRadius) const {
     glm::vec4 bSphereVS =  _matView * glm::vec4(rSphereCenterWS, 1.0f);
     const glm::vec3 v3Center = glm::vec3(bSphereVS);
@@ -265,3 +260,46 @@ isVisible(const glm::vec3& rSphereCenterWS, const float fRadius) const {
     }
     return true;
 }
+
+//--------------------------------------------------
+//--------------------------------------------------
+
+
+CCamera::CCamera(aiCamera* aic_asCamera)
+{
+    setView(aic_asCamera);
+    setProjectionPersp(aic_asCamera);
+}
+
+bool CCamera::viewFrustumCullingVisible(CSceneNode* sc_rootSceneNode)
+{
+    //View Frustum Culling
+    return false;
+}
+
+void CCamera::setView(aiCamera* aic_asCamera)
+{
+    glm::vec3 v_bufferEyePosition = glm::normalize(glm::vec3(aic_asCamera->mPosition.x, aic_asCamera->mPosition.y, aic_asCamera->mPosition.z));
+    glm::vec3 v_bufferUp = glm::normalize(glm::vec3(aic_asCamera->mUp.x, aic_asCamera->mUp.y, aic_asCamera->mUp.z));
+    
+    glm::vec3 v_bufferEyeZ = glm::normalize(glm::vec3(aic_asCamera->mLookAt.x, aic_asCamera->mLookAt.y, aic_asCamera->mLookAt.z));
+    glm::vec3 v_bufferEyeX = glm::normalize(glm::cross(v_bufferUp, v_bufferEyeZ));
+    glm::vec3 v_bufferEyeY = glm::normalize(glm::cross(v_bufferEyeZ, v_bufferEyeX));
+    
+    (*m_viewMatrixInverse)[0] = glm::vec4(v_bufferEyeX.x, v_bufferEyeX.y, v_bufferEyeX.z, 0);
+    (*m_viewMatrixInverse)[1] = glm::vec4(v_bufferEyeY.x, v_bufferEyeY.y, v_bufferEyeY.z, 0);
+    (*m_viewMatrixInverse)[2] = glm::vec4(v_bufferEyeZ.x, v_bufferEyeZ.y, v_bufferEyeZ.z, 0);
+    (*m_viewMatrixInverse)[3] = glm::vec4(v_bufferEyePosition.x, v_bufferEyePosition.y, v_bufferEyePosition.z, 1);
+    
+    *m_viewMatrix = glm::inverse(*m_viewMatrixInverse);
+}
+
+void CCamera::setProjectionPersp(aiCamera* aic_asCamera)
+{
+    *m_projectionMatrix = glm::perspective(aic_asCamera->mHorizontalFOV,
+                                           aic_asCamera->mAspect,
+                                           aic_asCamera->mClipPlaneNear,
+                                           aic_asCamera->mClipPlaneFar);
+}
+
+

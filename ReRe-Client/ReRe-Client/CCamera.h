@@ -13,13 +13,17 @@
 #include <stdio.h>
 #include <math.h>
 #include <vector>
-#include "glm/ext.hpp"
 
-class CCamera
+#include <assimp/camera.h>
+#include <glm/ext.hpp>
+
+#include "CSceneNode.h"
+
+class Camera
 {
 public:
-    CCamera();
-    ~CCamera();
+    Camera();
+    ~Camera();
     
     inline const std::string& getName() const {return _name;}
     inline void setName(const std::string& name) {_name = name;}
@@ -94,7 +98,6 @@ private:
     float       _fFovDeg;
     float       _fFar;
     float       _fNear;
-    float       _fMovementSpeed;
     glm::vec4   _v4FrustumPlanesVS[6];
     float       _fFocalLength;
     bool        _bIsOrtho;
@@ -109,7 +112,49 @@ private:
 };
 
 
+class CCamera
+{
+private:
+    struct st_windowParameter
+    {
+        float f_width;
+        float f_height;
+    };
+    
+    struct st_cameraParameterIntern
+    {
+        float f_far;
+        float f_near;
+        float f_deg;
+        float f_aspect;
+        float f_fieldOfView;
+    };
+    
+    glm::mat4* m_viewMatrix;
+    glm::mat4* m_viewMatrixInverse;
+    glm::mat4* m_projectionMatrix;
+    
+public:
+    CCamera(aiCamera* aic_asCamera);
+    
+    glm::mat4 returnViewMatrix()
+        { return *m_viewMatrix; };
+    
+    glm::mat4 returnViewMatrixInverse()
+        { return *m_viewMatrixInverse; };
+    
+    glm::mat4 returnViewMatrixInverseTranspose()
+        { return glm::transpose(glm::inverse(*m_viewMatrix)); };
+    
+    glm::mat4 returnProjectionMatrix()
+        { return *m_projectionMatrix; };
 
+    bool viewFrustumCullingVisible(CSceneNode* sc_rootSceneNode);
+    
+private:
+    void setView(aiCamera* aic_asCamera);
+    void setProjectionPersp(aiCamera* aic_asCamera);
+};
 
 
 

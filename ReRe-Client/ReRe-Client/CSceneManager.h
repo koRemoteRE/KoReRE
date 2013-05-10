@@ -10,8 +10,8 @@
 #define __ReRe_Client__SceneManager__
 
 #include <assimp/Importer.hpp>
-#include <assimp/scene.h>
 #include <assimp/postprocess.h>
+
 #include <GL/glew.h>
 #include <GL3/gl3.h>
 
@@ -22,6 +22,7 @@ using namespace std;
 
 class CSceneManager
 {
+    // Variablen
 private:
     struct st_meshVAO
     {
@@ -37,9 +38,7 @@ private:
     
     CSceneNode* sn_p_rootSceneNode;
     CCamera* c_cameraNode;
-    
     vector<CLight*> v_p_lightNode;
-    int* i_p_numLightNode;
     
     aiMesh** aim_p_asMesh;
     int* i_p_numMesh;
@@ -48,29 +47,35 @@ private:
     aiTexture** ait_p_mTexture;
     int* i_p_numTexture;
     
+    // Methoden
 public:
     CSceneManager(std::string st_filename);         // Konstruktor
-    
-    //
-    CSceneNode* returnRootSceneNode();              // Gibt den Wurzelknoten des Szenegraphen zurück
     
     //
     void drawScene(CSceneNode* sn_p_drawNode);
     
     //
-    CCamera* returnCameraNode();                    // Gibt die Kamera zurück
+    CSceneNode* returnRootSceneNode()              // Gibt den Wurzelknoten des Szenegraphen zurück
+        { return sn_p_rootSceneNode; };
     
     //
-    CLight* returnLightNode();                      // Gibt Lichtquelle zurück
-    int* returnLightNodeSize();                      // Gibt die Anzahl der Lichtquellen zurück
+    CCamera* returnCameraNode()                     // Gibt die Kamera zurück
+        { return c_cameraNode; };
+    
+    //
+    vector<CLight*> returnLightNode()               // Gibt Lichtquelle zurück
+        { return v_p_lightNode; };
+    
+    int returnLightNodeSize()                      // Gibt die Anzahl der Lichtquellen zurück
+        { return v_p_lightNode.size(); };
 
 private:
     //
     void bindVAO();
     
     //
-    CCamera* createCameraNode();                    // Legt eine Kamera an
-    CLight* createLightNode();                      // Legt eine neue Lichtquelle an
+    void createCameraNode();                    // Legt eine Kamera an
+    void createLightNode();                      // Legt eine neue Lichtquelle an
 };
 
 #endif /* defined(__ReRe_Client__SceneManager__) */
