@@ -267,6 +267,10 @@ isVisible(const glm::vec3& rSphereCenterWS, const float fRadius) const {
 
 CCamera::CCamera(aiCamera* aic_asCamera)
 {
+    m_viewMatrix = new glm::mat4;
+    m_viewMatrixInverse = new glm::mat4;
+    m_projectionMatrix = new glm::mat4;
+    
     setView(aic_asCamera);
     setProjectionPersp(aic_asCamera);
 }
