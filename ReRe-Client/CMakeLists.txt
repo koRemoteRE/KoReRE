@@ -61,8 +61,16 @@ else()
 	    ${EXT_LIBS}/assimp.lib
 	  )
 	 target_link_libraries(ReReClient ${VS_LIBS})
-  endif(MSVC)
-   
+  else()
+    link_directories(${EXT_LIBS})
+    link_directories(${CMAKE_LIBRARY_PATH})
+    include_directories(${CMAKE_LIBRARY_PATH})
+    set(
+    assimp
+    glfw
+    opengl32
+    )
+  endif()
 endif()
 
 #aux_source_directory(./ReRe-Client SRC_LIST)
