@@ -8,6 +8,7 @@
 #ifndef MATRIXSTATES_H_
 #define MATRIXSTATES_H_
 #include <vector>
+#include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <windows.h>
 #include <GL/glut.h>
