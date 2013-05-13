@@ -35,16 +35,10 @@ void main()
 		}
 		if(num != 0){
 			outputF = vec4(color/num,1.0);
-			//outputF = vec4(0.0,1.0,0.0,1.0);
-		}
-		else{
-			outputF = vec4(0.0,0.0,1.0,1.0);
 		}
 	}
 	else{
 		outputF = vec4(c);
 	}
-		
-	//outputF = vec4(texDim,0.0,1.0);
 
 }
