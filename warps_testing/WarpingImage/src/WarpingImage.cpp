@@ -60,7 +60,7 @@ int main(int argc, char **argv) {
 
 	std::cout << glGetString(GL_VERSION) << std::endl;
 
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 
 	utl = new Util();
 	matState = new MatrixState();
@@ -91,22 +91,12 @@ void displayFirstFrame() {
 	matState->perspective(45.0f, textureAspect, 0.1f, 50.0f);
 	firstProjMatrix = matState->getCurrentMatrix();
 
-	std::cout << "FirstProj: ";
-	for (int i = 0; i < 16; i++) {
-		std::cout << glm::value_ptr(firstProjMatrix)[i] << " ";
-	}
-	std::cout << std::endl;
 	matState->matrixMode(matState->VIEW);
 	matState->loadIdentity();
 	matState->lookAt(0.0f, 0.0f, 15.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 	matState->translate(pos.x, pos.y, pos.z);
 	matState->rotate(rot, 0.0f, 1.0f, 0.0f);
 	firstModelMatrix = matState->getCurrentMatrix();
-	std::cout << "FirstModel: ";
-	for (int i = 0; i < 16; i++) {
-		std::cout << glm::value_ptr(firstModelMatrix)[i] << " ";
-	}
-	std::cout << std::endl;
 
 	glUseProgram(prog);
 
@@ -152,7 +142,6 @@ void display() {
 	matState->perspective(45.0f, aspect, 0.1f, 50.0f);
 	projMatrix = matState->getCurrentMatrix();
 
-	std::cout << std::endl;
 	matState->matrixMode(matState->VIEW);
 	matState->loadIdentity();
 	matState->lookAt(0.0f, 0.0f, 15.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
@@ -174,7 +163,9 @@ void display() {
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, firstFrameTexture);
 	glUniform1i(glGetUniformLocation(progNorm, "frameTex"), 0);
+	glm::ivec2 dim(TEXTURE_WIDTH,TEXTURE_HEIGHT);
 
+	glUniform2iv(glGetUniformLocation(progNorm,"texDim"),1,glm::value_ptr(dim));
 	glBindVertexArray(vao[3]);
 	glDrawElements(GL_TRIANGLES, sizeof(boxIndices), GL_UNSIGNED_SHORT, 0);
 
