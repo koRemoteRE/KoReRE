@@ -23,8 +23,8 @@ void main()
 		for(int x = -3; x <= 3; x++){
 			for(int y = -3; y <= 3; y++){
 				vec2 tempPos;
-				tempPos.x = texCoord.x + x*texDim.x;
-				tempPos.y = texCoord.y + y*texDim.y;
+				tempPos.x = texCoord.x + x*texel.x;
+				tempPos.y = texCoord.y + y*texel.y;
 			
 				vec4 tempColor = vec4(texture2D(frameTex,tempPos));
 				if(tempColor.w != 0.0){
@@ -34,8 +34,8 @@ void main()
 			}
 		}
 		if(num != 0){
-			//outputF = vec4(color/num,1.0);
-			outputF = vec4(0.0,1.0,0.0,1.0);
+			outputF = vec4(color/num,1.0);
+			//outputF = vec4(0.0,1.0,0.0,1.0);
 		}
 		else{
 			outputF = vec4(0.0,0.0,1.0,1.0);
