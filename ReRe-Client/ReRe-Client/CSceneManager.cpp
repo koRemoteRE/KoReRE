@@ -43,11 +43,6 @@ CSceneManager::CSceneManager(std::string st_filename)
     }
 }
 
-CSceneNode* CSceneManager::returnRootSceneNode()
-{
-    return sn_p_rootSceneNode;
-}
-
 void CSceneManager::drawScene(CSceneNode* sn_p_drawNode)
 {
     //TODO: Vertexliste zeichnen
@@ -64,25 +59,6 @@ void CSceneManager::drawScene(CSceneNode* sn_p_drawNode)
     {
         drawScene(sn_p_drawNode->returnChildren()[ui_numNode]);
     }
-}
-
-//
-
-CCamera* CSceneManager::returnCameraNode()
-{
-    return c_cameraNode;
-}
-
-//
-
-CLight* CSceneManager::returnLightNode()
-{
-    return v_p_lightNode.back();
-}
-
-int* CSceneManager::returnLightNodeSize()
-{
-    return i_p_numLightNode;
 }
 
 //
@@ -159,19 +135,16 @@ void CSceneManager::bindVAO()
     }
 }
 
-CCamera* CSceneManager::createCameraNode()
+void CSceneManager::createCameraNode()
 {
-    c_cameraNode = new CCamera();
-    
-    return c_cameraNode;
+    c_cameraNode = new CCamera(ais_asScene->mCameras[0]);
 }
 
-CLight* CSceneManager::createLightNode()
+void CSceneManager::createLightNode()
 {
     for (int i_numLightSource = 0; i_numLightSource < ais_asScene->mNumLights; i_numLightSource++)
     {
         v_p_lightNode.push_back(new CLight(ais_asScene->mLights[i_numLightSource]));
     }
-    return v_p_lightNode.back();
 }
 
