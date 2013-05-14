@@ -1,4 +1,4 @@
-#version 330
+#version 150
 
 in vec3 v_position;
 in vec2 v_texture;

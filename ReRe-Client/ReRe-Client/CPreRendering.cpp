@@ -14,10 +14,10 @@ GLuint currentImgFragmentShader;
 GLuint currentImgShaderProgram;
 
 GLuint diffImgTexture;
-GLuint depthImgTexture;
+//GLuint depthImgTexture;
 
 GLuint currentImgFBO;
-GLuint depthBuffer;
+//GLuint depthBuffer;
 
 // Window size
 int width = 1024;
@@ -29,7 +29,7 @@ GLuint showImgVertexShader;
 GLuint showImgFragmentShader;
 GLuint showImgShaderProgram;
 
-GLuint textureToShow = 0;   // 0 = diffImg; 1 = depthImg
+// GLuint textureToShow = 0;   // 0 = diffImg; 1 = depthImg
 
 // --------------------------------------------------------
 
@@ -53,7 +53,7 @@ CPreRendering::~CPreRendering()
 {
     // Delete resources
     glDeleteTextures(1, &diffImgTexture);
-    glDeleteTextures(1, &depthImgTexture);
+    //glDeleteTextures(1, &depthImgTexture);
     
     // Delete Framebuffer
     glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
@@ -175,15 +175,15 @@ void CPreRendering::createTextures()
     
     // Current DepthImg
 	// Create texture and bind to texture unit 1
-	glActiveTexture(GL_TEXTURE1);
-	glGenTextures(1, &depthImgTexture);
-	glBindTexture(GL_TEXTURE_2D, depthImgTexture);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0,
-                 GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	// glActiveTexture(GL_TEXTURE1);
+	// glGenTextures(1, &depthImgTexture);
+	// glBindTexture(GL_TEXTURE_2D, depthImgTexture);
+	// glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	// glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	// glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0,
+    //             GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 
 	// Texture unit 0 should be active again
 	glActiveTexture(GL_TEXTURE0);
@@ -206,12 +206,12 @@ void CPreRendering::createFBO()
         diffImgTexture,
         0);
 
-    glFramebufferTexture2DEXT(
-        GL_FRAMEBUFFER_EXT,
-        GL_DEPTH_ATTACHMENT,
-        GL_TEXTURE_2D,
-        depthImgTexture,
-        0);
+    // glFramebufferTexture2DEXT(
+    //    GL_FRAMEBUFFER_EXT,
+    //    GL_DEPTH_ATTACHMENT,
+    //    GL_TEXTURE_2D,
+    //    depthImgTexture,
+    //    0);
     
     // Disable FBO for now
     glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
@@ -226,7 +226,7 @@ void CPreRendering::writeToFBO()
     // Draw into textures
     GLenum buffers[2];
     buffers[0] = GL_COLOR_ATTACHMENT0_EXT;
-    buffers[1] = GL_DEPTH_ATTACHMENT_EXT;
+    // buffers[1] = GL_DEPTH_ATTACHMENT_EXT;
     glDrawBuffers(2, buffers);
     
     // Use FBO shader
@@ -350,12 +350,12 @@ void CPreRendering::testDraw()
     
 	// Texture "normal" is bound
 	// to texture unit 1
-	hUniform = glGetUniformLocation(showImgShaderProgram,"depthImgTexture");
-	glUniform1i(hUniform, 1);
+	// hUniform = glGetUniformLocation(showImgShaderProgram,"depthImgTexture");
+	// glUniform1i(hUniform, 1);
     
 	// Tell the shader which texture to show
-	hUniform = glGetUniformLocation(showImgShaderProgram,"textureToShow");
-	glUniform1i(hUniform, textureToShow);
+	// hUniform = glGetUniformLocation(showImgShaderProgram,"textureToShow");
+	// glUniform1i(hUniform, textureToShow);
     
     // TODO: Add uniform variables (matrices)
     

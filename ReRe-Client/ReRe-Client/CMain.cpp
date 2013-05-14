@@ -17,6 +17,11 @@
 #include <glm/glm.hpp>
 
 
+void drawWarpedImg(void)
+{
+    // TODO: Warping
+}
+
 void MainLoop(void)
 {
     CPreRendering* renderer = new CPreRendering();
@@ -24,6 +29,8 @@ void MainLoop(void)
     do{
         renderer->writeToFBO();
         renderer->testDraw();
+        
+        drawWarpedImg();
         
         // Swap buffers
         glfwSwapBuffers();
