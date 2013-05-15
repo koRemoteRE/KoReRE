@@ -1,0 +1,15 @@
+# built application files
+*.exe
+
+# generated files
+bin/
+gen/
+Debug/
+
+# Eclipse project files
+.classpath
+.project
+.settings/
+
+# Other files
+.DS_Store
