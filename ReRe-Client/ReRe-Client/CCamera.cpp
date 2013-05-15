@@ -271,8 +271,8 @@ CCamera::CCamera(aiCamera* aic_asCamera)
     m_viewMatrixInverse = new glm::mat4;
     m_projectionMatrix = new glm::mat4;
     
-    setView(aic_asCamera);
-    setProjectionPersp(aic_asCamera);
+    setViewMatrix(aic_asCamera);
+    setProjectionPerspMatrix(aic_asCamera);
 }
 
 bool CCamera::viewFrustumCullingVisible(CSceneNode* sc_rootSceneNode)
@@ -281,7 +281,7 @@ bool CCamera::viewFrustumCullingVisible(CSceneNode* sc_rootSceneNode)
     return false;
 }
 
-void CCamera::setView(aiCamera* aic_asCamera)
+void CCamera::setViewMatrix(aiCamera* aic_asCamera)
 {
     glm::vec3 v_bufferEyePosition = glm::normalize(glm::vec3(aic_asCamera->mPosition.x, aic_asCamera->mPosition.y, aic_asCamera->mPosition.z));
     glm::vec3 v_bufferUp = glm::normalize(glm::vec3(aic_asCamera->mUp.x, aic_asCamera->mUp.y, aic_asCamera->mUp.z));
@@ -298,7 +298,7 @@ void CCamera::setView(aiCamera* aic_asCamera)
     *m_viewMatrix = glm::inverse(*m_viewMatrixInverse);
 }
 
-void CCamera::setProjectionPersp(aiCamera* aic_asCamera)
+void CCamera::setProjectionPerspMatrix(aiCamera* aic_asCamera)
 {
     *m_projectionMatrix = glm::perspective(aic_asCamera->mHorizontalFOV,
                                            aic_asCamera->mAspect,

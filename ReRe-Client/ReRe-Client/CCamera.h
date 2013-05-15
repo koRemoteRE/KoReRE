@@ -148,12 +148,12 @@ public:
     
     glm::mat4 returnProjectionMatrix()
         { return *m_projectionMatrix; };
-
+    
     bool viewFrustumCullingVisible(CSceneNode* sc_rootSceneNode);
     
 private:
-    void setView(aiCamera* aic_asCamera);
-    void setProjectionPersp(aiCamera* aic_asCamera);
+    void setViewMatrix(aiCamera* aic_asCamera);
+    void setProjectionPerspMatrix(aiCamera* aic_asCamera);
 };
 
 

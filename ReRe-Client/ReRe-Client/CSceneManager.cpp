@@ -50,6 +50,7 @@ void CSceneManager::drawScene(CSceneNode* sn_p_drawNode)
     
     for (unsigned int ui_numMesh = 0; ui_numMesh <  *(sn_p_drawNode->returnNumberOfMesh()); ui_numMesh++)
     {
+        //glBindTexture(GL_TEXTURE_2D, stm_meshList[sn_p_drawNode->returnMeshIndex()[ui_numMesh]].glui_textureIndex);
         glBindVertexArray(stm_meshList[sn_p_drawNode->returnMeshIndex()[ui_numMesh]].glui_vaoBuffer);
         glDrawElements(GL_TRIANGLES,stm_meshList[sn_p_drawNode->returnMeshIndex()[ui_numMesh]].glui_numFace*3, GL_UNSIGNED_INT, 0);
     }
@@ -96,8 +97,8 @@ void CSceneManager::bindVAO()
             glGenBuffers(1, &glui_vertexArrayObjBuffer);
             glBindBuffer(GL_ARRAY_BUFFER, glui_vertexArrayObjBuffer);
             glBufferData(GL_ARRAY_BUFFER, sizeof(float) * aim_p_asMesh[ui_meshNum]->mNumVertices * 3, aim_p_asMesh[ui_meshNum]->mVertices, GL_STATIC_DRAW);
-            //glEnableVertexAttribArray(vertexLoc);
-            //glVertexAttribPointer(vertexLoc, 3, GL_FLOAT, 0, 0, 0);
+            glEnableVertexAttribArray(SHADER_POSITION_LOC);
+            glVertexAttribPointer(SHADER_POSITION_LOC, 3, GL_FLOAT, 0, 0, 0);
         }
         
         //
@@ -105,7 +106,9 @@ void CSceneManager::bindVAO()
         {
             glGenBuffers(1, &glui_vertexArrayObjBuffer);
             glBindBuffer(GL_ARRAY_BUFFER, glui_vertexArrayObjBuffer);
-            
+            glBufferData(GL_ARRAY_BUFFER, sizeof(float) * aim_p_asMesh[ui_meshNum]->mNumVertices * 3, aim_p_asMesh[ui_meshNum]->mNormals, GL_STATIC_DRAW);
+            glEnableVertexAttribArray(SHADER_NORMAL_LOC);
+            glVertexAttribPointer(SHADER_NORMAL_LOC, 3, GL_FLOAT, 0, 0, 0);
         }
         
         //Texturen
@@ -121,15 +124,16 @@ void CSceneManager::bindVAO()
             glGenBuffers(1, &glui_vertexArrayObjBuffer);
             glBindBuffer(GL_ARRAY_BUFFER, glui_vertexArrayObjBuffer);
             glBufferData(GL_ARRAY_BUFFER, sizeof(float) * aim_p_asMesh[ui_meshNum]->mNumVertices * 2, f_p_textureCoord, GL_STATIC_DRAW);
-            //glEnableVertexAttribArray(texCoordLoc);
-            //glVertexAttribPointer(texCoordLoc, 2, GL_FLOAT, 0, 0, 0);
+            //glEnableVertexAttribArray(SHADER_TEX_COORD_LOC);
+            //glVertexAttribPointer(SHADER_TEX_COORD_LOC, 2, GL_FLOAT, 0, 0, 0);
         }
-        
-        //Material??
         
         glBindVertexArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
+        
+        //TODO: Material und Textur von Objekt
+        
         
         stm_meshList.push_back(stm_meshVAO);
     }
