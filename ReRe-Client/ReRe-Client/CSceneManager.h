@@ -15,6 +15,7 @@
 #include <GL/glew.h>
 #include <GL3/gl3.h>
 
+#include "CDefinitions.h"
 #include "CSceneNode.h"
 #include "CCamera.h"
 
