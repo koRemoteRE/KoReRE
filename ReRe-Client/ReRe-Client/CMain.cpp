@@ -17,6 +17,11 @@
 #include <glm/glm.hpp>
 
 
+void drawWarpedImg(void)
+{
+    // TODO: Warping
+}
+
 void MainLoop(void)
 {
     CPreRendering* renderer = new CPreRendering();
@@ -24,6 +29,8 @@ void MainLoop(void)
     do{
         renderer->writeToFBO();
         renderer->testDraw();
+        
+        drawWarpedImg();
         
         // Swap buffers
         glfwSwapBuffers();
@@ -49,7 +56,7 @@ int main(int argc, const char * argv[])
     glfwOpenWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //We don't want the old OpenGL
         
     // Open a window and create its OpenGL context
-    if( !glfwOpenWindow( 1024, 768, 0,0,0,0, 32,0, GLFW_WINDOW ) )
+    if( !glfwOpenWindow( WIDTH, HEIGHT, 0,0,0,0, 32,0, GLFW_WINDOW ) )
     {
         fprintf( stderr, "Failed to open GLFW window\n" );
         glfwTerminate();
