@@ -97,8 +97,8 @@ void CSceneManager::bindVAO()
             glGenBuffers(1, &glui_vertexArrayObjBuffer);
             glBindBuffer(GL_ARRAY_BUFFER, glui_vertexArrayObjBuffer);
             glBufferData(GL_ARRAY_BUFFER, sizeof(float) * aim_p_asMesh[ui_meshNum]->mNumVertices * 3, aim_p_asMesh[ui_meshNum]->mVertices, GL_STATIC_DRAW);
-            glEnableVertexAttribArray(1);
-            glVertexAttribPointer(1, 3, GL_FLOAT, 0, 0, 0);
+            glEnableVertexAttribArray(SHADER_POSITION_LOC);
+            glVertexAttribPointer(SHADER_POSITION_LOC, 3, GL_FLOAT, 0, 0, 0);
         }
         
         //
@@ -107,8 +107,8 @@ void CSceneManager::bindVAO()
             glGenBuffers(1, &glui_vertexArrayObjBuffer);
             glBindBuffer(GL_ARRAY_BUFFER, glui_vertexArrayObjBuffer);
             glBufferData(GL_ARRAY_BUFFER, sizeof(float) * aim_p_asMesh[ui_meshNum]->mNumVertices * 3, aim_p_asMesh[ui_meshNum]->mNormals, GL_STATIC_DRAW);
-            glEnableVertexAttribArray(2);
-            glVertexAttribPointer(2, 3, GL_FLOAT, 0, 0, 0);
+            glEnableVertexAttribArray(SHADER_NORMAL_LOC);
+            glVertexAttribPointer(SHADER_NORMAL_LOC, 3, GL_FLOAT, 0, 0, 0);
         }
         
         //Texturen
@@ -124,15 +124,16 @@ void CSceneManager::bindVAO()
             glGenBuffers(1, &glui_vertexArrayObjBuffer);
             glBindBuffer(GL_ARRAY_BUFFER, glui_vertexArrayObjBuffer);
             glBufferData(GL_ARRAY_BUFFER, sizeof(float) * aim_p_asMesh[ui_meshNum]->mNumVertices * 2, f_p_textureCoord, GL_STATIC_DRAW);
-            //glEnableVertexAttribArray(3);
-            //glVertexAttribPointer(3, 2, GL_FLOAT, 0, 0, 0);
+            //glEnableVertexAttribArray(SHADER_TEX_COORD_LOC);
+            //glVertexAttribPointer(SHADER_TEX_COORD_LOC, 2, GL_FLOAT, 0, 0, 0);
         }
         
         glBindVertexArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
         
-        //Material??
+        //TODO: Material und Textur von Objekt
+        
         
         stm_meshList.push_back(stm_meshVAO);
     }
