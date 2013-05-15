@@ -209,13 +209,12 @@ void CPreRendering::writeToFBO()
     // Use FBO shader
     glUseProgram(currentImgShaderProgram);
     
-    // TODO: Add Uniform Variables (matrices + lightpos)
-    
     // Clear content of FBO
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
        
     // Draw Scene
-    sceneMgr->drawScene(sceneMgr->returnRootSceneNode());
+    // Add Uniform Variables (matrices + light_pos)
+    sceneMgr->drawScene(currentImgShaderProgram);
     
     // Stop rendering to FBO
     glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);

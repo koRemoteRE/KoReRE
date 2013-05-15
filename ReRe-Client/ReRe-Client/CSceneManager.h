@@ -53,7 +53,7 @@ public:
     CSceneManager(std::string st_filename);         // Konstruktor
     
     //
-    void drawScene(CSceneNode* sn_p_drawNode);
+    void drawScene(GLuint glui_shaderProgram);
     
     //
     CSceneNode* returnRootSceneNode()              // Gibt den Wurzelknoten des Szenegraphen zurück
@@ -72,7 +72,14 @@ public:
 
 private:
     //
+    void drawScene(CSceneNode* sn_p_drawNode, GLuint glui_shaderProgram);
+    
+    //
     void bindVAO();
+    
+    //
+    void bindUniform(GLuint glui_shaderProgram);
+    void bindUniformModelMatrix(CSceneNode* sn_p_drawNode, GLuint glui_shaderProgram);
     
     //
     void createCameraNode();                    // Legt eine Kamera an
