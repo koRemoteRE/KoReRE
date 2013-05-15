@@ -449,8 +449,15 @@ int main(void) {
  
   //RTSPOnDemandServer server = RTSPOnDemandServer();
   // Main loop
+
+  //FPS LIMIT--------------------
+  float fpslimit = 1.0/25; //25fps
+  double frametime;
+  //-----------------------------
+
   while (running) {
     time = the_timer.timeSinceLastCall();
+    frametime = glfwGetTime();
 
     kore::SceneManager::getInstance()->update();
 
@@ -515,6 +522,9 @@ int main(void) {
 
     // Check if ESC key was pressed or window was closed
     running = !glfwGetKey(GLFW_KEY_ESC) && glfwGetWindowParam(GLFW_OPENED);
+   
+    frametime = glfwGetTime()-frametime;
+    glfwSleep(fpslimit-frametime);
   }
 
   // Test XML writing
