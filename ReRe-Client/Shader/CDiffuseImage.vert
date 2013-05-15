@@ -1,9 +1,10 @@
 #version 150
 
-in vec3 v_lightPos;
 in vec3 v_position;
 in vec3 v_normal;
 //in vec2 v_texture;
+
+uniform vec3 v_lightPos;
 
 uniform mat4 m_projection;
 uniform mat4 m_view;

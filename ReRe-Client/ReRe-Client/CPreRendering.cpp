@@ -139,8 +139,7 @@ void CPreRendering::initGLSL()
     glAttachShader(currentImgShaderProgram, currentImgVertexShader);
     glAttachShader(currentImgShaderProgram, currentImgFragmentShader);
     
-    // Bind Attributes - TODO: Compare to VertexAttributePointers!
-    glBindAttribLocation(currentImgShaderProgram, SHADER_LIGHT_POS_LOC, "v_lightPos");
+    // Bind Attributes
     glBindAttribLocation(currentImgShaderProgram, SHADER_POSITION_LOC, "v_position");
     glBindAttribLocation(currentImgShaderProgram, SHADER_NORMAL_LOC, "v_normal");
     //glBindAttribLocation(currentImgShaderProgram, SHADER_TEX_COORD_LOC, "v_texture");
@@ -210,7 +209,7 @@ void CPreRendering::writeToFBO()
     // Use FBO shader
     glUseProgram(currentImgShaderProgram);
     
-    // TODO: Add Uniform Variables (matrices)
+    // TODO: Add Uniform Variables (matrices + lightpos)
     
     // Clear content of FBO
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

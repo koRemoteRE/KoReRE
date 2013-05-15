@@ -9,9 +9,11 @@
 #ifndef ReReClient_CDefinitions_h
 #define ReReClient_CDefinitions_h
 
+// Define Window
 #define WIDTH 1024
 #define HEIGHT 768
 
+// Define indices of the generic vertex attributes
 #define SHADER_LIGHT_POS_LOC 0
 #define SHADER_POSITION_LOC 1
 #define SHADER_NORMAL_LOC 2
