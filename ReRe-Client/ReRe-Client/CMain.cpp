@@ -27,7 +27,7 @@ void MainLoop(void)
     CPreRendering* renderer = new CPreRendering();
 
     do{
-        renderer->writeToFBO();
+        //renderer->writeToFBO();
         renderer->testDraw();
         
         drawWarpedImg();

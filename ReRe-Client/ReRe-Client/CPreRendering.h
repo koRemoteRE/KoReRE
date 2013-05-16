@@ -34,16 +34,17 @@ private:
     
     void checkFrameBuffer();
     
-    // --- Just Testing --- TODO: Delete! ----------------
-    
-    void initGLSLforTesting();
-    void drawFullScreenQuad();
-    
-    GLuint cube;
-    
-    // ---------------------------------------------------
     
     CSceneManager* sceneMgr;
+    
+    // GLSL related variables
+    GLuint currentImgVertexShader;
+    GLuint currentImgFragmentShader;
+    GLuint currentImgShaderProgram;
+    
+    GLuint currentImgTexture;
+    
+    GLuint currentImgFBO;
     
 public:
     CPreRendering();

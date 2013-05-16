@@ -54,6 +54,8 @@ void CSceneManager::drawScene(CSceneNode* sn_p_drawNode, GLuint glui_shaderProgr
     // Vertexliste zeichnen
     // Für alle Knoten zeichnen
     
+    bindUniformModelMatrix(sn_p_drawNode, glui_shaderProgram);
+    
     for (unsigned int ui_numMesh = 0; ui_numMesh <  *(sn_p_drawNode->returnNumberOfMesh()); ui_numMesh++)
     {
         //glBindTexture(GL_TEXTURE_2D, stm_meshList[sn_p_drawNode->returnMeshIndex()[ui_numMesh]].glui_textureIndex);
