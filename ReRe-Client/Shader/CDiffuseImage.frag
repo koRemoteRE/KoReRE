@@ -1,7 +1,7 @@
 #version 150
 
 in vec3 f_lightVec;
-in vec4 f_position;
+//in vec4 f_position;
 in vec3 f_normal;
 //in vec3 f_texture;
 
