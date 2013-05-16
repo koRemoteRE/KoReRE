@@ -76,8 +76,14 @@ add_library( libavcodec STATIC IMPORTED )
 add_library( libavutil STATIC IMPORTED )
    set_target_properties( libavutil PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/MacLibs/libavutil.a )
 
-  add_library( dylibavutil SHARED IMPORTED )
+add_library( dylibavutil SHARED IMPORTED )
    set_target_properties( libavutil PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/MacLibs/libavutil.dylib )
+
+add_library( libswscale STATIC IMPORTED )
+   set_target_properties( libswscale PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/MacLibs/libswscale.a )
+
+add_library( dylibswscale SHARED IMPORTED )
+   set_target_properties( libswscale PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/MacLibs/libswscale.dylib )
 
 
 #__________________________________________
@@ -90,6 +96,7 @@ add_library( libavutil STATIC IMPORTED )
    target_link_libraries(ReReClient libavdevice)
    target_link_libraries(ReReClient libavcodec)
    target_link_libraries(ReReClient libavutil)
+   target_link_libraries(ReReClient libswscale)
 
 #__________________________________________
    
