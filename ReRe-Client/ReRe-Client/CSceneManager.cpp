@@ -53,6 +53,7 @@ void CSceneManager::drawScene(CSceneNode* sn_p_drawNode, GLuint glui_shaderProgr
 {
     // Vertexliste zeichnen
     // Für alle Knoten zeichnen
+    bindUniformModelMatrix(sn_p_drawNode, glui_shaderProgram);
     
     for (unsigned int ui_numMesh = 0; ui_numMesh <  *(sn_p_drawNode->returnNumberOfMesh()); ui_numMesh++)
     {
@@ -153,9 +154,6 @@ void CSceneManager::bindUniform(GLuint glui_shaderProgram)
     GLint uniformViewMatrix = glGetUniformLocation(glui_shaderProgram,"m_view");
 	glUniformMatrix4fv(uniformViewMatrix, 1, GL_FALSE, glm::value_ptr(returnCameraNode()->returnViewMatrix()));
     
-    GLint uniformNormalMatrix = glGetUniformLocation(glui_shaderProgram,"m_normal");
-	glUniformMatrix4fv(uniformNormalMatrix, 1, GL_FALSE, glm::value_ptr(returnCameraNode()->returnViewMatrixInverseTranspose()));
-    
     GLint uniformLightPosVector = glGetUniformLocation(glui_shaderProgram,"v_lightPos");
 	glUniform3f(uniformLightPosVector,
                 (returnLightNode()[0]->returnPosition())->x,
@@ -167,6 +165,9 @@ void CSceneManager::bindUniformModelMatrix(CSceneNode* sn_p_drawNode, GLuint glu
 {
     GLint uniformModelMatrix = glGetUniformLocation(glui_shaderProgram,"m_model");
 	glUniformMatrix4fv(uniformModelMatrix, 1, GL_FALSE, glm::value_ptr( *sn_p_drawNode->returnModelMatrix() ));
+    
+    GLint uniformNormalMatrix = glGetUniformLocation(glui_shaderProgram,"m_normal");
+	glUniformMatrix4fv(uniformNormalMatrix, 1, GL_FALSE, glm::value_ptr( glm::transpose( glm::inverse(*sn_p_drawNode->returnModelMatrix() ) ) ) );
 }
 
 void CSceneManager::createCameraNode()

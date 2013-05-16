@@ -268,7 +268,6 @@ isVisible(const glm::vec3& rSphereCenterWS, const float fRadius) const {
 CCamera::CCamera(aiCamera* aic_asCamera)
 {
     m_viewMatrix = new glm::mat4;
-    m_viewMatrixInverse = new glm::mat4;
     m_projectionMatrix = new glm::mat4;
     
     setViewMatrix(aic_asCamera);
@@ -283,19 +282,20 @@ bool CCamera::viewFrustumCullingVisible(CSceneNode* sc_rootSceneNode)
 
 void CCamera::setViewMatrix(aiCamera* aic_asCamera)
 {
-    glm::vec3 v_bufferEyePosition = glm::normalize(glm::vec3(aic_asCamera->mPosition.x, aic_asCamera->mPosition.y, aic_asCamera->mPosition.z));
-    glm::vec3 v_bufferUp = glm::normalize(glm::vec3(aic_asCamera->mUp.x, aic_asCamera->mUp.y, aic_asCamera->mUp.z));
     
-    glm::vec3 v_bufferEyeZ = glm::normalize(glm::vec3(aic_asCamera->mLookAt.x, aic_asCamera->mLookAt.y, aic_asCamera->mLookAt.z));
-    glm::vec3 v_bufferEyeX = glm::normalize(glm::cross(v_bufferUp, v_bufferEyeZ));
-    glm::vec3 v_bufferEyeY = glm::normalize(glm::cross(v_bufferEyeZ, v_bufferEyeX));
+    glm::vec3 v_eyePosition = glm::vec3(aic_asCamera->mPosition.x,
+                                        aic_asCamera->mPosition.y,
+                                        aic_asCamera->mPosition.z);
     
-    (*m_viewMatrixInverse)[0] = glm::vec4(v_bufferEyeX.x, v_bufferEyeX.y, v_bufferEyeX.z, 0);
-    (*m_viewMatrixInverse)[1] = glm::vec4(v_bufferEyeY.x, v_bufferEyeY.y, v_bufferEyeY.z, 0);
-    (*m_viewMatrixInverse)[2] = glm::vec4(v_bufferEyeZ.x, v_bufferEyeZ.y, v_bufferEyeZ.z, 0);
-    (*m_viewMatrixInverse)[3] = glm::vec4(v_bufferEyePosition.x, v_bufferEyePosition.y, v_bufferEyePosition.z, 1);
+    glm::vec3 v_eyeLookAt = glm::vec3(aic_asCamera->mLookAt.x,
+                                      aic_asCamera->mLookAt.y,
+                                      aic_asCamera->mLookAt.z);
     
-    *m_viewMatrix = glm::inverse(*m_viewMatrixInverse);
+    glm::vec3 v_eyeUp = glm::vec3(aic_asCamera->mUp.x,
+                                  aic_asCamera->mUp.y,
+                                  aic_asCamera->mUp.z);
+    
+    *m_viewMatrix = glm::lookAt(v_eyePosition, v_eyeLookAt, v_eyeUp);
 }
 
 void CCamera::setProjectionPerspMatrix(aiCamera* aic_asCamera)

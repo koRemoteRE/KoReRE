@@ -131,7 +131,6 @@ private:
     };
     
     glm::mat4* m_viewMatrix;
-    glm::mat4* m_viewMatrixInverse;
     glm::mat4* m_projectionMatrix;
     
 public:
@@ -141,7 +140,7 @@ public:
         { return *m_viewMatrix; };
     
     glm::mat4 returnViewMatrixInverse()
-        { return *m_viewMatrixInverse; };
+        { return glm::inverse(*m_viewMatrix); };
     
     glm::mat4 returnViewMatrixInverseTranspose()
         { return glm::transpose(glm::inverse(*m_viewMatrix)); };

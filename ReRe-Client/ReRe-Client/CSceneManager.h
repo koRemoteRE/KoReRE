@@ -25,22 +25,25 @@ class CSceneManager
 {
     // Variablen
 private:
+    //
     struct st_meshVAO
     {
         GLuint glui_vaoBuffer;
         GLuint glui_textureIndex;
         GLuint glui_numFace;
     };
-    
     vector<st_meshVAO> stm_meshList;
     
+    //
     Assimp::Importer imp_asImporter;
     const aiScene* ais_asScene;
     
+    //
     CSceneNode* sn_p_rootSceneNode;
     CCamera* c_cameraNode;
     vector<CLight*> v_p_lightNode;
     
+    //
     aiMesh** aim_p_asMesh;
     int* i_p_numMesh;
     aiMaterial** aim_p_asMaterial;
