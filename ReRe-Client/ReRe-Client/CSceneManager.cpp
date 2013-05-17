@@ -190,14 +190,16 @@ void CSceneManager::bindUniformModelMatrix(CSceneNode* sn_p_drawNode, GLuint glu
 
 void CSceneManager::createCameraNode()
 {
-    c_cameraNode = new CCamera(ais_asScene->mCameras[0]);
+    c_cameraNode = new CCamera(ais_asScene->mCameras[0],
+                               &ais_asScene->mRootNode->FindNode("Camera")->mTransformation);
 }
 
 void CSceneManager::createLightNode()
 {
     for (int i_numLightSource = 0; i_numLightSource < ais_asScene->mNumLights; i_numLightSource++)
     {
-        v_p_lightNode.push_back(new CLight(ais_asScene->mLights[i_numLightSource]));
+        v_p_lightNode.push_back(new CLight(ais_asScene->mLights[i_numLightSource],
+                                           &ais_asScene->mRootNode->FindNode("Lamp")->mTransformation));
     }
 }
 

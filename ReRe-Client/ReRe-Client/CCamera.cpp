@@ -8,130 +8,7 @@
 
 #include "CCamera.h"
 
-Camera::Camera()
-:_matView(1.0f),
-_matViewInverse(1.0f),
-_matProjection(1.0f),
-_matViewProj(1.0f),
-_fFovDeg(0.0f),
-_fFar(0.0f),
-_fNear(0.0f),
-_fFocalLength(0.0f),
-_bIsOrtho(false),
-_fWidth(1.0f),
-_fHeight(1.0),
-_name("")
-{}
-
-Camera::~Camera() {
-}
-
-
-glm::vec3 Camera::getSide() const {
-    // Note: assume the camera's view matrix is not scaled
-    // (otherwise the return-vec would have to be normalized)
-    return glm::vec3(_matViewInverse[ 0 ]);
-}
-
-glm::vec3 Camera::getUp() const {
-    // Note: assume the camera's view matrix is not scaled
-    // (otherwise the return-vec would have to be normalized)
-    return glm::vec3(_matViewInverse[ 1 ]);
-}
-
-glm::vec3 Camera::getForward() const {
-    // Note: assume the camera's view matrix is not scaled
-    // (otherwise the return-vec would have to be normalized)
-    return glm::vec3(_matViewInverse[ 2 ]);
-}
-
-glm::vec3 Camera::getPosition() const {
-    return glm::vec3(_matViewInverse[ 3 ]);
-}
-
-void Camera::setProjectionOrtho(float fLeft, float fRight, float fBottom,
-                                      float fTop, float fNear, float fFar) {
-    _matProjection = glm::ortho(fLeft, fRight, fBottom, fTop, fNear, fFar);
-    _fFar = fFar;
-    _fNear = fNear;
-    _fFovDeg = -1.0f;  // Not valid in this case -> Mark as negative.
-    _bIsOrtho = true;
-    
-    paramsChanged();
-}
-
-void Camera::setProjectionPersp(float yFov_deg, float fWidth,
-                                      float fHeight, float fNear, float fFar) {
-  
-    _matProjection = glm::perspectiveFov(yFov_deg, fWidth,
-                                         fHeight, fNear, fFar);
-    _fNear = fNear;
-    _fFar = fFar;
-    _fFovDeg = yFov_deg;
-    _bIsOrtho = false;
-    _fWidth = fWidth;
-    _fHeight = fHeight;
-    
-    // Calculate focal length
-    float fFovHor2 = glm::atan(
-                               getAspectRatio() * glm::tan(getFovRad() / 2.0f));
-    
-    _fFocalLength = 1.0f / glm::tan(fFovHor2);
-    paramsChanged();
-}
-
-void Camera::setProjectionPersp(float yFov_deg, float fAspect,
-                                      float fNear, float fFar) {
-    float fWidth = 1.0f;
-    float fHeight = fWidth / fAspect;
-    
-    _matProjection = glm::perspectiveFov(yFov_deg, fWidth, fHeight, fNear, fFar);
-    _fNear = fNear;
-    _fFar = fFar;
-    _fFovDeg = yFov_deg;
-    _bIsOrtho = false;
-    _fWidth = fWidth;
-    _fHeight = fHeight;
-    
-    // Calculate focal length
-    float fFovHor2 = glm::atan(
-                               getAspectRatio() * glm::tan(getFovRad() / 2.0f));
-    
-    _fFocalLength = 1.0f / glm::tan(fFovHor2);
-    paramsChanged();
-}
-
-void Camera::paramsChanged() {
-    _matViewProj = _matProjection * _matView;
-    updateFrustumPlanes();
-}
-
-
-void Camera::rotateFromMouseMove(float dx, float dy) {
-    // Ugly hack incoming here...
-    static bool bFistTime = true;
-    
-    if (bFistTime) {
-        bFistTime = false;
-        return;
-    }
-    
-    rotateViewQuat(dx, glm::vec3(0.0f, 1.0f, 0.0f));
-    rotateViewQuat(dy, getSide());
-}
-
-void Camera::rotateViewQuat(const float angle, const glm::vec3 v3Axis) {
-//to do
-}
-
-void Camera::moveForward(float fSpeed) {
-// to do
-}
-
-void Camera::moveSideways(float fSpeed) {
-// to do
-}
-
+/*
 std::vector<glm::vec3> Camera::getWSfrustumCorners() {
     glm::mat4 matViewInv = getViewInv();
     // calculate frustum corner coordinates
@@ -259,19 +136,22 @@ isVisible(const glm::vec3& rSphereCenterWS, const float fRadius) const {
         return false;
     }
     return true;
-}
+}*/
 
 //--------------------------------------------------
 //--------------------------------------------------
 
 
-CCamera::CCamera(aiCamera* aic_asCamera)
+CCamera::CCamera(aiCamera* aic_asCamera, aiMatrix4x4* aim_nodeTransform)
 {
     m_viewMatrix = new glm::mat4;
     m_projectionMatrix = new glm::mat4;
     
     setViewMatrix(aic_asCamera);
     setProjectionPerspMatrix(aic_asCamera);
+    
+    //TODO: Transformation in View-Matrix einbauen
+    
 }
 
 bool CCamera::viewFrustumCullingVisible(CSceneNode* sc_rootSceneNode)

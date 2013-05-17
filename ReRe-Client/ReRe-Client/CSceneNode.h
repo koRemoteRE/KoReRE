@@ -12,9 +12,7 @@
 #include <iostream>
 #include <vector>
 
-#include <assimp/scene.h>
-#include <glm/glm.hpp>
-
+#include "CTransformAiToGlm.h"
 
 using namespace std;
 
@@ -64,7 +62,7 @@ private:
     glm::vec3* v_p_lightDiffuse;
     
 public:
-    CLight(aiLight* ail_asLight);
+    CLight(aiLight* ail_asLight, aiMatrix4x4* aim_nodeTransform);
     
     glm::vec3* returnPosition()
         { return v_p_lightPosition; };
