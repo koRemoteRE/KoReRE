@@ -88,5 +88,5 @@ CLight::CLight(aiLight* ail_asLight)
     v_p_lightPosition = new glm::vec3;
     v_p_lightPosition->x = ail_asLight->mPosition.x;
     v_p_lightPosition->y = ail_asLight->mPosition.y;
-    v_p_lightPosition->z = ail_asLight->mPosition.z;
+    v_p_lightPosition->z = ail_asLight->mPosition.z+10;
 }

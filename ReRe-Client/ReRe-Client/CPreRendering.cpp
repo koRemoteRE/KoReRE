@@ -15,7 +15,7 @@ CPreRendering::CPreRendering()
     createFBO();
     initGLSL();
     
-    sceneMgr = new CSceneManager("../Assets/cube.dae");
+    sceneMgr = new CSceneManager("../Assets/triangle.dae");
 }
 
 CPreRendering::~CPreRendering()

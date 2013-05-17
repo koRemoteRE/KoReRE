@@ -79,6 +79,7 @@ void CSceneManager::bindVAO()
     
     for (unsigned int ui_meshNum = 0; ui_meshNum < *i_p_numMesh; ui_meshNum++)
     {
+        cout << "Create VAO..." << endl;
         //
         st_meshVAO stm_meshVAO;
         stm_meshVAO.glui_numFace = aim_p_asMesh[ui_meshNum]->mNumFaces;
@@ -103,6 +104,7 @@ void CSceneManager::bindVAO()
         //
         if (aim_p_asMesh[ui_meshNum]->HasPositions())
         {
+            cout << "Bind Positions..." << endl;
             glGenBuffers(1, &glui_vertexArrayObjBuffer);
             glBindBuffer(GL_ARRAY_BUFFER, glui_vertexArrayObjBuffer);
             glBufferData(GL_ARRAY_BUFFER, sizeof(float) * aim_p_asMesh[ui_meshNum]->mNumVertices * 3, aim_p_asMesh[ui_meshNum]->mVertices, GL_STATIC_DRAW);
@@ -113,6 +115,7 @@ void CSceneManager::bindVAO()
         //
         if (aim_p_asMesh[ui_meshNum]->HasNormals())
         {
+            cout << "Bind Normals..." << endl;
             glGenBuffers(1, &glui_vertexArrayObjBuffer);
             glBindBuffer(GL_ARRAY_BUFFER, glui_vertexArrayObjBuffer);
             glBufferData(GL_ARRAY_BUFFER, sizeof(float) * aim_p_asMesh[ui_meshNum]->mNumVertices * 3, aim_p_asMesh[ui_meshNum]->mNormals, GL_STATIC_DRAW);
@@ -123,6 +126,7 @@ void CSceneManager::bindVAO()
         //Texturen
         if (aim_p_asMesh[ui_meshNum]->HasTextureCoords(0))
         {
+            cout << "Bind Texture Coordinates..." << endl;
             float* f_p_textureCoord = (float*) malloc(sizeof(float) * aim_p_asMesh[ui_meshNum]->mNumVertices * 2);
             for (unsigned int ui_textureNum = 0; ui_textureNum < aim_p_asMesh[ui_meshNum]->mNumVertices; ui_textureNum++)
             {
@@ -156,11 +160,18 @@ void CSceneManager::bindUniform(GLuint glui_shaderProgram)
     GLint uniformViewMatrix = glGetUniformLocation(glui_shaderProgram,"m_view");
 	glUniformMatrix4fv(uniformViewMatrix, 1, GL_FALSE, glm::value_ptr(returnCameraNode()->returnViewMatrix()));
     
-    GLint uniformLightPosVector = glGetUniformLocation(glui_shaderProgram,"v_lightPos");
-	glUniform3f(uniformLightPosVector,
+    GLint uniformLightVector = glGetUniformLocation(glui_shaderProgram,"lightPos");
+	glUniform3f(uniformLightVector,
                 (returnLightNode()[0]->returnPosition())->x,
                 (returnLightNode()[0]->returnPosition())->y,
                 (returnLightNode()[0]->returnPosition())->z);
+    
+    // Diffuse Light: (1,1,1)
+    uniformLightVector = glGetUniformLocation(glui_shaderProgram,"diffuseLightColor");
+    glUniform3f(uniformLightVector,
+                (returnLightNode()[0]->returnDiffuse())->x,
+                (returnLightNode()[0]->returnDiffuse())->y,
+                (returnLightNode()[0]->returnDiffuse())->z);
 }
 
 void CSceneManager::bindUniformModelMatrix(CSceneNode* sn_p_drawNode, GLuint glui_shaderProgram)
@@ -168,8 +179,13 @@ void CSceneManager::bindUniformModelMatrix(CSceneNode* sn_p_drawNode, GLuint glu
     GLint uniformModelMatrix = glGetUniformLocation(glui_shaderProgram,"m_model");
 	glUniformMatrix4fv(uniformModelMatrix, 1, GL_FALSE, glm::value_ptr( *sn_p_drawNode->returnModelMatrix() ));
     
+    glm::mat4 normalBuffer = returnCameraNode()->returnViewMatrix() * *sn_p_drawNode->returnModelMatrix();
+    
+    normalBuffer = glm::transpose(glm::inverse(normalBuffer));
+    glm::mat3 normalMatrix = glm::mat3(normalBuffer);
+    
     GLint uniformNormalMatrix = glGetUniformLocation(glui_shaderProgram,"m_normal");
-	glUniformMatrix4fv(uniformNormalMatrix, 1, GL_FALSE, glm::value_ptr( glm::transpose( glm::inverse(*sn_p_drawNode->returnModelMatrix() ) ) ) );
+	glUniformMatrix3fv(uniformNormalMatrix, 1, GL_FALSE, glm::value_ptr( normalMatrix ) ) ;
 }
 
 void CSceneManager::createCameraNode()

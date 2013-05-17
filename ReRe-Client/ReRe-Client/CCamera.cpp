@@ -282,10 +282,11 @@ bool CCamera::viewFrustumCullingVisible(CSceneNode* sc_rootSceneNode)
 
 void CCamera::setViewMatrix(aiCamera* aic_asCamera)
 {
+    // Position: (0,0,0), LookAt: (0,0,-1), Up: (0,1,0)
     
     glm::vec3 v_eyePosition = glm::vec3(aic_asCamera->mPosition.x,
                                         aic_asCamera->mPosition.y,
-                                        aic_asCamera->mPosition.z);
+                                        aic_asCamera->mPosition.z+5);
     
     glm::vec3 v_eyeLookAt = glm::vec3(aic_asCamera->mLookAt.x,
                                       aic_asCamera->mLookAt.y,
@@ -300,8 +301,10 @@ void CCamera::setViewMatrix(aiCamera* aic_asCamera)
 
 void CCamera::setProjectionPerspMatrix(aiCamera* aic_asCamera)
 {
-    *m_projectionMatrix = glm::perspective(aic_asCamera->mHorizontalFOV,
-                                           aic_asCamera->mAspect,
+    float fov = 45;
+    float aspect = (float)WIDTH/HEIGHT;
+    *m_projectionMatrix = glm::perspective(fov,
+                                           aspect,
                                            aic_asCamera->mClipPlaneNear,
                                            aic_asCamera->mClipPlaneFar);
 }

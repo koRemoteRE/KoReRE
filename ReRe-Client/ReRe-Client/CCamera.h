@@ -18,6 +18,7 @@
 #include <glm/ext.hpp>
 
 #include "CSceneNode.h"
+#include "CDefinitions.h"
 
 class Camera
 {
