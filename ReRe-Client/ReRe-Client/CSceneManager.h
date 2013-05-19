@@ -81,11 +81,12 @@ private:
     void bindVAO();
     
     //
-    void bindUniform(GLuint glui_shaderProgram);
+    void bindUniform(GLuint glui_shaderProgram);    // View- und Projection-Matrix an Shader binden
     void bindUniformModelMatrix(CSceneNode* sn_p_drawNode, GLuint glui_shaderProgram);
+                                                    // Model- und Normal-Matrix an Shader binden
     
     //
-    void createCameraNode();                    // Legt eine Kamera an
+    void createCameraNode();                     // Legt eine Kamera an
     void createLightNode();                      // Legt eine neue Lichtquelle an
 };
 
