@@ -59,7 +59,7 @@ public:
     bool viewFrustumCullingVisible(CSceneNode* sc_rootSceneNode);
     
 private:
-    void setViewMatrix(aiCamera* aic_asCamera);
+    void setViewMatrix(aiCamera* aic_asCamera, aiMatrix4x4* aim_nodeTransform);
     void setProjectionPerspMatrix(aiCamera* aic_asCamera);
 };
 

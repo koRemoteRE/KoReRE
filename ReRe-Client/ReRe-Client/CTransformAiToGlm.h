@@ -32,18 +32,18 @@ public:
     
     static glm::mat4* TransformMat4P(aiMatrix4x4 aim_AssimpMatrix)
     {
-        return new glm::mat4(aim_AssimpMatrix.a1, aim_AssimpMatrix.a2, aim_AssimpMatrix.a3, aim_AssimpMatrix.a4,
-                             aim_AssimpMatrix.b1, aim_AssimpMatrix.b2, aim_AssimpMatrix.b3, aim_AssimpMatrix.b4,
-                             aim_AssimpMatrix.c1, aim_AssimpMatrix.c2, aim_AssimpMatrix.c3, aim_AssimpMatrix.c4,
-                             aim_AssimpMatrix.d1, aim_AssimpMatrix.d2, aim_AssimpMatrix.d3, aim_AssimpMatrix.d4);
+        return new glm::mat4(aim_AssimpMatrix.a1, aim_AssimpMatrix.b1, aim_AssimpMatrix.c1, aim_AssimpMatrix.d1,
+                             aim_AssimpMatrix.a2, aim_AssimpMatrix.b2, aim_AssimpMatrix.c2, aim_AssimpMatrix.d2,
+                             aim_AssimpMatrix.a3, aim_AssimpMatrix.b3, aim_AssimpMatrix.c3, aim_AssimpMatrix.d3,
+                             aim_AssimpMatrix.a4, aim_AssimpMatrix.b4, aim_AssimpMatrix.c4, aim_AssimpMatrix.d4);
     };
     
     static glm::mat4 TransformMat4(aiMatrix4x4 aim_AssimpMatrix)
     {
-        return glm::mat4(aim_AssimpMatrix.a1, aim_AssimpMatrix.a2, aim_AssimpMatrix.a3, aim_AssimpMatrix.a4,
-                         aim_AssimpMatrix.b1, aim_AssimpMatrix.b2, aim_AssimpMatrix.b3, aim_AssimpMatrix.b4,
-                         aim_AssimpMatrix.c1, aim_AssimpMatrix.c2, aim_AssimpMatrix.c3, aim_AssimpMatrix.c4,
-                         aim_AssimpMatrix.d1, aim_AssimpMatrix.d2, aim_AssimpMatrix.d3, aim_AssimpMatrix.d4);
+        return glm::mat4(aim_AssimpMatrix.a1, aim_AssimpMatrix.b1, aim_AssimpMatrix.c1, aim_AssimpMatrix.d1,
+                         aim_AssimpMatrix.a2, aim_AssimpMatrix.b2, aim_AssimpMatrix.c2, aim_AssimpMatrix.d2,
+                         aim_AssimpMatrix.a3, aim_AssimpMatrix.b3, aim_AssimpMatrix.c3, aim_AssimpMatrix.d3,
+                         aim_AssimpMatrix.a4, aim_AssimpMatrix.b4, aim_AssimpMatrix.c4, aim_AssimpMatrix.d4);
     };
 
 };

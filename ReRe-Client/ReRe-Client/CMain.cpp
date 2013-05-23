@@ -75,6 +75,8 @@ int main(int argc, const char * argv[])
     // Ensure we can capture the escape key being pressed below
     glfwEnable( GLFW_STICKY_KEYS );
     
+    glEnable(GL_DEPTH_TEST);
+    
     MainLoop();
     
     // Close window and terminate GLFW

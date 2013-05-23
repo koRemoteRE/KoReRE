@@ -15,7 +15,7 @@ CPreRendering::CPreRendering()
     createFBO();
     initGLSL();
     
-    sceneMgr = new CSceneManager("../Assets/cube.dae");
+    sceneMgr = new CSceneManager("../Assets/TestEnv.dae");
 }
 
 CPreRendering::~CPreRendering()
@@ -238,6 +238,8 @@ void CPreRendering::initGLSL()
 
 void CPreRendering::testDraw()
 {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
     glUseProgram(currentImgShaderProgram);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     

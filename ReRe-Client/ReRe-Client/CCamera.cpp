@@ -147,7 +147,7 @@ CCamera::CCamera(aiCamera* aic_asCamera, aiMatrix4x4* aim_nodeTransform)
     m_viewMatrix = new glm::mat4;
     m_projectionMatrix = new glm::mat4;
     
-    setViewMatrix(aic_asCamera);
+    setViewMatrix(aic_asCamera, aim_nodeTransform);
     setProjectionPerspMatrix(aic_asCamera);
     
     //TODO: Transformation in View-Matrix einbauen
@@ -160,13 +160,13 @@ bool CCamera::viewFrustumCullingVisible(CSceneNode* sc_rootSceneNode)
     return false;
 }
 
-void CCamera::setViewMatrix(aiCamera* aic_asCamera)
+void CCamera::setViewMatrix(aiCamera* aic_asCamera, aiMatrix4x4* aim_nodeTransform)
 {
     // Position: (0,0,0), LookAt: (0,0,-1), Up: (0,1,0)
     
     glm::vec3 v_eyePosition = glm::vec3(aic_asCamera->mPosition.x,
                                         aic_asCamera->mPosition.y,
-                                        aic_asCamera->mPosition.z+5);
+                                        aic_asCamera->mPosition.z);
     
     glm::vec3 v_eyeLookAt = glm::vec3(aic_asCamera->mLookAt.x,
                                       aic_asCamera->mLookAt.y,
@@ -177,14 +177,26 @@ void CCamera::setViewMatrix(aiCamera* aic_asCamera)
                                   aic_asCamera->mUp.z);
     
     *m_viewMatrix = glm::lookAt(v_eyePosition, v_eyeLookAt, v_eyeUp);
+    
+    *m_viewMatrix = glm::inverse( *CTransformAiToGlm::TransformMat4P(*aim_nodeTransform) * (*m_viewMatrix) );
+    
+    /*
+    cout << aim_nodeTransform->a1 << " " << aim_nodeTransform->a2 << " " << aim_nodeTransform->a3 << " " << aim_nodeTransform->a4 << endl;
+    cout << aim_nodeTransform->b1 << " " << aim_nodeTransform->b2 << " " << aim_nodeTransform->b3 << " " << aim_nodeTransform->b4 << endl;
+    cout << aim_nodeTransform->c1 << " " << aim_nodeTransform->c2 << " " << aim_nodeTransform->c3 << " " << aim_nodeTransform->c4 << endl;
+    cout << aim_nodeTransform->d1 << " " << aim_nodeTransform->d2 << " " << aim_nodeTransform->d3 << " " << aim_nodeTransform->d4 << endl;
+    
+    for (int i=0; i<4; i++)
+        cout << (*m_viewMatrix)[0][i] << " " << (*m_viewMatrix)[1][i]<< " " << (*m_viewMatrix)[2][i]<< " " << (*m_viewMatrix)[3][i] << endl;
+     */
 }
 
 void CCamera::setProjectionPerspMatrix(aiCamera* aic_asCamera)
 {
-    float fov = 45;
-    float aspect = (float)WIDTH/HEIGHT;
+    float fov = glm::degrees(aic_asCamera->mHorizontalFOV)/ aic_asCamera->mAspect;
+//  float aspect = (float)WIDTH/HEIGHT;
     *m_projectionMatrix = glm::perspective(fov,
-                                           aspect,
+                                           aic_asCamera->mAspect,
                                            aic_asCamera->mClipPlaneNear,
                                            aic_asCamera->mClipPlaneFar);
 }

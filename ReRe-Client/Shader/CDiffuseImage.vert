@@ -21,7 +21,7 @@ void main()
 //  f_texture = vec3(v_texture, 1.0f);
     
     vec4 transformed_position = m_view * m_model * vec4(v_position, 1.0f);
-//    transformed_position.xyz = transformed_position.xyz / transformed_position.w;
+    transformed_position.xyz = transformed_position.xyz / transformed_position.w;
     vec4 lightVec = m_view * vec4(lightPos, 1.0f);
     f_lightVec = normalize(lightVec.xyz - transformed_position.xyz);
 
