@@ -20,8 +20,8 @@ void main()
 	if(c.w == 0){
 		vec3 color = vec3(0.0);
 		int num = 0;
-		for(int x = -3; x <= 3; x++){
-			for(int y = -3; y <= 3; y++){
+		for(int x = -1; x <= 1; x++){
+			for(int y = -1; y <= 1; y++){
 				vec2 tempPos;
 				tempPos.x = texCoord.x + x*texel.x;
 				tempPos.y = texCoord.y + y*texel.y;
@@ -40,5 +40,4 @@ void main()
 	else{
 		outputF = vec4(c);
 	}
-
 }

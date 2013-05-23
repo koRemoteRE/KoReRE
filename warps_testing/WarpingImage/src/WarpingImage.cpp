@@ -38,6 +38,8 @@ float rot = 0.0f;
 glm::mat4 projMatrix, modelMatrix;
 glm::mat4 firstProjMatrix, firstModelMatrix;
 
+int counter = 0;
+
 void displayFirstFrame();
 void display();
 void setupBuffers();
@@ -82,6 +84,7 @@ int main(int argc, char **argv) {
 }
 
 void displayFirstFrame() {
+	std::cout << "displayFirstFrame()" << std::endl;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, firstFrameFBO);
@@ -134,6 +137,7 @@ void displayFirstFrame() {
 }
 
 void display() {
+	counter++;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 //
 	glViewport(0, 0, (GLsizei) WINDOW_WIDTH, (GLsizei) WINDOW_HEIGHT);
@@ -183,6 +187,13 @@ void display() {
 //			0);
 //	glUseProgram(0);
 //	glutSwapBuffers();
+
+	if(counter > 200){
+		glutDisplayFunc(displayFirstFrame);
+		glutIdleFunc(displayFirstFrame);
+		counter = 0;
+		std::cout << "switching display func" << std::endl;
+	}
 
 }
 
