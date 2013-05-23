@@ -56,6 +56,7 @@
 #include "KoRE/Events.h"
 #include "Kore/Operations/OperationFactory.h"
 #include "encoder.h"
+#include "ConcurrentQueue.h"
 
 #include "live555/BasicUsageEnvironment.hh"
 #include "live555/GroupsockHelper.hh"
@@ -67,6 +68,8 @@
 kore::SceneNode* rotationNode = NULL;
 kore::SceneNode* lightNode = NULL;
 kore::Camera* pCamera = NULL;
+
+static ConcurrentQueue *queue;
 
 void setUpSimpleRendering(kore::SceneNode* renderNode, kore::ShaderProgramPass*
                           programPass, kore::Texture* texture, 
@@ -431,6 +434,8 @@ int main(void) {
   init();
   initScene();
 
+  queue = new ConcurrentQueue();
+
   
 
   kore::Timer the_timer;
@@ -443,9 +448,11 @@ int main(void) {
   glfwGetMousePos(&oldMouseX,&oldMouseY);
   
   Encoder* encoder = Encoder::getInstance();
-  encoder->init("test.h264",800,600);
+  //encoder->init("test.h264",800,600);
+  encoder->init(queue, 800, 600);
+  //encoder->start();
   
-  boost::thread serverThread = boost::thread(RTSPThread);
+  //boost::thread serverThread = boost::thread(RTSPThread);
  
   //RTSPOnDemandServer server = RTSPOnDemandServer();
   // Main loop
