@@ -68,8 +68,10 @@ void CSceneNode::findNextMeshNode(aiNode* ain_asNode, glm::mat4 m_nextTransform)
 
 CLight::CLight(aiLight* ail_asLight, aiMatrix4x4* aim_nodeTransform)
 {
+    // Speichern des diffusen Lichts
     v_p_lightDiffuse = CTransformAiToGlm::TransformCol3P(ail_asLight->mColorDiffuse);
     
+    // Speichern der Lichtposition (ohne Richtung)
     v_p_lightPosition = CTransformAiToGlm::TransformVec3P(ail_asLight->mPosition);
     v_p_lightPosition->x += aim_nodeTransform->a4;
     v_p_lightPosition->y += aim_nodeTransform->b4;

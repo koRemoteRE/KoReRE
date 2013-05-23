@@ -150,8 +150,6 @@ CCamera::CCamera(aiCamera* aic_asCamera, aiMatrix4x4* aim_nodeTransform)
     setViewMatrix(aic_asCamera, aim_nodeTransform);
     setProjectionPerspMatrix(aic_asCamera);
     
-    //TODO: Transformation in View-Matrix einbauen
-    
 }
 
 bool CCamera::viewFrustumCullingVisible(CSceneNode* sc_rootSceneNode)
@@ -179,16 +177,6 @@ void CCamera::setViewMatrix(aiCamera* aic_asCamera, aiMatrix4x4* aim_nodeTransfo
     *m_viewMatrix = glm::lookAt(v_eyePosition, v_eyeLookAt, v_eyeUp);
     
     *m_viewMatrix = glm::inverse( *CTransformAiToGlm::TransformMat4P(*aim_nodeTransform) * (*m_viewMatrix) );
-    
-    /*
-    cout << aim_nodeTransform->a1 << " " << aim_nodeTransform->a2 << " " << aim_nodeTransform->a3 << " " << aim_nodeTransform->a4 << endl;
-    cout << aim_nodeTransform->b1 << " " << aim_nodeTransform->b2 << " " << aim_nodeTransform->b3 << " " << aim_nodeTransform->b4 << endl;
-    cout << aim_nodeTransform->c1 << " " << aim_nodeTransform->c2 << " " << aim_nodeTransform->c3 << " " << aim_nodeTransform->c4 << endl;
-    cout << aim_nodeTransform->d1 << " " << aim_nodeTransform->d2 << " " << aim_nodeTransform->d3 << " " << aim_nodeTransform->d4 << endl;
-    
-    for (int i=0; i<4; i++)
-        cout << (*m_viewMatrix)[0][i] << " " << (*m_viewMatrix)[1][i]<< " " << (*m_viewMatrix)[2][i]<< " " << (*m_viewMatrix)[3][i] << endl;
-     */
 }
 
 void CCamera::setProjectionPerspMatrix(aiCamera* aic_asCamera)
