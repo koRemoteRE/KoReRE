@@ -28,6 +28,11 @@ CPreRendering::~CPreRendering()
     glDeleteFramebuffersEXT(1, &currentImgFBO);
 }
 
+GLuint CPreRendering::getCurrentDiffImg()
+{
+    return currentImgTexture;
+}
+
 // Print information about the compiling step
 void CPreRendering::printShaderInfoLog(GLuint shader)
 {

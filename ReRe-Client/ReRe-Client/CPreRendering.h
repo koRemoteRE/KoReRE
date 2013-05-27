@@ -50,6 +50,8 @@ public:
     CPreRendering();
     ~CPreRendering();
     
+    GLuint getCurrentDiffImg();
+    
     void writeToFBO();
     
     // --- Just Testing --- TODO: Delete! ----------------
