@@ -144,15 +144,19 @@ isVisible(const glm::vec3& rSphereCenterWS, const float fRadius) const {
 
 CCamera::CCamera(aiCamera* aic_asCamera, aiMatrix4x4* aim_nodeTransform)
 {
-    m_viewMatrix = new glm::mat4;
-    m_projectionMatrix = new glm::mat4;
+    m_viewMatrix = new glm::mat4(1);
+    m_projectionMatrix = new glm::mat4(1);
     
     setViewMatrix(aic_asCamera, aim_nodeTransform);
     setProjectionPerspMatrix(aic_asCamera);
+}
+
+void CCamera::updateCamera()
+{
     
 }
 
-bool CCamera::viewFrustumCullingVisible(CSceneNode* sc_rootSceneNode)
+bool CCamera::viewVisible(CSceneNode* sc_rootSceneNode)
 {
     //View Frustum Culling
     return false;
@@ -160,8 +164,6 @@ bool CCamera::viewFrustumCullingVisible(CSceneNode* sc_rootSceneNode)
 
 void CCamera::setViewMatrix(aiCamera* aic_asCamera, aiMatrix4x4* aim_nodeTransform)
 {
-    // Position: (0,0,0), LookAt: (0,0,-1), Up: (0,1,0)
-    
     glm::vec3 v_eyePosition = glm::vec3(aic_asCamera->mPosition.x,
                                         aic_asCamera->mPosition.y,
                                         aic_asCamera->mPosition.z);
@@ -176,6 +178,7 @@ void CCamera::setViewMatrix(aiCamera* aic_asCamera, aiMatrix4x4* aim_nodeTransfo
     
     *m_viewMatrix = glm::lookAt(v_eyePosition, v_eyeLookAt, v_eyeUp);
     
+    //Transformation mit Kamerakoordinaten kombinieren
     *m_viewMatrix = glm::inverse( *CTransformAiToGlm::TransformMat4P(*aim_nodeTransform) * (*m_viewMatrix) );
 }
 

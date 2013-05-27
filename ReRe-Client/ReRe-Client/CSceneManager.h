@@ -40,7 +40,7 @@ private:
     
     //
     CSceneNode* sn_p_rootSceneNode;
-    CCamera* c_cameraNode;
+    CCamera* c_p_cameraNode;
     vector<CLight*> v_p_lightNode;
     
     //
@@ -53,24 +53,25 @@ private:
     
     // Methoden
 public:
+    //
     CSceneManager(std::string st_filename);         // Konstruktor
     
     //
-    void drawScene(GLuint glui_shaderProgram);
+    void drawScene(GLuint glui_shaderProgram);            // Szene zeichnen
     
     //
-    CSceneNode* returnRootSceneNode()              // Gibt den Wurzelknoten des Szenegraphen zurück
+    inline CSceneNode* returnRootSceneNode()              // Gibt den Wurzelknoten des Szenegraphen zurück
         { return sn_p_rootSceneNode; };
     
     //
-    CCamera* returnCameraNode()                     // Gibt die Kamera zurück
-        { return c_cameraNode; };
+    inline CCamera* returnCameraNode()                     // Gibt die Kamera zurück
+        { return c_p_cameraNode; };
     
     //
-    vector<CLight*> returnLightNode()               // Gibt Lichtquelle zurück
+    inline vector<CLight*> returnLightNode()               // Gibt Lichtquelle zurück
         { return v_p_lightNode; };
     
-    int returnLightNodeSize()                      // Gibt die Anzahl der Lichtquellen zurück
+    inline int returnLightNodeSize()                      // Gibt die Anzahl der Lichtquellen zurück
         { return v_p_lightNode.size(); };
 
 private:

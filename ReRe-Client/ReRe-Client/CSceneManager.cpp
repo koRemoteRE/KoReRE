@@ -154,23 +154,23 @@ void CSceneManager::bindVAO()
 void CSceneManager::bindUniform(GLuint glui_shaderProgram)
 {
     // ProjectionsMatrix an Shader übergeben
-    GLint uniformProjectionMatrix = glGetUniformLocation(glui_shaderProgram,"m_projection");
-	glUniformMatrix4fv(uniformProjectionMatrix, 1, GL_FALSE, glm::value_ptr(returnCameraNode()->returnProjectionMatrix()));
+    GLint gli_uniformProjectionMatrix = glGetUniformLocation(glui_shaderProgram,"m_projection");
+	glUniformMatrix4fv(gli_uniformProjectionMatrix, 1, GL_FALSE, glm::value_ptr(returnCameraNode()->returnProjectionMatrix()));
     
     // ViewMatrix an Shader übergeben
-    GLint uniformViewMatrix = glGetUniformLocation(glui_shaderProgram,"m_view");
-	glUniformMatrix4fv(uniformViewMatrix, 1, GL_FALSE, glm::value_ptr(returnCameraNode()->returnViewMatrix()));
+    GLint gli_uniformViewMatrix = glGetUniformLocation(glui_shaderProgram,"m_view");
+	glUniformMatrix4fv(gli_uniformViewMatrix, 1, GL_FALSE, glm::value_ptr(returnCameraNode()->returnViewMatrix()));
     
     // Lichtposition an Shader übergeben
-    GLint uniformLightVector = glGetUniformLocation(glui_shaderProgram,"lightPos");
-	glUniform3f(uniformLightVector,
+    GLint gli_uniformLightVector = glGetUniformLocation(glui_shaderProgram,"lightPos");
+	glUniform3f(gli_uniformLightVector,
                 (returnLightNode()[0]->returnPosition())->x,
                 (returnLightNode()[0]->returnPosition())->y,
                 (returnLightNode()[0]->returnPosition())->z);
     
     // Diffuses Licht an Shader übergeben
-    uniformLightVector = glGetUniformLocation(glui_shaderProgram,"diffuseLightColor");
-    glUniform3f(uniformLightVector,
+    gli_uniformLightVector = glGetUniformLocation(glui_shaderProgram,"diffuseLightColor");
+    glUniform3f(gli_uniformLightVector,
                 (returnLightNode()[0]->returnDiffuse())->x,
                 (returnLightNode()[0]->returnDiffuse())->y,
                 (returnLightNode()[0]->returnDiffuse())->z);
@@ -179,23 +179,23 @@ void CSceneManager::bindUniform(GLuint glui_shaderProgram)
 void CSceneManager::bindUniformModelMatrix(CSceneNode* sn_p_drawNode, GLuint glui_shaderProgram)
 {
     // ModelMatrix an Shader übergeben
-    GLint uniformModelMatrix = glGetUniformLocation(glui_shaderProgram,"m_model");
-	glUniformMatrix4fv(uniformModelMatrix, 1, GL_FALSE, glm::value_ptr( *sn_p_drawNode->returnModelMatrix() ));
+    GLint gli_uniformModelMatrix = glGetUniformLocation(glui_shaderProgram,"m_model");
+	glUniformMatrix4fv(gli_uniformModelMatrix, 1, GL_FALSE, glm::value_ptr( *sn_p_drawNode->returnModelMatrix() ));
     
     // Normalen Matrix berechnen
-    glm::mat4 normalBuffer = returnCameraNode()->returnViewMatrix() * *sn_p_drawNode->returnModelMatrix();
-    normalBuffer = glm::transpose(glm::inverse(normalBuffer));
-    glm::mat3 normalMatrix = glm::mat3(normalBuffer);
+    glm::mat4 m_normalBuffer = returnCameraNode()->returnViewMatrix() * *sn_p_drawNode->returnModelMatrix();
+    m_normalBuffer = glm::transpose(glm::inverse(m_normalBuffer));
+    glm::mat3 m_normalMatrix = glm::mat3(m_normalBuffer);
     
     // Normalen Matrix an Shader übergeben
-    GLint uniformNormalMatrix = glGetUniformLocation(glui_shaderProgram,"m_normal");
-	glUniformMatrix3fv(uniformNormalMatrix, 1, GL_FALSE, glm::value_ptr( normalMatrix ) ) ;
+    GLint gli_uniformNormalMatrix = glGetUniformLocation(glui_shaderProgram,"m_normal");
+	glUniformMatrix3fv(gli_uniformNormalMatrix, 1, GL_FALSE, glm::value_ptr( m_normalMatrix ) ) ;
 }
 
 void CSceneManager::createCameraNode()
 {
     // Name der Kameraquelle nutzen um SceneNode-Transformation mit zu uebergeben
-    c_cameraNode = new CCamera(ais_asScene->mCameras[0],
+    c_p_cameraNode = new CCamera(ais_asScene->mCameras[0],
                                &ais_asScene->mRootNode->FindNode( ais_asScene->mCameras[0]->mName )->mTransformation);
 }
 

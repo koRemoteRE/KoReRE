@@ -14,9 +14,6 @@
 #include <math.h>
 #include <vector>
 
-#include <assimp/camera.h>
-#include <glm/ext.hpp>
-
 #include "CSceneNode.h"
 #include "CDefinitions.h"
 
@@ -56,7 +53,9 @@ public:
     glm::mat4 returnProjectionMatrix()
         { return *m_projectionMatrix; };
     
-    bool viewFrustumCullingVisible(CSceneNode* sc_rootSceneNode);
+    void updateCamera();
+    
+    bool viewVisible(CSceneNode* sc_rootSceneNode);     // View Frustum Culling
     
 private:
     void setViewMatrix(aiCamera* aic_asCamera, aiMatrix4x4* aim_nodeTransform);
