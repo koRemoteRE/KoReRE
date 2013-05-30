@@ -5,6 +5,7 @@
 #include "live555/FramedSource.hh"
 #endif
 #include "Encoder.h"
+#include "ConcurrentQueue.h"
 
 // The following class can be used to define specific encoder parameters
 class DeviceParameters {
@@ -14,7 +15,7 @@ class DeviceParameters {
 class H264FramedSource: public FramedSource {
 public:
   static H264FramedSource* createNew(UsageEnvironment& env);
-public:
+  
   static EventTriggerId eventTriggerId;
   // Note that this is defined here to be a static class variable, because this code is intended to illustrate how to
   // encapsulate a *single* device - not a set of devices.
@@ -29,13 +30,19 @@ private:
   // redefined virtual functions:
   virtual void doGetNextFrame();
   //virtual void doStopGettingFrames(); // optional
-
-private:
   static void deliverFrame0(void* clientData);
   void deliverFrame();
 
-private:
   static unsigned referenceCount; // used to count how many instances of this class currently exist
+  static unsigned FrameSize;
+
+  ConcurrentQueue *queue;
+  Encoder *encoder;
+  AVPacket *oldPacket;
+  unsigned fPlayTimePerFrame;
+  unsigned fPreferreFrameSize;
+  unsigned fLastPlayTime;
+
 };
 
 #endif

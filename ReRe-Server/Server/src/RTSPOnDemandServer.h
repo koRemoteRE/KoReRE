@@ -3,6 +3,8 @@
 
 #include "live555/liveMedia.hh"
 #include "live555/BasicUsageEnvironment.hh"
+#include "H264LiveVideoSubsession.h"
+#include "H264FramedSource.h"
 
 class RTSPOnDemandServer
 {
@@ -13,6 +15,7 @@ public:
   void streamFrame();
 private:
   UsageEnvironment* env;
+  H264VideoStreamDiscreteFramer *h264VideoStreamDiscreteFramer;
 
 };
 #endif //SERVER_RTSPSERVER_H

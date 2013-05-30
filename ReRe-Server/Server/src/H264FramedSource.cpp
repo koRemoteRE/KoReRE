@@ -2,6 +2,7 @@
 #include "live555/GroupsockHelper.hh" // for "gettimeofday()"
 
 EventTriggerId H264FramedSource::eventTriggerId = 0;
+unsigned H264FramedSource::FrameSize = 0;
 unsigned H264FramedSource::referenceCount = 0;
 
 H264FramedSource* H264FramedSource::createNew(UsageEnvironment& env) {
@@ -9,13 +10,22 @@ H264FramedSource* H264FramedSource::createNew(UsageEnvironment& env) {
 }
 
 H264FramedSource::H264FramedSource(UsageEnvironment& env)
-                                  : FramedSource(env)
+                                  : FramedSource(env),
+								  fPreferreFrameSize(400000),
+								  fPlayTimePerFrame(40),
+								  fLastPlayTime(0)
                                   {
   if (referenceCount == 0) {
-    //encoder = Encoder::getInstance();
-    //encoder->init("test.h264",800,600);
+    
   }
   ++referenceCount;
+
+  queue = ConcurrentQueue::getInstance();
+
+	encoder = Encoder::getInstance();
+	encoder->start();
+	//oldPacket = 0;
+
 
   // Any instance-specific initialization of the device would be done here:
   //%%% TO BE WRITTEN %%%
@@ -46,6 +56,8 @@ H264FramedSource::~H264FramedSource() {
     // Reclaim our 'event trigger'
     envir().taskScheduler().deleteEventTrigger(eventTriggerId);
     eventTriggerId = 0;
+
+	encoder->stop();
   }
 }
 
@@ -53,15 +65,17 @@ void H264FramedSource::doGetNextFrame() {
   // This function is called (by our 'downstream' object) when it asks for new data.
 
   // Note: If, for some reason, the source device stops being readable (e.g., it gets closed), then you do the following:
-  if (0 /* the source stops being readable */ /*%%% TO BE WRITTEN %%%*/) {
+  /*if (false) {
     handleClosure(this);
     return;
-  }
+  }*/
 
   // If a new frame of data is immediately available to be delivered, then do this now:
-  if (0 /* a new frame of data is immediately available to be delivered*/ /*%%% TO BE WRITTEN %%%*/) {
-    deliverFrame();
-  }
+  /*if (0) {*/
+	//if(!queue->empty()){
+		deliverFrame();
+	//}
+  //}
 
   // No new data is immediately available to be delivered.  We don't do anything more here.
   // Instead, our event trigger must be called (e.g., from a separate thread) when new data becomes available.
@@ -94,26 +108,51 @@ void H264FramedSource::deliverFrame() {
   //         to set this variable, because - in this case - data will never arrive 'early'.
   // Note the code below.
 
-  if (!isCurrentlyAwaitingData()) return; // we're not ready for the data yet
+	
+	AVPacket currPacket;
 
-  AVPacket* currPacket = Encoder::getInstance()->getCurrentPacket();
+	double time_base = 1.0/25.0;
 
-  u_int8_t* newFrameDataStart = currPacket->data + 4; //+4 skip startcode
-  unsigned newFrameSize = currPacket->size;
+	//if(!queue->empty()){
 
-  // Deliver the data here:
-  if (newFrameSize > fMaxSize) {
-    fFrameSize = fMaxSize;
-    fNumTruncatedBytes = newFrameSize - fMaxSize;
-  } else {
-    fFrameSize = newFrameSize;
-  }
-  gettimeofday(&fPresentationTime, NULL); // If you have a more accurate time - e.g., from an encoder - then use that instead.
-  // If the device is *not* a 'live source' (e.g., it comes instead from a file or buffer), then set "fDurationInMicroseconds" here.
-  memmove(fTo, newFrameDataStart, fFrameSize);
+		queue->waitAndPop(currPacket);
 
-  // After delivering the data, inform the reader that it is now available:
-  FramedSource::afterGetting(this);
+		u_int8_t* newFrameDataStart = currPacket.data + 4; //+4 skip startcode
+		unsigned newFrameSize = currPacket.size;
+
+		// Deliver the data here:
+		if (newFrameSize > fMaxSize) {
+			fFrameSize = fMaxSize;
+			fNumTruncatedBytes = newFrameSize - fMaxSize;
+		} else {
+			fFrameSize = newFrameSize;
+		}
+
+		/*if(40 > 0 && 400000 > 0){
+			if(fPresentationTime.tv_sec == 0 && fPresentationTime.tv_usec == 0){
+				gettimeofday(&fPresentationTime, NULL);
+			}else{
+				unsigned uSeconds = fPresentationTime.tv_usec + fLastPlayTime;
+				fPresentationTime.tv_sec += uSeconds/1000000;
+				fPresentationTime.tv_usec = uSeconds%1000000;
+			}
+
+			fLastPlayTime = (fPlayTimePerFrame * fFrameSize)/400000;
+			fDurationInMicroseconds = fLastPlayTime;
+		}else{
+			gettimeofday(&fPresentationTime, NULL);
+		}*/
+
+		gettimeofday(&fPresentationTime, NULL); // If you have a more accurate time - e.g., from an encoder - then use that instead.
+		// If the device is *not* a 'live source' (e.g., it comes instead from a file or buffer), then set "fDurationInMicroseconds" here.
+		
+		memcpy(fTo, newFrameDataStart, fFrameSize);
+
+		// After delivering the data, inform the reader that it is now available:
+		FramedSource::afterGetting(this);
+	/*}else{
+		return;
+	}*/
 }
 
 

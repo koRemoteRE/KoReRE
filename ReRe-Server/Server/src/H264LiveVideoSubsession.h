@@ -5,11 +5,11 @@
 class H264LiveVideoSubsession : public OnDemandServerMediaSubsession
 {
 public:
-  static H264LiveVideoSubsession* createNew(UsageEnvironment& env, char const* fileName, Boolean reuseFirstSource);
+  static H264LiveVideoSubsession* createNew(UsageEnvironment& env, Boolean reuseFirstSource);
   EventTriggerId eventTriggerId;
 
 protected:
-  H264LiveVideoSubsession(UsageEnvironment& env, char const* fileName, Boolean reuseFirstSource);
+  H264LiveVideoSubsession(UsageEnvironment& env, Boolean reuseFirstSource);
   virtual  ~H264LiveVideoSubsession(void);
 
   virtual FramedSource* createNewStreamSource( unsigned clientSessionId, unsigned& estBitrate );

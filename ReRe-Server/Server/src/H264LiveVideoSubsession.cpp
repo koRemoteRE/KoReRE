@@ -5,15 +5,14 @@
 
 
 H264LiveVideoSubsession::H264LiveVideoSubsession(UsageEnvironment& env, 
-                                                 char const* fileName, 
                                                  Boolean reuseFirstSource)
                                                  : OnDemandServerMediaSubsession(env,reuseFirstSource)
 {
 }
 
-H264LiveVideoSubsession* H264LiveVideoSubsession::createNew( UsageEnvironment& env, char const* fileName, Boolean reuseFirstSource )
+H264LiveVideoSubsession* H264LiveVideoSubsession::createNew( UsageEnvironment& env,  Boolean reuseFirstSource )
 {
-  return new H264LiveVideoSubsession(env,fileName,reuseFirstSource);
+  return new H264LiveVideoSubsession(env,reuseFirstSource);
 }
 
 
@@ -24,7 +23,7 @@ H264LiveVideoSubsession::~H264LiveVideoSubsession(void)
 
 FramedSource* H264LiveVideoSubsession::createNewStreamSource( unsigned clientSessionId, unsigned& estBitrate )
 {
-  estBitrate = 400;
+  estBitrate = 500;
   FramedSource* h264NALSource = H264FramedSource::createNew(envir());
   return H264VideoStreamDiscreteFramer::createNew(envir(), h264NALSource);
 

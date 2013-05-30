@@ -69,8 +69,6 @@ kore::SceneNode* rotationNode = NULL;
 kore::SceneNode* lightNode = NULL;
 kore::Camera* pCamera = NULL;
 
-static ConcurrentQueue *queue;
-
 void setUpSimpleRendering(kore::SceneNode* renderNode, kore::ShaderProgramPass*
                           programPass, kore::Texture* texture, 
                           kore::LightComponent* light) {
@@ -427,16 +425,15 @@ void RTSPThread(){
   server.startStreaming(watch);
 }
 
+static Encoder *encoder;
+static ConcurrentQueue *queue;
+
 int main(void) {
 
   int running = GL_TRUE;
   
   init();
   initScene();
-
-  queue = new ConcurrentQueue();
-
-  
 
   kore::Timer the_timer;
   the_timer.start();
@@ -447,14 +444,13 @@ int main(void) {
   int oldMouseY = 0;
   glfwGetMousePos(&oldMouseX,&oldMouseY);
   
-  Encoder* encoder = Encoder::getInstance();
-  //encoder->init("test.h264",800,600);
-  encoder->init(queue, 800, 600);
-  //encoder->start();
-  
-  //boost::thread serverThread = boost::thread(RTSPThread);
+  //queue = ConcurrentQueue::getInstance();
+
+  encoder = Encoder::getInstance();
+  encoder->init("test.h264",800,600);
+
+  boost::thread serverThread = boost::thread(RTSPThread);
  
-  //RTSPOnDemandServer server = RTSPOnDemandServer();
   // Main loop
 
   //FPS LIMIT--------------------

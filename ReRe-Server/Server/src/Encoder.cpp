@@ -2,7 +2,6 @@
 #include <iostream>
 #include "KoRE\RenderManager.h"
 
-
 extern "C"{
   #include "libavutil/opt.h"
 };
@@ -18,7 +17,7 @@ Encoder::Encoder(void)
 
 Encoder::~Encoder(void)
 {
-  av_write_trailer(formatContext);
+  av_write_trailer(fc);
   // Close each codec. 
   if (videoStream){
     avcodec_close(videoStream->codec);
@@ -29,10 +28,10 @@ Encoder::~Encoder(void)
   }
   if (!(fmt->flags & AVFMT_NOFILE))
     // Close the output file. 
-      avio_close(formatContext->pb);
+      avio_close(fc->pb);
 
   // free the stream 
-  avformat_free_context(formatContext);
+  avformat_free_context(fc);
 }
 
 AVStream *Encoder::add_stream(AVFormatContext *oc, AVCodec **codec,
@@ -136,94 +135,55 @@ void Encoder::open_video(AVFormatContext *oc, AVCodec *codec, AVStream *st)
   *((AVPicture *)frame) = dst_picture;
 }
 
-//bool Encoder::init( char* filename, int width, int height )
-bool Encoder::init(ConcurrentQueue *q, int width, int height )
+
+bool Encoder::init( char* filename, int width, int height )
 {
-	//queue = q;	//new
-
   av_register_all();
-  avformat_network_init();
-
-  //2. Format für h264
-  formatContext = avformat_alloc_context();
-  if(ret = avio_open_dyn_buf(&ioContext)){
-	  return -1;
-  }
-  formatContext->pb = ioContext;
-  formatContext->oformat = av_guess_format("h264", 0, 0);
-
-  //3. Prepare a context for the rtp-Output 
-  rtpContext = avformat_alloc_context();
-  if(!rtpContext)return -1;
-
-  rtpContext->oformat = av_guess_format("rtp", 0, 0);
-
-  //Fake Video
-  actualStream = 0;
-  actualStream = av_new_stream(rtpContext, 0);
-  if(!actualStream)return -1;
-  avcodec_get_context_defaults3(actualStream->codec, NULL);
-  actualStream->codec->codec_id = CODEC_ID_H264;
-
-  rtpContext->audio_codec_id = CODEC_ID_NONE;
-  rtpContext->audio_codec_id = CODEC_ID_H264;
-  //res = av_set_parameters(rtpcontext,0); 
-
-  //Real Output Destination
-  ret = avio_open(&rtpContext->pb, "rtp://192.168.1.1:8000", AVIO_FLAG_WRITE);
-
-  //rtpStream = av_new_stream(rtpContext, 0);
-
-  avformat_write_header(rtpContext, NULL);
-  avformat_write_header(formatContext, NULL);
-
-
-  //avformat_alloc_output_context2(&formatContext, NULL, NULL, filename);
-  /*avformat_alloc_output_context2(&formatContext, NULL, "h264", NULL);
-  if (!formatContext) {
+  avformat_alloc_output_context2(&fc, NULL, "h264", NULL);
+  if (!fc) {
     printf("Could not deduce output format from file extension: using MPEG.\n");
-    //avformat_alloc_output_context2(&formatContext, NULL, "mp4", filename);
-	avformat_alloc_output_context2(&formatContext, NULL, "mp4", NULL);
+    avformat_alloc_output_context2(&fc, NULL, "mp4", filename);
   }
-  if (!formatContext) {
+  if (!fc) {
     exit(1);
   }
-  //fmt = formatContext->oformat;
-  formatContext->oformat = av_guess_format("h264", NULL, NULL);
-
+  fmt = fc->oformat;
   //fmt->video_codec = AV_CODEC_ID_H264;
   videoStream = NULL;
   if (fmt->video_codec != AV_CODEC_ID_NONE) {
-    videoStream = add_stream(formatContext, &codec, fmt->video_codec);
+    videoStream = add_stream(fc, &codec, fmt->video_codec);
   }
   if (videoStream){
-    open_video(formatContext, codec, videoStream);
+    open_video(fc, codec, videoStream);
   }
 
-  //av_dump_format(formatContext, 0, filename,1);
+  av_dump_format(fc, 0, filename,1);
 
   if (!(fmt->flags & AVFMT_NOFILE)) {
-    //ret = avio_open(&formatContext->pb, filename, AVIO_FLAG_WRITE);
+    ret = avio_open(&fc->pb, filename, AVIO_FLAG_WRITE);
     if (ret < 0) {
-      //fprintf(stderr, "Could not open '%s': %s\n", filename);
+      fprintf(stderr, "Could not open '%s': %s\n", filename);
       exit(1);
     }
   }
-  //ret = avformat_write_header(formatContext, NULL);
-  if (ret < 0) {
-    fprintf(stderr, "Error occurred when opening output file: %s\n");
-    exit(1);
-  }*/
+  avformat_write_header(fc, NULL);
+
   picRGB = avcodec_alloc_frame();
   picYUV = avcodec_alloc_frame();
   if (picYUV)
     picYUV->pts = 0;
+
+
+
+
+
 
   renderResolution = glm::ivec2(800,600);//kore::RenderManager::getInstance()->getRenderResolution();
 
   int framebuffersize = renderResolution.x*renderResolution.y*3;
   buffer = (uint8_t*)malloc(framebuffersize);
 
+  codecContext = videoStream->codec;
 /*
   codec = avcodec_find_encoder(CODEC_ID_H264);
   if (!codec){
@@ -259,8 +219,6 @@ bool Encoder::init(ConcurrentQueue *q, int width, int height )
 
   outbuf_size = 100000;
   outbuf = (uint8_t *)malloc(outbuf_size);
-
-
   
   size =renderResolution.x*renderResolution.y;
 
@@ -287,6 +245,9 @@ bool Encoder::init(ConcurrentQueue *q, int width, int height )
     std::cerr <<  "initialize of conversion context failed!" << std::endl;
     return false;
   }
+  
+  queue = ConcurrentQueue::getInstance();
+
   _initialized = true;
   frameno = 0;
 
@@ -295,11 +256,12 @@ bool Encoder::init(ConcurrentQueue *q, int width, int height )
 
 void Encoder::encodeFrame()
 {
+	frameReadyForStream = false;
   if(!_recording) return;
 
-  if (rtpStream)
-	  video_pts = (double)rtpStream->pts.val * rtpStream->time_base.num /
-    rtpStream->time_base.den;
+  if (videoStream)
+    video_pts = (double)videoStream->pts.val * videoStream->time_base.num /
+    videoStream->time_base.den;
   else
     video_pts = 0.0;
 
@@ -317,110 +279,60 @@ void Encoder::encodeFrame()
             picRGB->linesize,0,
             renderResolution.y,
             picYUV->data,picYUV->linesize);
-  
-  //if (formatContext->oformat->flags & AVFMT_RAWPICTURE) {
+  if (fc->oformat->flags & AVFMT_RAWPICTURE) {
     // Raw video case - directly store the picture in the packet 
-   /* AVPacket pkt;
+    AVPacket pkt;
     av_init_packet(&pkt);
 
     pkt.flags        |= AV_PKT_FLAG_KEY;
     pkt.stream_index  = videoStream->index;
     pkt.data          = picYUV->data[0];
-    pkt.size          = sizeof(AVFrame);*/
+    pkt.size          = sizeof(AVFrame);
 
-    //ret = av_write_frame(formatContext, &pkt);
-  //} else {
-    //AVPacket pkt = { 0 };
-	AVPacket avPkt;
-	AVPacket tsPkt;
-
-	av_init_packet(&avPkt);
-	av_init_packet(&tsPkt);
-
-	picYUV->interlaced_frame = 1;
-	picYUV->top_field_first = 1;
-
-	codecContext = actualStream->codec;
-
-	int anc_size = avcodec_encode_video(codecContext, outbuf, outbuf_size, picYUV);
-
-	if(anc_size > 0){
-		if(codecContext->coded_frame->key_frame){
-			avPkt.flags |= AV_PKT_FLAG_KEY;
-		}
-
-		avPkt.size = anc_size;
-		avPkt.pts = av_rescale_q(codecContext->coded_frame->pts, codecContext->time_base, actualStream->time_base);
-		avPkt.stream_index = videoStream->index;
-		avPkt.data = outbuf;
-
-
-		ret = av_interleaved_write_frame(formatContext, &avPkt);
-
-		int len = avio_close_dyn_buf(ioContext, &destBuffer);
-
-		tsPkt.size = len;
-		tsPkt.data = destBuffer;
-
-		av_interleaved_write_frame(rtpContext, &tsPkt);
-		av_free(destBuffer);
-
-		if(ret = avio_open_dyn_buf(&ioContext)){
-
-		}
-	}
-
-	
-	
-	
-
-	
-	
-
-    //int got_packet;
-    //av_init_packet(&pkt);
+    ret = av_write_frame(fc, &pkt);
+  } else {
+    AVPacket pkt = { 0 };
+    int got_packet;
+    av_init_packet(&pkt);
 
     // encode the image 
-    //ret = avcodec_encode_video2(codecContext, &actualPkt, picYUV, &got_packet);	
-
-	
-
-	
-
-
+    ret = avcodec_encode_video2(codecContext, &pkt, picYUV, &got_packet);
+    if (ret < 0) {
+      fprintf(stderr, "Error encoding video frame: %s\n");
+      exit(1);
+    }
     // If size is zero, it means the image was buffered. 
-	/*
+
     if (!ret && got_packet && pkt.size) {
       pkt.stream_index = videoStream->index;
 
       // Write the compressed frame to the media file. 
-		//Write compressed Frame into Queue???*********************
-	  currPacket = &pkt;
-      //ret = av_write_frame(formatContext, &pkt);
 
-	  queue->push(pkt);
-    
-	} else {
+	  frameReadyForStream = true;
+        currPacket = &pkt;
+		queue->push(pkt);
+		//std::cout << queue->getLenght() << std::endl;
+        //ret = av_write_frame(fc, &pkt);
+    } else {
       ret = 0;
     }
   }
   if (ret != 0) {
     fprintf(stderr, "Error while writing video frame: %s\n");
     exit(1);
-  }*/
+  }
   frame_count++;
-  //picYUV->pts += av_rescale_q(1, actualStream->codec->time_base, actualStream->time_base);
+  picYUV->pts += av_rescale_q(1, videoStream->codec->time_base, videoStream->time_base);
 
   //out_size = avcodec_encode_video(codecContext,outbuf,outbuf_size,picYUV);
   //std::cout << "encoding Frame " << ++frameno << "(size ="<<out_size <<")" << std::endl;
   //fwrite(outbuf, 1, out_size, file);
-  //}
 }
-/*
+
 void Encoder::finish()
 {
 
-
+/*
   //delayed frames
   for(; out_size; ++frameno){
     out_size = avcodec_encode_video(codecContext, outbuf, outbuf_size, NULL);
@@ -441,12 +353,12 @@ void Encoder::finish()
 
   sws_freeContext(sws_context);
   avcodec_close(codecContext);
-  av_free(codecContext);
+  av_free(codecContext);*/
   //av_free(picRGB);
   //av_free(picYUV);
 
   _recording=false;
-}*/
+}
 
 void Encoder::start()
 {
@@ -471,10 +383,10 @@ void Encoder::stop()
 
 AVPacket* Encoder::getCurrentPacket()
 {
-  if (_initialized && currPacket!=NULL){
+	if (_initialized && currPacket != NULL){
    return currPacket;
-  }
-  else{
+  }else{
     std::cerr <<  "Encoder is not initialized or no frame encoded!" << std::endl;
+	return NULL;
   }
 }

@@ -1,6 +1,4 @@
 #include "RTSPOnDemandServer.h"
-#include "H264LiveVideoSubsession.h"
-
 
 
 RTSPOnDemandServer::RTSPOnDemandServer(void)
@@ -12,17 +10,17 @@ RTSPOnDemandServer::RTSPOnDemandServer(void)
     *env << "Failed to create RTSP server: " << env->getResultMsg() << "\n";
     exit(1);
   }
-
+  
   OutPacketBuffer::maxSize = 400000;
   char const* streamName = "h264Test";
-  char const* inputFileName = "test.h264";
+  //char const* inputFileName = "test.h264";
   ServerMediaSession* sms
     = ServerMediaSession::createNew(*env, streamName, streamName);
-  //sms->addSubsession(H264LiveVideoSubsession
-  //  ::createNew(*env, inputFileName, true));
+  sms->addSubsession(H264LiveVideoSubsession
+    ::createNew(*env, true));
   
-  sms->addSubsession(H264VideoFileServerMediaSubsession
-    ::createNew(*env, inputFileName, true));
+  /*sms->addSubsession(H264VideoFileServerMediaSubsession
+    ::createNew(*env, inputFileName, true));*/
 
   
   rtspServer->addServerMediaSession(sms);

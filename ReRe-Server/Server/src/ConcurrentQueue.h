@@ -15,11 +15,15 @@ extern "C" {
 class ConcurrentQueue
 {
 private:
+	ConcurrentQueue(void);
 	std::queue<AVPacket> theQueue;
 	mutable boost::mutex theMutex;
 	boost::condition_variable theConditionVariable;
 public:
-	ConcurrentQueue();
+	static ConcurrentQueue* getInstance(){
+		static ConcurrentQueue queue;
+		return &queue;
+	};
 	~ConcurrentQueue();
 	void push(AVPacket const &data);
 	bool empty() const;
