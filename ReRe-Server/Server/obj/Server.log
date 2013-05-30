@@ -1,12 +1,8 @@
-﻿Build started 23.05.2013 08:43:50.
+﻿Build started 30.05.2013 23:55:14.
      1>Project "C:\Users\Emil\Desktop\Praktikum\KoReRE\ReRe-Server\Server\Server.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         D:\Programme\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /IC:\Users\Emil\Desktop\boost_1_53_0 /I"C:\Users\Emil\Desktop\Praktikum\KoReRE\ReRe-Server\ext/include" /I"C:\Users\Emil\Desktop\Praktikum\KoReRE\ReRe-Server\Server\src" /Zi /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D GLFW_INCLUDE_GL3 /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo"C:\Users\Emil\Desktop\Praktikum\KoReRE\ReRe-Server\Server\\obj\\" /Fd"C:\Users\Emil\Desktop\Praktikum\KoReRE\ReRe-Server\\bin\\Server.pdb" /Gd /TP /analyze- /errorReport:prompt  /Zm1000 src\Encoder.cpp
-         Encoder.cpp
-     1>src\Encoder.cpp(150): warning C4305: 'return' : truncation from 'int' to 'bool'
-     1>src\Encoder.cpp(157): warning C4305: 'return' : truncation from 'int' to 'bool'
-     1>src\Encoder.cpp(164): warning C4305: 'return' : truncation from 'int' to 'bool'
-     1>c:\users\emil\desktop\praktikum\korere\rere-server\server\src\encoder.cpp(480): warning C4715: 'Encoder::getCurrentPacket' : not all control paths return a value
+         D:\Programme\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /IC:\Users\Emil\Desktop\boost_1_53_0/ /I"C:\Users\Emil\Desktop\Praktikum\KoReRE\ReRe-Server\ext/include" /I"C:\Users\Emil\Desktop\Praktikum\KoReRE\ReRe-Server\Server\src" /Zi /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D GLFW_INCLUDE_GL3 /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo"C:\Users\Emil\Desktop\Praktikum\KoReRE\ReRe-Server\Server\\obj\\" /Fd"C:\Users\Emil\Desktop\Praktikum\KoReRE\ReRe-Server\\bin\\Server.pdb" /Gd /TP /analyze- /errorReport:prompt  /Zm1000 src\H264FramedSource.cpp
+         H264FramedSource.cpp
        Link:
          D:\Programme\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Emil\Desktop\Praktikum\KoReRE\ReRe-Server\\bin\Server_Debug.exe" /INCREMENTAL /NOLOGO /LIBPATH:C:\Users\Emil\Desktop\boost_1_53_0\stage\lib ..\ext\lib\tinyxml.lib kernel32.lib ws2_32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib ..\ext\lib\KoRE.lib OpenGL32.lib "C:\Users\Emil\Desktop\Praktikum\KoReRE\ReRe-Server\ext\lib\msvc100\GLFW.lib" ..\ext\lib\glew32.lib "..\ext\lib\assimp_release-dll_win32\assimp.lib" ..\ext\lib\avcodec.lib ..\ext\lib\swscale.lib ..\ext\lib\avformat.lib ..\ext\lib\avutil.lib ..\ext\lib\live555\libUsageEnvironment.lib ..\ext\lib\live555\libBasicUsageEnvironment.lib ..\ext\lib\live555\libgroupsock.lib ..\ext\lib\live555\libliveMedia.lib "boost_thread-vc110-mt-gd-1_53.lib" "boost_system-vc110-mt-gd-1_53.lib" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Emil\Desktop\Praktikum\KoReRE\ReRe-Server\bin/Server.pdb" /SUBSYSTEM:CONSOLE /STACK:"10000000" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Emil\Desktop\Praktikum\KoReRE\ReRe-Server\\bin\Server_Debug.lib" /MACHINE:X86 "C:\Users\Emil\Desktop\Praktikum\KoReRE\ReRe-Server\Server\\obj\ConcurrentQueue.obj"
          "C:\Users\Emil\Desktop\Praktikum\KoReRE\ReRe-Server\Server\\obj\Encoder.obj"
@@ -20,4 +16,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:04.91
+Time Elapsed 00:00:05.65
