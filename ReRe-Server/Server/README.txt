@@ -1,0 +1,1 @@
+Da ist ein Bug in Boost. Die Benutzen dort ne Typdefinition, die "Boolean" heisst. Ich hab sie einfach in "temp" umbenannt und es läuft. Deshalb muss die Datei im ensprechenden Ordner mit meiner überschrieben werden.
