@@ -147,20 +147,55 @@ CCamera::CCamera(aiCamera* aic_asCamera, aiMatrix4x4* aim_nodeTransform)
     m_viewMatrix = new glm::mat4(1);
     m_projectionMatrix = new glm::mat4(1);
     
+    f_RotationX = f_RotationY = 0.0f;
+    
     setViewMatrix(aic_asCamera, aim_nodeTransform);
     setProjectionPerspMatrix(aic_asCamera);
 }
 
+glm::vec3 returnPosition()
+{
+    return glm::vec3(  );
+}
+
+void CCamera::automaticMovement(int i)
+{
+    i /= 30;
+    float f_newPositionX = sin(i) / 30;
+    *m_viewMatrix = glm::translate(*m_viewMatrix, f_newPositionX, 0.0f, 0.0f);
+}
+
 void CCamera::updateCameraView(int i_mouseWayX, int i_mouseWayY)
 {
-    float f_newPositionX = 0, f_newPositionY = 0, f_newPositionZ = 0;
+   float f_newPositionX = 0, f_newPositionY = 0, f_newPositionZ = 0;
     
-    f_RotationX-=i_mouseWayX-WIDTH/2;
-    f_RotationY-=i_mouseWayY-HEIGHT/2;
+    if (i_mouseWayX == WIDTH / 2)
+        f_RotationX = 0;
+    else
+        f_RotationX+=(WIDTH/2 - (float)i_mouseWayX)*0.001f;
     
-    *m_viewMatrix = glm::rotate(*m_viewMatrix, f_RotationX, glm::vec3(1,0,0));
-    *m_viewMatrix = glm::rotate(*m_viewMatrix, f_RotationY, glm::vec3(0,1,0));
+    
+    if (i_mouseWayY == HEIGHT / 2)
+        f_RotationY = 0;
+    else
+    {
+        f_RotationY+=(HEIGHT/2 - (float)i_mouseWayY)*0.001f;
+    
+        // Clamp the camera to max/min rotationY angle
+        if(f_RotationY > 90.0f)
+            f_RotationY = 90.0f;
+    
+        if(f_RotationY < -90.0f)
+            f_RotationY = -90.0f;
+    }
+    
+    *m_viewMatrix=glm::inverse(*m_viewMatrix);
+    
+    *m_viewMatrix = glm::rotate(*m_viewMatrix, f_RotationY, glm::vec3(1,0,0));
+    *m_viewMatrix = glm::rotate(*m_viewMatrix, f_RotationX, glm::vec3(0,1,0));
     *m_viewMatrix = glm::translate(*m_viewMatrix, f_newPositionX, f_newPositionY, f_newPositionZ);
+    
+    *m_viewMatrix=glm::inverse(*m_viewMatrix);
 }
 
 bool CCamera::viewVisible(CSceneNode* sc_rootSceneNode)

@@ -31,12 +31,14 @@ private:
     
     float f_RotationX;
     float f_RotationY;
-    
+        
     glm::mat4* m_viewMatrix;
     glm::mat4* m_projectionMatrix;
     
 public:
     CCamera(aiCamera* aic_asCamera, aiMatrix4x4* aim_nodeTransform);
+    
+    glm::vec3 returnPosition();
     
     glm::mat4 returnViewMatrix()
         { return *m_viewMatrix; };
@@ -50,7 +52,11 @@ public:
     glm::mat4 returnProjectionMatrix()
         { return *m_projectionMatrix; };
     
+    void automaticMovement(int i);
+    
     void updateCameraView(int i_mouseWayX, int i_mouseWayY);
+    
+    
     
     bool viewVisible(CSceneNode* sc_rootSceneNode);     // View Frustum Culling
     

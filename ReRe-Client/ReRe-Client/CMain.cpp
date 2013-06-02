@@ -16,6 +16,7 @@
 #include <GL/glfw.h>
 #include <glm/glm.hpp>
 
+int mouseX, mouseY;
 
 void drawWarpedImg(void)
 {
@@ -26,11 +27,26 @@ void MainLoop(void)
 {
     CPreRendering* renderer = new CPreRendering();
 
+    int i = 0;
+    
     do{
-        renderer->writeToFBO();
-        //renderer->testDraw();
+        // Get mouse position
+        glfwGetMousePos(&mouseX, &mouseY);
+        
+        // Update Camera Matrix
+        renderer->getSceneGraph()->returnCameraNode()->updateCameraView(mouseX, mouseY);
+        
+        // Test Movement
+        i++;
+        renderer->getSceneGraph()->returnCameraNode()->automaticMovement(i);
+        
+        //renderer->writeToFBO();
+        renderer->testDraw();
         
         drawWarpedImg();
+        
+        // Reset mouse position for next frame
+        glfwSetMousePos(WIDTH/2, HEIGHT/2);
         
         // Swap buffers
         glfwSwapBuffers();
@@ -76,6 +92,10 @@ int main(int argc, const char * argv[])
     glfwEnable( GLFW_STICKY_KEYS );
     
     glEnable(GL_DEPTH_TEST);
+    
+    // Initialize Mouse Position
+    glfwDisable( GLFW_MOUSE_CURSOR);
+    glfwSetMousePos(WIDTH/2, HEIGHT/2);
     
     MainLoop();
     
