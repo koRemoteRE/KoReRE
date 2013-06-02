@@ -28,6 +28,32 @@ CPreRendering::~CPreRendering()
     glDeleteFramebuffersEXT(1, &currentImgFBO);
 }
 
+GLuint CPreRendering::getCurrentDiffImg()
+{
+    return currentImgTexture;
+}
+
+CSceneManager* CPreRendering::getSceneGraph()
+{
+    return sceneMgr;
+}
+
+glm::mat4 CPreRendering::getProjectionMatrix()
+{
+    return sceneMgr->returnCameraNode()->returnProjectionMatrix();
+}
+
+glm::mat4 CPreRendering::getViewMatrix()
+{
+    return sceneMgr->returnCameraNode()->returnViewMatrix();
+}
+
+glm::mat4 CPreRendering::getCameraMatrix()
+{
+    return (sceneMgr->returnCameraNode()->returnProjectionMatrix() *
+            sceneMgr->returnCameraNode()->returnViewMatrix());
+}
+
 // Print information about the compiling step
 void CPreRendering::printShaderInfoLog(GLuint shader)
 {
