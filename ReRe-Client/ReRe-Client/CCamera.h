@@ -20,12 +20,6 @@
 class CCamera
 {
 private:
-    struct st_windowParameter
-    {
-        float f_width;
-        float f_height;
-    };
-    
     struct st_cameraParameterIntern
     {
         float f_far;
@@ -34,6 +28,9 @@ private:
         float f_aspect;
         float f_fieldOfView;
     };
+    
+    float f_RotationX;
+    float f_RotationY;
     
     glm::mat4* m_viewMatrix;
     glm::mat4* m_projectionMatrix;
@@ -53,7 +50,7 @@ public:
     glm::mat4 returnProjectionMatrix()
         { return *m_projectionMatrix; };
     
-    void updateCamera();
+    void updateCameraView(int i_mouseWayX, int i_mouseWayY);
     
     bool viewVisible(CSceneNode* sc_rootSceneNode);     // View Frustum Culling
     

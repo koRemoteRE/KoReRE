@@ -151,9 +151,16 @@ CCamera::CCamera(aiCamera* aic_asCamera, aiMatrix4x4* aim_nodeTransform)
     setProjectionPerspMatrix(aic_asCamera);
 }
 
-void CCamera::updateCamera()
+void CCamera::updateCameraView(int i_mouseWayX, int i_mouseWayY)
 {
+    float f_newPositionX = 0, f_newPositionY = 0, f_newPositionZ = 0;
     
+    f_RotationX-=i_mouseWayX-WIDTH/2;
+    f_RotationY-=i_mouseWayY-HEIGHT/2;
+    
+    *m_viewMatrix = glm::rotate(*m_viewMatrix, f_RotationX, glm::vec3(1,0,0));
+    *m_viewMatrix = glm::rotate(*m_viewMatrix, f_RotationY, glm::vec3(0,1,0));
+    *m_viewMatrix = glm::translate(*m_viewMatrix, f_newPositionX, f_newPositionY, f_newPositionZ);
 }
 
 bool CCamera::viewVisible(CSceneNode* sc_rootSceneNode)
