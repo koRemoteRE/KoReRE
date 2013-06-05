@@ -351,10 +351,8 @@ void initScene(){
 
   GLenum drawBuffers[] = {GL_COLOR_ATTACHMENT0};
   kore::FrameBufferStage* backBufferStage = new kore::FrameBufferStage;
-  backBufferStage->setFrameBuffer(kore::FrameBuffer::BACKBUFFER,
-    GL_FRAMEBUFFER,
-    drawBuffers,
-    1);
+  backBufferStage->setFrameBuffer(kore::FrameBuffer::BACKBUFFER);
+  backBufferStage->setActiveAttachments(drawBuffers, 1);
 
   kore::ShaderProgramPass* shaderProgPass = new kore::ShaderProgramPass;
   //shaderProgPass->setShaderProgram(simpleShader);
@@ -461,11 +459,10 @@ int main(void) {
   while (running) {
     time = the_timer.timeSinceLastCall();
     frametime = glfwGetTime();
-
+    
     kore::SceneManager::getInstance()->update();
-
     if (glfwGetKey(GLFW_KEY_UP) || glfwGetKey('W')) {
-      pCamera->moveForward(cameraMoveSpeed * static_cast<float>(time));
+     pCamera->moveForward(cameraMoveSpeed * static_cast<float>(time));
     }
 
     if (glfwGetKey(GLFW_KEY_DOWN) || glfwGetKey('S')) {
@@ -478,6 +475,9 @@ int main(void) {
 
     if (glfwGetKey(GLFW_KEY_RIGHT) || glfwGetKey('D')) {
       pCamera->moveSideways(cameraMoveSpeed * static_cast<float>(time));
+    }
+    if (glfwGetKey('U')) {
+      pCamera->getSceneNode()->setTranslation(glm::vec3(0,0,0));
     }
 
     int mouseX = 0;
@@ -504,7 +504,7 @@ int main(void) {
       //server.startStreaming();
       //encoder->finish();
     }
-
+    
     oldMouseX = mouseX;
     oldMouseY = mouseY;
 

@@ -11,9 +11,9 @@ H264FramedSource* H264FramedSource::createNew(UsageEnvironment& env) {
 
 H264FramedSource::H264FramedSource(UsageEnvironment& env)
                                   : FramedSource(env),
-								  fPreferreFrameSize(400000),
-								  fPlayTimePerFrame(40),
-								  fLastPlayTime(0)
+                  fPreferreFrameSize(400000),
+                  fPlayTimePerFrame(40),
+                  fLastPlayTime(0)
                                   {
   if (referenceCount == 0) {
     
@@ -22,9 +22,9 @@ H264FramedSource::H264FramedSource(UsageEnvironment& env)
 
   queue = ConcurrentQueue::getInstance();
 
-	encoder = Encoder::getInstance();
-	encoder->start();
-	//oldPacket = 0;
+  encoder = Encoder::getInstance();
+  encoder->start();
+  //oldPacket = 0;
 
 
   // Any instance-specific initialization of the device would be done here:
@@ -57,7 +57,7 @@ H264FramedSource::~H264FramedSource() {
     envir().taskScheduler().deleteEventTrigger(eventTriggerId);
     eventTriggerId = 0;
 
-	encoder->stop();
+  encoder->stop();
   }
 }
 
@@ -72,9 +72,9 @@ void H264FramedSource::doGetNextFrame() {
 
   // If a new frame of data is immediately available to be delivered, then do this now:
   /*if (0) {*/
-	//if(!queue->empty()){
-		deliverFrame();
-	//}
+  //if(!queue->empty()){
+    deliverFrame();
+  //}
   //}
 
   // No new data is immediately available to be delivered.  We don't do anything more here.
@@ -108,51 +108,51 @@ void H264FramedSource::deliverFrame() {
   //         to set this variable, because - in this case - data will never arrive 'early'.
   // Note the code below.
 
-	
-	AVPacket currPacket;
+  
+  AVPacket currPacket;
 
-	double time_base = 1.0/25.0;
+  double time_base = 1.0/25.0;
 
-	//if(!queue->empty()){
+  //if(!queue->empty()){
 
-		queue->waitAndPop(currPacket);
+    queue->waitAndPop(currPacket);
 
-		u_int8_t* newFrameDataStart = currPacket.data + 4; //+4 skip startcode
-		unsigned newFrameSize = currPacket.size;
+    u_int8_t* newFrameDataStart = currPacket.data + 4; //+4 skip startcode
+    unsigned newFrameSize = currPacket.size;
 
-		// Deliver the data here:
-		if (newFrameSize > fMaxSize) {
-			fFrameSize = fMaxSize;
-			fNumTruncatedBytes = newFrameSize - fMaxSize;
-		} else {
-			fFrameSize = newFrameSize;
-		}
+    // Deliver the data here:
+    if (newFrameSize > fMaxSize) {
+      fFrameSize = fMaxSize;
+      fNumTruncatedBytes = newFrameSize - fMaxSize;
+    } else {
+      fFrameSize = newFrameSize;
+    }
 
-		/*if(40 > 0 && 400000 > 0){
-			if(fPresentationTime.tv_sec == 0 && fPresentationTime.tv_usec == 0){
-				gettimeofday(&fPresentationTime, NULL);
-			}else{
-				unsigned uSeconds = fPresentationTime.tv_usec + fLastPlayTime;
-				fPresentationTime.tv_sec += uSeconds/1000000;
-				fPresentationTime.tv_usec = uSeconds%1000000;
-			}
+    /*if(40 > 0 && 400000 > 0){
+      if(fPresentationTime.tv_sec == 0 && fPresentationTime.tv_usec == 0){
+        gettimeofday(&fPresentationTime, NULL);
+      }else{
+        unsigned uSeconds = fPresentationTime.tv_usec + fLastPlayTime;
+        fPresentationTime.tv_sec += uSeconds/1000000;
+        fPresentationTime.tv_usec = uSeconds%1000000;
+      }
 
-			fLastPlayTime = (fPlayTimePerFrame * fFrameSize)/400000;
-			fDurationInMicroseconds = fLastPlayTime;
-		}else{
-			gettimeofday(&fPresentationTime, NULL);
-		}*/
+      fLastPlayTime = (fPlayTimePerFrame * fFrameSize)/400000;
+      fDurationInMicroseconds = fLastPlayTime;
+    }else{
+      gettimeofday(&fPresentationTime, NULL);
+    }*/
 
-		gettimeofday(&fPresentationTime, NULL); // If you have a more accurate time - e.g., from an encoder - then use that instead.
-		// If the device is *not* a 'live source' (e.g., it comes instead from a file or buffer), then set "fDurationInMicroseconds" here.
-		
-		memcpy(fTo, newFrameDataStart, fFrameSize);
+    gettimeofday(&fPresentationTime, NULL); // If you have a more accurate time - e.g., from an encoder - then use that instead.
+    // If the device is *not* a 'live source' (e.g., it comes instead from a file or buffer), then set "fDurationInMicroseconds" here.
+    
+    memcpy(fTo, newFrameDataStart, fFrameSize);
 
-		// After delivering the data, inform the reader that it is now available:
-		FramedSource::afterGetting(this);
-	/*}else{
-		return;
-	}*/
+    // After delivering the data, inform the reader that it is now available:
+    FramedSource::afterGetting(this);
+  /*}else{
+    return;
+  }*/
 }
 
 

@@ -256,7 +256,7 @@ bool Encoder::init( char* filename, int width, int height )
 
 void Encoder::encodeFrame()
 {
-	frameReadyForStream = false;
+  frameReadyForStream = false;
   if(!_recording) return;
 
   if (videoStream)
@@ -308,10 +308,10 @@ void Encoder::encodeFrame()
 
       // Write the compressed frame to the media file. 
 
-	  frameReadyForStream = true;
+    frameReadyForStream = true;
         currPacket = &pkt;
-		queue->push(pkt);
-		//std::cout << queue->getLenght() << std::endl;
+    queue->push(pkt);
+    //std::cout << queue->getLenght() << std::endl;
         //ret = av_write_frame(fc, &pkt);
     } else {
       ret = 0;
@@ -383,10 +383,10 @@ void Encoder::stop()
 
 AVPacket* Encoder::getCurrentPacket()
 {
-	if (_initialized && currPacket != NULL){
+  if (_initialized && currPacket != NULL){
    return currPacket;
   }else{
     std::cerr <<  "Encoder is not initialized or no frame encoded!" << std::endl;
-	return NULL;
+  return NULL;
   }
 }
