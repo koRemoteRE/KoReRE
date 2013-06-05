@@ -15,10 +15,13 @@ CSceneNode::CSceneNode(aiNode* ain_asNode)
     // Überprüfen, ob Mesh vorhanden
     if (ain_asNode->mNumMeshes != 0)
     {
-        // Mesh speichern
-        i_p_nodeMesh = ain_asNode->mMeshes;
         // Anzahl der Meshes speichern
         i_nodeMeshNum = ain_asNode->mNumMeshes;
+        
+        // Mesh speichern
+        ui_p_nodeMesh = new unsigned int[i_nodeMeshNum];
+        for (int i_mesh = 0; i_mesh< i_nodeMeshNum; i_mesh++)
+            ui_p_nodeMesh[i_mesh] = ain_asNode->mMeshes[i_mesh];
     }
     
     // Transformation im Objekt speichern
@@ -29,10 +32,13 @@ CSceneNode::CSceneNode(aiNode* ain_asNode)
 
 CSceneNode::CSceneNode(aiNode* ain_asNode, glm::mat4 m_parnetTransform)
 {
-    // Mesh speichern
-    i_p_nodeMesh = ain_asNode->mMeshes;
     // Anzahl der Meshes speichern
     i_nodeMeshNum = ain_asNode->mNumMeshes;
+    
+    // Mesh speichern
+    ui_p_nodeMesh = new unsigned int[i_nodeMeshNum];
+    for (int i_mesh = 0; i_mesh< i_nodeMeshNum; i_mesh++)
+        ui_p_nodeMesh[i_mesh] = ain_asNode->mMeshes[i_mesh];
     
     // Transformation im Objekt speichern
     m_sceneNodeTransform = CTransformAiToGlm::TransformMat4P(ain_asNode->mTransformation);

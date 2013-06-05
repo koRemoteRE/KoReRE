@@ -13,31 +13,45 @@ CSceneManager::CSceneManager(std::string st_filename)
 {
     if (st_filename.substr(st_filename.find_last_of('.')) == ".dae")
     {
+        const aiScene* ais_p_asImportScene;
+        
         // Mit Assimp Collada-Datei laden
-        ais_asScene = imp_asImporter.ReadFile(st_filename,  aiProcess_CalcTangentSpace |
+        ais_p_asImportScene = imp_asImporter.ReadFile(st_filename,  aiProcess_CalcTangentSpace |
                                                             aiProcess_Triangulate |
                                                             aiProcess_JoinIdenticalVertices |
                                                             aiProcess_SortByPType);
         // Neuen Root-SceneNode für eigenen Szenegraph anlegen
-        sn_p_rootSceneNode = new CSceneNode(ais_asScene->mRootNode);
+        sn_p_rootSceneNode = new CSceneNode(ais_p_asImportScene->mRootNode);
+        
+        // Verwendete Texturen laden
+        loadTexture();
         
         // Licht und Kamera anlegen
-        createLightNode();
-        createCameraNode();
+        createLightNode(ais_p_asImportScene);
+        createCameraNode(ais_p_asImportScene);
         
-        aim_p_asMesh = ais_asScene->mMeshes;
-        aim_p_asMaterial = ais_asScene->mMaterials;
-        ait_p_mTexture = ais_asScene->mTextures;
+        i_numMesh = ais_p_asImportScene->mNumMeshes;
+        i_numMaterial = ais_p_asImportScene->mNumMaterials;
+        i_numTexture = ais_p_asImportScene->mNumTextures;
         
-        i_p_numMesh = new int;
-        i_p_numMaterial = new int;
-        i_p_numTexture = new int;
+        // Adressen werden gespeichert!!
+        // Ersetzen: Inhalt der Adressen kopieren um Assimp-Daten zu löschen
+        aim_p_asMesh = new aiMesh*[i_numMesh];
+        for (int i_mesh = 0; i_mesh < i_numMesh; i_mesh++)
+            aim_p_asMesh[i_mesh] = new aiMesh(*ais_p_asImportScene->mMeshes[i_mesh]);
         
-        *i_p_numMesh = ais_asScene->mNumMeshes;
-        *i_p_numMaterial = ais_asScene->mNumMaterials;
-        *i_p_numTexture = ais_asScene->mNumTextures;
+        aim_p_asMaterial = new aiMaterial*[i_numMaterial];
+        for (int i_material = 0; i_material < i_numMaterial; i_material++)
+            aim_p_asMaterial[i_material] = new aiMaterial(*ais_p_asImportScene->mMaterials[i_material]);
+        
+        ait_p_asTexture = new aiTexture*[i_numTexture];
+        for (int i_texture = 0; i_texture < i_numTexture; i_texture++)
+            ait_p_asTexture[i_texture] = new aiTexture(*ais_p_asImportScene->mTextures[i_texture]);
         
         bindVAO();
+        
+        // Assimp-Szene löschen
+        delete ais_p_asImportScene;
     }
     else
     {
@@ -71,13 +85,18 @@ void CSceneManager::drawScene(CSceneNode* sn_p_drawNode, GLuint glui_shaderProgr
     }
 }
 
+void CSceneManager::loadTexture()
+{
+    ilInit();
+}
+
 //
 void CSceneManager::bindVAO()
 {
     //Vertexliste für jedes Mesh in der Szene anlegen
     GLuint glui_vertexArrayObjBuffer;
     
-    for (unsigned int ui_meshNum = 0; ui_meshNum < *i_p_numMesh; ui_meshNum++)
+    for (unsigned int ui_meshNum = 0; ui_meshNum < i_numMesh; ui_meshNum++)
     {
         cout << "Create VAO-" << ui_meshNum << "..." << endl;
         st_meshVAO stm_meshVAO;
@@ -146,8 +165,9 @@ void CSceneManager::bindVAO()
         
         //TODO: Material und Textur von Objekt
         
-        
         stm_meshList.push_back(stm_meshVAO);
+        
+        delete ui_p_faceVertexArrayObjArray;
     }
 }
 
@@ -192,14 +212,14 @@ void CSceneManager::bindUniformModelMatrix(CSceneNode* sn_p_drawNode, GLuint glu
 	glUniformMatrix3fv(gli_uniformNormalMatrix, 1, GL_FALSE, glm::value_ptr( m_normalMatrix ) ) ;
 }
 
-void CSceneManager::createCameraNode()
+void CSceneManager::createCameraNode(const aiScene* ais_asScene)
 {
     // Name der Kameraquelle nutzen um SceneNode-Transformation mit zu uebergeben
     c_p_cameraNode = new CCamera(ais_asScene->mCameras[0],
                                &ais_asScene->mRootNode->FindNode( ais_asScene->mCameras[0]->mName )->mTransformation);
 }
 
-void CSceneManager::createLightNode()
+void CSceneManager::createLightNode(const aiScene* ais_asScene)
 {
     // Über alle Lichtquellen gehen
     // Name der Lichtquelle nutzen um SceneNode-Transformation mit zu uebergeben

@@ -14,6 +14,7 @@
 
 #include <GL/glew.h>
 #include <GL3/gl3.h>
+#include <IL/il.h>
 
 #include "CDefinitions.h"
 #include "CSceneNode.h"
@@ -36,7 +37,6 @@ private:
     
     //
     Assimp::Importer imp_asImporter;
-    const aiScene* ais_asScene;
     
     //
     CSceneNode* sn_p_rootSceneNode;
@@ -45,11 +45,11 @@ private:
     
     //
     aiMesh** aim_p_asMesh;
-    int* i_p_numMesh;
+    int i_numMesh;
     aiMaterial** aim_p_asMaterial;
-    int* i_p_numMaterial;
-    aiTexture** ait_p_mTexture;
-    int* i_p_numTexture;
+    int i_numMaterial;
+    aiTexture** ait_p_asTexture;
+    int i_numTexture;
     
     // Methoden
 public:
@@ -79,6 +79,9 @@ private:
     void drawScene(CSceneNode* sn_p_drawNode, GLuint glui_shaderProgram);
     
     //
+    void loadTexture();
+    
+    //
     void bindVAO();
     
     //
@@ -87,8 +90,8 @@ private:
                                                     // Model- und Normal-Matrix an Shader binden
     
     //
-    void createCameraNode();                     // Legt eine Kamera an
-    void createLightNode();                      // Legt eine neue Lichtquelle an
+    void createCameraNode(const aiScene* ais_asScene);  // Legt eine Kamera an
+    void createLightNode(const aiScene* ais_asScene);   // Legt eine neue Lichtquelle an
 };
 
 #endif /* defined(__ReRe_Client__SceneManager__) */

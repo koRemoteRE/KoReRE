@@ -22,9 +22,9 @@ class CSceneNode
     // Variablen
 private:
     vector<CSceneNode*> v_p_sceneNodeChildren;  // Liste aller Kinder eines Knotens
-    glm::mat4* m_sceneNodeTransform;          // Transformation des Knoten
-    unsigned int* i_p_nodeMesh;                 // Index auf Mesh
-    int i_nodeMeshNum;                          // Anzahl an Meshes
+    glm::mat4* m_sceneNodeTransform;            // Transformation des Knoten
+    unsigned int* ui_p_nodeMesh;                 // Index auf Mesh
+    int i_nodeMeshNum;                        // Anzahl an Meshes
     
     // Methoden
 public:
@@ -38,7 +38,7 @@ public:
         { return m_sceneNodeTransform; };
     
     unsigned int* returnMeshIndex()
-        { return i_p_nodeMesh; };
+        { return ui_p_nodeMesh; };
     
     int* returnNumberOfMesh()
         { return &i_nodeMeshNum; };
