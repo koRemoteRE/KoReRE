@@ -23,9 +23,6 @@ CSceneManager::CSceneManager(std::string st_filename)
         // Neuen Root-SceneNode für eigenen Szenegraph anlegen
         sn_p_rootSceneNode = new CSceneNode(ais_p_asImportScene->mRootNode);
         
-        // Verwendete Texturen laden
-        loadTexture();
-        
         // Licht und Kamera anlegen
         createLightNode(ais_p_asImportScene);
         createCameraNode(ais_p_asImportScene);
@@ -34,8 +31,6 @@ CSceneManager::CSceneManager(std::string st_filename)
         i_numMaterial = ais_p_asImportScene->mNumMaterials;
         i_numTexture = ais_p_asImportScene->mNumTextures;
         
-        // Adressen werden gespeichert!!
-        // Ersetzen: Inhalt der Adressen kopieren um Assimp-Daten zu löschen
         aim_p_asMesh = new aiMesh*[i_numMesh];
         for (int i_mesh = 0; i_mesh < i_numMesh; i_mesh++)
             aim_p_asMesh[i_mesh] = new aiMesh(*ais_p_asImportScene->mMeshes[i_mesh]);
@@ -48,6 +43,10 @@ CSceneManager::CSceneManager(std::string st_filename)
         for (int i_texture = 0; i_texture < i_numTexture; i_texture++)
             ait_p_asTexture[i_texture] = new aiTexture(*ais_p_asImportScene->mTextures[i_texture]);
         
+        // Verwendete Texturen laden
+        loadTexture();
+        
+        // Alle Daten Vertex Array Object binden
         bindVAO();
         
         // Assimp-Szene löschen
@@ -84,10 +83,45 @@ void CSceneManager::drawScene(CSceneNode* sn_p_drawNode, GLuint glui_shaderProgr
         drawScene(sn_p_drawNode->returnChildren()[ui_numNode], glui_shaderProgram);
     }
 }
-
-void CSceneManager::loadTexture()
+void CSceneManager::bindUniform(GLuint glui_shaderProgram)
 {
-    ilInit();
+    // ProjectionsMatrix an Shader übergeben
+    GLint gli_uniformProjectionMatrix = glGetUniformLocation(glui_shaderProgram,"m_projection");
+	glUniformMatrix4fv(gli_uniformProjectionMatrix, 1, GL_FALSE, glm::value_ptr(returnCameraNode()->returnProjectionMatrix()));
+    
+    // ViewMatrix an Shader übergeben
+    GLint gli_uniformViewMatrix = glGetUniformLocation(glui_shaderProgram,"m_view");
+	glUniformMatrix4fv(gli_uniformViewMatrix, 1, GL_FALSE, glm::value_ptr(returnCameraNode()->returnViewMatrix()));
+    
+    // Lichtposition an Shader übergeben
+    GLint gli_uniformLightVector = glGetUniformLocation(glui_shaderProgram,"lightPos");
+	glUniform3f(gli_uniformLightVector,
+                (returnLightNode()[0]->returnPosition())->x,
+                (returnLightNode()[0]->returnPosition())->y,
+                (returnLightNode()[0]->returnPosition())->z);
+    
+    // Diffuses Licht an Shader übergeben
+    gli_uniformLightVector = glGetUniformLocation(glui_shaderProgram,"diffuseLightColor");
+    glUniform3f(gli_uniformLightVector,
+                (returnLightNode()[0]->returnDiffuse())->x,
+                (returnLightNode()[0]->returnDiffuse())->y,
+                (returnLightNode()[0]->returnDiffuse())->z);
+}
+
+void CSceneManager::bindUniformModelMatrix(CSceneNode* sn_p_drawNode, GLuint glui_shaderProgram)
+{
+    // ModelMatrix an Shader übergeben
+    GLint gli_uniformModelMatrix = glGetUniformLocation(glui_shaderProgram,"m_model");
+	glUniformMatrix4fv(gli_uniformModelMatrix, 1, GL_FALSE, glm::value_ptr( *sn_p_drawNode->returnModelMatrix() ));
+    
+    // Normalen Matrix berechnen
+    glm::mat4 m_normalBuffer = returnCameraNode()->returnViewMatrix() * *sn_p_drawNode->returnModelMatrix();
+    m_normalBuffer = glm::transpose(glm::inverse(m_normalBuffer));
+    glm::mat3 m_normalMatrix = glm::mat3(m_normalBuffer);
+    
+    // Normalen Matrix an Shader übergeben
+    GLint gli_uniformNormalMatrix = glGetUniformLocation(glui_shaderProgram,"m_normal");
+	glUniformMatrix3fv(gli_uniformNormalMatrix, 1, GL_FALSE, glm::value_ptr( m_normalMatrix ) ) ;
 }
 
 //
@@ -158,12 +192,16 @@ void CSceneManager::bindVAO()
             //glEnableVertexAttribArray(SHADER_TEX_COORD_LOC);
             //glVertexAttribPointer(SHADER_TEX_COORD_LOC, 2, GL_FLOAT, 0, 0, 0);
         }
-        
+        // unbind Buffers
         glBindVertexArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
         
         //TODO: Material und Textur von Objekt
+        aiString aistr_texPath;
+        if (AI_SUCCESS == aim_p_asMaterial[aim_p_asMesh[ui_meshNum]->mMaterialIndex]->GetTexture(aiTextureType_DIFFUSE, 0, &aistr_texPath))
+            stm_meshVAO.glui_textureIndex = map_strglui_textureID[aistr_texPath.data];
+        
         
         stm_meshList.push_back(stm_meshVAO);
         
@@ -171,45 +209,61 @@ void CSceneManager::bindVAO()
     }
 }
 
-void CSceneManager::bindUniform(GLuint glui_shaderProgram)
+void CSceneManager::loadTexture()
 {
-    // ProjectionsMatrix an Shader übergeben
-    GLint gli_uniformProjectionMatrix = glGetUniformLocation(glui_shaderProgram,"m_projection");
-	glUniformMatrix4fv(gli_uniformProjectionMatrix, 1, GL_FALSE, glm::value_ptr(returnCameraNode()->returnProjectionMatrix()));
+    // DevIL initialisieren
+    ilInit();
     
-    // ViewMatrix an Shader übergeben
-    GLint gli_uniformViewMatrix = glGetUniformLocation(glui_shaderProgram,"m_view");
-	glUniformMatrix4fv(gli_uniformViewMatrix, 1, GL_FALSE, glm::value_ptr(returnCameraNode()->returnViewMatrix()));
+    // Szenen Material nach Texturen durchsuchen
+    for (int i_material = 0, i_texIndex; i_material < i_numMaterial; i_material++, i_texIndex = 0)
+    {
+        aiString aistr_path;
+        while (aim_p_asMaterial[i_material]->GetTexture(aiTextureType_DIFFUSE, i_texIndex, &aistr_path) == AI_SUCCESS)
+        {
+            map_strglui_textureID[aistr_path.data] = 0;
+            i_texIndex++;
+        }
+    }
     
-    // Lichtposition an Shader übergeben
-    GLint gli_uniformLightVector = glGetUniformLocation(glui_shaderProgram,"lightPos");
-	glUniform3f(gli_uniformLightVector,
-                (returnLightNode()[0]->returnPosition())->x,
-                (returnLightNode()[0]->returnPosition())->y,
-                (returnLightNode()[0]->returnPosition())->z);
+    int i_textureIDSize = map_strglui_textureID.size();
     
-    // Diffuses Licht an Shader übergeben
-    gli_uniformLightVector = glGetUniformLocation(glui_shaderProgram,"diffuseLightColor");
-    glUniform3f(gli_uniformLightVector,
-                (returnLightNode()[0]->returnDiffuse())->x,
-                (returnLightNode()[0]->returnDiffuse())->y,
-                (returnLightNode()[0]->returnDiffuse())->z);
-}
-
-void CSceneManager::bindUniformModelMatrix(CSceneNode* sn_p_drawNode, GLuint glui_shaderProgram)
-{
-    // ModelMatrix an Shader übergeben
-    GLint gli_uniformModelMatrix = glGetUniformLocation(glui_shaderProgram,"m_model");
-	glUniformMatrix4fv(gli_uniformModelMatrix, 1, GL_FALSE, glm::value_ptr( *sn_p_drawNode->returnModelMatrix() ));
+    // Array mit DevIL-Texture IDs füllen
+    ILuint* ilui_imageID = new ILuint[i_textureIDSize];
+    ilGenImages(i_textureIDSize, ilui_imageID);
     
-    // Normalen Matrix berechnen
-    glm::mat4 m_normalBuffer = returnCameraNode()->returnViewMatrix() * *sn_p_drawNode->returnModelMatrix();
-    m_normalBuffer = glm::transpose(glm::inverse(m_normalBuffer));
-    glm::mat3 m_normalMatrix = glm::mat3(m_normalBuffer);
+    // Array mit GL-Texture IDs füllen
+    GLuint* glui_textureID = new GLuint[i_textureIDSize];
+    glGenTextures(i_textureIDSize, glui_textureID);
     
-    // Normalen Matrix an Shader übergeben
-    GLint gli_uniformNormalMatrix = glGetUniformLocation(glui_shaderProgram,"m_normal");
-	glUniformMatrix3fv(gli_uniformNormalMatrix, 1, GL_FALSE, glm::value_ptr( m_normalMatrix ) ) ;
+    int i_index = 0;
+    for (map<string, GLuint>::iterator iter_textureIDNum = map_strglui_textureID.begin(); iter_textureIDNum != map_strglui_textureID.end(); iter_textureIDNum++, i_index++)
+    {
+        // DevIL-Bild ID speichern
+        string str_filename = (*iter_textureIDNum).first;
+        (*iter_textureIDNum).second = glui_textureID[i_index];
+        
+        // DevIL-Bild Name binden
+        ilBindImage(ilui_imageID[i_index]);
+        ilEnable(IL_ORIGIN_SET);
+        ilOriginFunc(IL_ORIGIN_LOWER_LEFT);
+        
+        if (ilLoadImage((ILstring)str_filename.c_str()))
+        {
+            // Bild in RGBA umwandeln
+            ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
+            
+            // OpenGL Texture erstellen und laden
+            glBindTexture(GL_TEXTURE_2D, glui_textureID[i_index]);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 0, GL_RGBA, GL_UNSIGNED_BYTE, ilGetData());
+        }
+    }
+    
+    // DevIL-Daten löschen (Als OpenGL Texture vorhanden)
+    ilDeleteImages(i_textureIDSize, ilui_imageID);
+    delete [] ilui_imageID;
+    delete [] glui_textureID;
 }
 
 void CSceneManager::createCameraNode(const aiScene* ais_asScene)

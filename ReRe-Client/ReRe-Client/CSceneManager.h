@@ -9,6 +9,8 @@
 #ifndef __ReRe_Client__SceneManager__
 #define __ReRe_Client__SceneManager__
 
+#include <map>
+
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 
@@ -51,6 +53,9 @@ private:
     aiTexture** ait_p_asTexture;
     int i_numTexture;
     
+    //
+    map<string, GLuint> map_strglui_textureID;
+    
     // Methoden
 public:
     //
@@ -79,16 +84,14 @@ private:
     void drawScene(CSceneNode* sn_p_drawNode, GLuint glui_shaderProgram);
     
     //
-    void loadTexture();
+    void bindUniform(GLuint glui_shaderProgram);    // View- und Projection-Matrix an Shader binden
+    void bindUniformModelMatrix(CSceneNode* sn_p_drawNode, GLuint glui_shaderProgram); // Model- und Normal-Matrix an Shader binden
     
     //
     void bindVAO();
     
     //
-    void bindUniform(GLuint glui_shaderProgram);    // View- und Projection-Matrix an Shader binden
-    void bindUniformModelMatrix(CSceneNode* sn_p_drawNode, GLuint glui_shaderProgram);
-                                                    // Model- und Normal-Matrix an Shader binden
-    
+    void loadTexture();
     //
     void createCameraNode(const aiScene* ais_asScene);  // Legt eine Kamera an
     void createLightNode(const aiScene* ais_asScene);   // Legt eine neue Lichtquelle an
