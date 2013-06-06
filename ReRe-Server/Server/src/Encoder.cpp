@@ -1,6 +1,10 @@
 #include "Encoder.h"
 #include <iostream>
+#include <time.h>
+#include "logger.h"
 #include "KoRE\RenderManager.h"
+
+logger loger;
 
 extern "C"{
   #include "libavutil/opt.h"
@@ -184,38 +188,6 @@ bool Encoder::init( char* filename, int width, int height )
   buffer = (uint8_t*)malloc(framebuffersize);
 
   codecContext = videoStream->codec;
-/*
-  codec = avcodec_find_encoder(CODEC_ID_H264);
-  if (!codec){
-    std::cerr << "codec not found" << std::endl;
-    return false;
-  }
-  codecContext = avcodec_alloc_context3(codec);
-
-
-  codecContext->bit_rate = 400000;
-  codecContext->width = width;
-  codecContext->height = height;
-  AVRational timebase = {1,25};
-  codecContext->time_base = timebase;
-  codecContext->gop_size = 10; //keyframe every 10 frame
-  codecContext->max_b_frames=1;
-  codecContext->mb_decision=2;
-  codecContext->pix_fmt = PIX_FMT_YUV420P;
-  codecContext->profile = FF_PROFILE_H264_BASELINE;
-
-  AVDictionary* conf = NULL;
-  av_dict_set(&conf, "preset","ultrafast",0);
-  if (avcodec_open2(codecContext, codec,&conf) < 0) {
-    std::cerr << "could not open codec" << std::endl;
-    return false;
-  }
-  file = fopen(filename, "wb");
-  if (!file) {
-    std::cerr << "could not open "<< filename << std::endl;
-    return false;
-  }*/
-
 
   outbuf_size = 100000;
   outbuf = (uint8_t *)malloc(outbuf_size);
@@ -256,7 +228,7 @@ bool Encoder::init( char* filename, int width, int height )
 
 void Encoder::encodeFrame()
 {
-  frameReadyForStream = false;
+  //frameReadyForStream = false;
   if(!_recording) return;
 
   if (videoStream)
@@ -296,6 +268,7 @@ void Encoder::encodeFrame()
     av_init_packet(&pkt);
 
     // encode the image 
+	loger.printTime("Eencoding start");
     ret = avcodec_encode_video2(codecContext, &pkt, picYUV, &got_packet);
     if (ret < 0) {
       fprintf(stderr, "Error encoding video frame: %s\n");
@@ -306,14 +279,15 @@ void Encoder::encodeFrame()
     if (!ret && got_packet && pkt.size) {
       pkt.stream_index = videoStream->index;
 
-      // Write the compressed frame to the media file. 
-
-    frameReadyForStream = true;
-        currPacket = &pkt;
-    queue->push(pkt);
+       
+	  loger.printTime("Encoding done");
+		currPacket = &pkt;
+		queue->push(pkt);
     //std::cout << queue->getLenght() << std::endl;
-        //ret = av_write_frame(fc, &pkt);
+	// Write the compressed frame to the media file.
+    //ret = av_write_frame(fc, &pkt);
     } else {
+		loger.printTime("Didn't push encoded Frame");
       ret = 0;
     }
   }
@@ -324,39 +298,10 @@ void Encoder::encodeFrame()
   frame_count++;
   picYUV->pts += av_rescale_q(1, videoStream->codec->time_base, videoStream->time_base);
 
-  //out_size = avcodec_encode_video(codecContext,outbuf,outbuf_size,picYUV);
-  //std::cout << "encoding Frame " << ++frameno << "(size ="<<out_size <<")" << std::endl;
-  //fwrite(outbuf, 1, out_size, file);
 }
 
 void Encoder::finish()
 {
-
-/*
-  //delayed frames
-  for(; out_size; ++frameno){
-    out_size = avcodec_encode_video(codecContext, outbuf, outbuf_size, NULL);
-    std::cout << "encoding frame "<<frameno<<" (size="<<out_size <<")"<<std::endl;
-    fwrite(outbuf, 1, out_size, file); 
-  }
-
-  //add sequence end code to have a real mpeg file
-  outbuf[0] = 0x00;
-  outbuf[1] = 0x00;
-  outbuf[2] = 0x01;
-  outbuf[3] = 0xb7;
-  fwrite(outbuf, 1, 4, file);
-  fclose(file);
-  free(buffer);
-  free(picYUVbuf);
-  free(outbuf);
-
-  sws_freeContext(sws_context);
-  avcodec_close(codecContext);
-  av_free(codecContext);*/
-  //av_free(picRGB);
-  //av_free(picYUV);
-
   _recording=false;
 }
 
