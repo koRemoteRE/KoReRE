@@ -86,12 +86,14 @@ private:
     //
     void bindUniform(GLuint glui_shaderProgram);    // View- und Projection-Matrix an Shader binden
     void bindUniformModelMatrix(CSceneNode* sn_p_drawNode, GLuint glui_shaderProgram); // Model- und Normal-Matrix an Shader binden
+    void bindUniformMaterial(unsigned int ui_meshNum, GLuint glui_shaderProgram);    // Material an Shader binden
     
-    //
+    // Vertex Array Objekt konfigurieren
     void bindVAO();
     
     //
     void loadTexture();
+    
     //
     void createCameraNode(const aiScene* ais_asScene);  // Legt eine Kamera an
     void createLightNode(const aiScene* ais_asScene);   // Legt eine neue Lichtquelle an

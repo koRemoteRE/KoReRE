@@ -72,7 +72,10 @@ void CSceneManager::drawScene(CSceneNode* sn_p_drawNode, GLuint glui_shaderProgr
     
     for (unsigned int ui_numMesh = 0; ui_numMesh <  *(sn_p_drawNode->returnNumberOfMesh()); ui_numMesh++)
     {
-        //glBindTexture(GL_TEXTURE_2D, stm_meshList[sn_p_drawNode->returnMeshIndex()[ui_numMesh]].glui_textureIndex);
+        bindUniformMaterial(ui_numMesh, glui_shaderProgram);
+        
+        //
+        glBindTexture(GL_TEXTURE_2D, stm_meshList[sn_p_drawNode->returnMeshIndex()[ui_numMesh]].glui_textureIndex);
         glBindVertexArray(stm_meshList[sn_p_drawNode->returnMeshIndex()[ui_numMesh]].glui_vaoBuffer);
         glDrawElements(GL_TRIANGLES,stm_meshList[sn_p_drawNode->returnMeshIndex()[ui_numMesh]].glui_numFace*3, GL_UNSIGNED_INT, 0);
     }
@@ -122,6 +125,23 @@ void CSceneManager::bindUniformModelMatrix(CSceneNode* sn_p_drawNode, GLuint glu
     // Normalen Matrix an Shader übergeben
     GLint gli_uniformNormalMatrix = glGetUniformLocation(glui_shaderProgram,"m_normal");
 	glUniformMatrix3fv(gli_uniformNormalMatrix, 1, GL_FALSE, glm::value_ptr( m_normalMatrix ) ) ;
+}
+
+void CSceneManager::bindUniformMaterial(unsigned int ui_meshNum, GLuint glui_shaderProgram)
+{
+    aiColor4D diffuse;
+    glm::vec4 v_materialDiffuse;
+    
+    if (AI_SUCCESS == aiGetMaterialColor(aim_p_asMaterial[aim_p_asMesh[ui_meshNum]->mMaterialIndex], AI_MATKEY_COLOR_DIFFUSE, &diffuse))
+    {
+        v_materialDiffuse[0] = diffuse.r;
+        v_materialDiffuse[1] = diffuse.g;
+        v_materialDiffuse[2] = diffuse.b;
+        v_materialDiffuse[3] = diffuse.a;
+    }
+    
+    GLint gli_uniformMaterial = glGetUniformLocation(glui_shaderProgram,"materialDif");
+    glUniform4f(gli_uniformMaterial, v_materialDiffuse[0], v_materialDiffuse[1], v_materialDiffuse[2], v_materialDiffuse[3]);
 }
 
 //
@@ -189,19 +209,20 @@ void CSceneManager::bindVAO()
             glGenBuffers(1, &glui_vertexArrayObjBuffer);
             glBindBuffer(GL_ARRAY_BUFFER, glui_vertexArrayObjBuffer);
             glBufferData(GL_ARRAY_BUFFER, sizeof(float) * aim_p_asMesh[ui_meshNum]->mNumVertices * 2, f_p_textureCoord, GL_STATIC_DRAW);
-            //glEnableVertexAttribArray(SHADER_TEX_COORD_LOC);
-            //glVertexAttribPointer(SHADER_TEX_COORD_LOC, 2, GL_FLOAT, 0, 0, 0);
+            glEnableVertexAttribArray(SHADER_TEX_COORD_LOC);
+            glVertexAttribPointer(SHADER_TEX_COORD_LOC, 2, GL_FLOAT, 0, 0, 0);
         }
         // unbind Buffers
         glBindVertexArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
         
-        //TODO: Material und Textur von Objekt
+        // Material und Textur von Objekt
         aiString aistr_texPath;
         if (AI_SUCCESS == aim_p_asMaterial[aim_p_asMesh[ui_meshNum]->mMaterialIndex]->GetTexture(aiTextureType_DIFFUSE, 0, &aistr_texPath))
+        {
             stm_meshVAO.glui_textureIndex = map_strglui_textureID[aistr_texPath.data];
-        
+        }
         
         stm_meshList.push_back(stm_meshVAO);
         
