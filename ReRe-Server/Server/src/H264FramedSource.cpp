@@ -118,7 +118,6 @@ void H264FramedSource::deliverFrame() {
 
   double time_base = 1.0/25.0;
 
-  //if(!queue->empty()){
 	loging.printTime("Access queue");
     queue->waitAndPop(currPacket);
 	loging.printTime("Pop from queue");
@@ -160,9 +159,6 @@ void H264FramedSource::deliverFrame() {
 
 	loging.printTime("Sending Frame");
 	loging.clearConsole();
-  /*}else{
-    return;
-  }*/
 }
 
 

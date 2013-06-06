@@ -177,11 +177,6 @@ bool Encoder::init( char* filename, int width, int height )
   if (picYUV)
     picYUV->pts = 0;
 
-
-
-
-
-
   renderResolution = glm::ivec2(800,600);//kore::RenderManager::getInstance()->getRenderResolution();
 
   int framebuffersize = renderResolution.x*renderResolution.y*3;
@@ -268,7 +263,7 @@ void Encoder::encodeFrame()
     av_init_packet(&pkt);
 
     // encode the image 
-	loger.printTime("Eencoding start");
+	loger.printTime("Encoding start");
     ret = avcodec_encode_video2(codecContext, &pkt, picYUV, &got_packet);
     if (ret < 0) {
       fprintf(stderr, "Error encoding video frame: %s\n");
@@ -277,18 +272,18 @@ void Encoder::encodeFrame()
     // If size is zero, it means the image was buffered. 
 
     if (!ret && got_packet && pkt.size) {
-      pkt.stream_index = videoStream->index;
+		pkt.stream_index = videoStream->index;
 
        
-	  loger.printTime("Encoding done");
-		currPacket = &pkt;
+		loger.printTime("Encoding done");
+		//currPacket = &pkt;
 		queue->push(pkt);
-    //std::cout << queue->getLenght() << std::endl;
-	// Write the compressed frame to the media file.
-    //ret = av_write_frame(fc, &pkt);
+		//std::cout << queue->getLenght() << std::endl;
+		// Write the compressed frame to the media file.
+		//ret = av_write_frame(fc, &pkt);
     } else {
 		loger.printTime("Didn't push encoded Frame");
-      ret = 0;
+		ret = 0;
     }
   }
   if (ret != 0) {
@@ -320,10 +315,6 @@ void Encoder::stop()
   if (_recording){
     _recording = false;
   }
-/*
-  else{
-    std::cerr <<  "Encoder is not recording!" << std::endl;
-  }*/
 }
 
 AVPacket* Encoder::getCurrentPacket()
