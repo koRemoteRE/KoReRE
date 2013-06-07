@@ -86,7 +86,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <AdditionalOptions> /Zm1000 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(BOOST_ROOT)/;$(SolutionDir)ext/include;$(ProjectDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(BOOST_ROOT);$(SolutionDir)ext/include;$(ProjectDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <CompileAs>CompileAsCpp</CompileAs>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -287,6 +287,7 @@
     <ClCompile Include="src\Encoder.cpp" />
     <ClCompile Include="src\H264FramedSource.cpp" />
     <ClCompile Include="src\H264LiveVideoSubsession.cpp" />
+    <ClCompile Include="src\logger.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\RTSPOnDemandServer.cpp" />
   </ItemGroup>
@@ -295,6 +296,7 @@
     <ClInclude Include="src\Encoder.h" />
     <ClInclude Include="src\H264FramedSource.h" />
     <ClInclude Include="src\H264LiveVideoSubsession.h" />
+    <ClInclude Include="src\logger.h" />
     <ClInclude Include="src\RTSPOnDemandServer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,5 +1,8 @@
 #include "H264FramedSource.h"
 #include "live555/GroupsockHelper.hh" // for "gettimeofday()"
+#include "logger.h"
+
+logger loging;
 
 EventTriggerId H264FramedSource::eventTriggerId = 0;
 unsigned H264FramedSource::FrameSize = 0;
@@ -23,7 +26,7 @@ H264FramedSource::H264FramedSource(UsageEnvironment& env)
   queue = ConcurrentQueue::getInstance();
 
   encoder = Encoder::getInstance();
-  encoder->start();
+  //encoder->start();
   //oldPacket = 0;
 
 
@@ -109,13 +112,15 @@ void H264FramedSource::deliverFrame() {
   // Note the code below.
 
   
+  encoder->start();
+
   AVPacket currPacket;
 
   double time_base = 1.0/25.0;
 
-  //if(!queue->empty()){
-
+	loging.printTime("Access queue");
     queue->waitAndPop(currPacket);
+	loging.printTime("Pop from queue");
 
     u_int8_t* newFrameDataStart = currPacket.data + 4; //+4 skip startcode
     unsigned newFrameSize = currPacket.size;
@@ -149,10 +154,11 @@ void H264FramedSource::deliverFrame() {
     memcpy(fTo, newFrameDataStart, fFrameSize);
 
     // After delivering the data, inform the reader that it is now available:
+	
     FramedSource::afterGetting(this);
-  /*}else{
-    return;
-  }*/
+
+	loging.printTime("Sending Frame");
+	loging.clearConsole();
 }
 
 

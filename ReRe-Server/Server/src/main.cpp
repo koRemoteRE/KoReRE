@@ -452,7 +452,7 @@ int main(void) {
   // Main loop
 
   //FPS LIMIT--------------------
-  float fpslimit = 1.0/25; //25fps
+  float fpslimit = 1.0/5; //25fps
   double frametime;
   //-----------------------------
 
