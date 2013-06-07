@@ -11,7 +11,7 @@ RTSPOnDemandServer::RTSPOnDemandServer(void)
     exit(1);
   }
   
-  OutPacketBuffer::maxSize = 400000;
+  OutPacketBuffer::maxSize = 600000;
   char const* streamName = "h264Test";
   //char const* inputFileName = "test.h264";
   ServerMediaSession* sms

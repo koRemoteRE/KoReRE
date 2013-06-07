@@ -82,8 +82,8 @@ AVStream *Encoder::add_stream(AVFormatContext *oc, AVCodec **codec,
     
   }
 
-  /*av_opt_set(c->priv_data, "preset", "ultrafast", 0);
-  av_opt_set(c->priv_data, "tune", "zerolatency", 0);*/
+  av_opt_set(c->priv_data, "preset", "ultrafast", 0);
+  //av_opt_set(c->priv_data, "tune", "zerolatency", 0);
 
   // Some formats want stream headers to be separate.
   if (oc->oformat->flags & AVFMT_GLOBALHEADER)
