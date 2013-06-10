@@ -115,12 +115,16 @@ void H264FramedSource::deliverFrame() {
   encoder->start();
 
   AVPacket currPacket;
+  QueuePacket qPkt;
 
-  double time_base = 1.0/25.0;
 
 	loging.printTime("Access queue");
-    queue->waitAndPop(currPacket);
+    queue->waitAndPop(qPkt);
 	loging.printTime("Pop from queue");
+
+
+	currPacket = qPkt.framePacket;
+
 
     u_int8_t* newFrameDataStart = currPacket.data + 4; //+4 skip startcode
     unsigned newFrameSize = currPacket.size;
@@ -133,7 +137,7 @@ void H264FramedSource::deliverFrame() {
       fFrameSize = newFrameSize;
     }
 
-    /*if(40 > 0 && 400000 > 0){
+    /*if(100 > 0 && 600000 > 0){
       if(fPresentationTime.tv_sec == 0 && fPresentationTime.tv_usec == 0){
         gettimeofday(&fPresentationTime, NULL);
       }else{
@@ -142,13 +146,17 @@ void H264FramedSource::deliverFrame() {
         fPresentationTime.tv_usec = uSeconds%1000000;
       }
 
-      fLastPlayTime = (fPlayTimePerFrame * fFrameSize)/400000;
+      fLastPlayTime = (fPlayTimePerFrame * fFrameSize)/600000;
       fDurationInMicroseconds = fLastPlayTime;
     }else{
       gettimeofday(&fPresentationTime, NULL);
     }*/
 
-    gettimeofday(&fPresentationTime, NULL); // If you have a more accurate time - e.g., from an encoder - then use that instead.
+	gettimeofday(&fPresentationTime, NULL);
+	//fPresentationTime.tv_sec -= 3;
+	//fPresentationTime.tv_usec -= 3000;
+	
+	// If you have a more accurate time - e.g., from an encoder - then use that instead.
     // If the device is *not* a 'live source' (e.g., it comes instead from a file or buffer), then set "fDurationInMicroseconds" here.
     
     memcpy(fTo, newFrameDataStart, fFrameSize);
@@ -157,6 +165,8 @@ void H264FramedSource::deliverFrame() {
 	
     FramedSource::afterGetting(this);
 
+	/*loging.printInt(fPresentationTime.tv_sec);
+	loging.printInt(fPresentationTime.tv_usec);*/
 	loging.printTime("Sending Frame");
 	loging.clearConsole();
 }

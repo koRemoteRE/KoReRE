@@ -3,11 +3,12 @@
 #include <iostream>
 #include <string>
 
-static class logger
+class logger
 {
 public:
 	logger(void);
-	static void printTime(char *messege);
+	static void printTime(const char *messege);
+	static void printInt(int n);
 	static void clearConsole();
 	~logger(void);
 };

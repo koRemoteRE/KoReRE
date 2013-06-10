@@ -8,7 +8,7 @@ ConcurrentQueue::~ConcurrentQueue(){
 
 }
 
-void ConcurrentQueue::push(AVPacket const &data){
+void ConcurrentQueue::push(QueuePacket const &data){
 	boost::mutex::scoped_lock lock(theMutex);
 	theQueue.push(data);
 	lock.unlock();
@@ -20,7 +20,7 @@ bool ConcurrentQueue::empty() const{
 	return theQueue.empty();
 }
 
-bool ConcurrentQueue::tryPop(AVPacket &poppedValue){
+bool ConcurrentQueue::tryPop(QueuePacket &poppedValue){
 	boost::mutex::scoped_lock lock(theMutex);
 	if(theQueue.empty()){
 		return false;
@@ -32,7 +32,7 @@ bool ConcurrentQueue::tryPop(AVPacket &poppedValue){
 	return true;
 }
 
-void ConcurrentQueue::waitAndPop(AVPacket &poppedValue){
+void ConcurrentQueue::waitAndPop(QueuePacket &poppedValue){
 	boost::mutex::scoped_lock lock(theMutex);
 	while(theQueue.empty()){
 		theConditionVariable.wait(lock);

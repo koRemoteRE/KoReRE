@@ -1,6 +1,6 @@
 #include "logger.h"
 
-bool logging = true;
+bool logging = false;
 
 logger::logger(void)
 {
@@ -12,9 +12,15 @@ logger::~logger(void)
 {
 }
 
-void logger::printTime(char *messege){
+void logger::printTime(const char *messege){
 	if(logging){
 		std::cout << GetTickCount() << " - - - " << messege << std::endl;
+	}
+}
+
+void logger::printInt(int n){
+	if(logging){
+		std::cout << n << std::endl;
 	}
 }
 

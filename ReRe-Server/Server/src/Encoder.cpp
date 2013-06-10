@@ -70,7 +70,7 @@ AVStream *Encoder::add_stream(AVFormatContext *oc, AVCodec **codec,
   // of which frame timestamps are represented. For fixed-fps content,
   // timebase should be 1/framerate and timestamp increments should be
   // identical to 1. 
-  c->time_base.den = 25;
+  c->time_base.den = 10;
   c->time_base.num = 1;
   c->gop_size      = 12; // emit one intra frame every twelve frames at most
   c->pix_fmt       = PIX_FMT_YUV420P;
@@ -87,7 +87,7 @@ AVStream *Encoder::add_stream(AVFormatContext *oc, AVCodec **codec,
   }
 
   av_opt_set(c->priv_data, "preset", "ultrafast", 0);
-  //av_opt_set(c->priv_data, "tune", "zerolatency", 0);
+  av_opt_set(c->priv_data, "tune", "zerolatency", 0);
 
   // Some formats want stream headers to be separate.
   if (oc->oformat->flags & AVFMT_GLOBALHEADER)
@@ -262,6 +262,9 @@ void Encoder::encodeFrame()
     int got_packet;
     av_init_packet(&pkt);
 
+	QueuePacket qPkt = { 0 };
+	timeval tv = { 0 };
+
     // encode the image 
 	loger.printTime("Encoding start");
     ret = avcodec_encode_video2(codecContext, &pkt, picYUV, &got_packet);
@@ -277,7 +280,10 @@ void Encoder::encodeFrame()
        
 		loger.printTime("Encoding done");
 		//currPacket = &pkt;
-		queue->push(pkt);
+
+		qPkt.framePacket = pkt;
+
+		queue->push(qPkt);
 		//std::cout << queue->getLenght() << std::endl;
 		// Write the compressed frame to the media file.
 		//ret = av_write_frame(fc, &pkt);
@@ -291,8 +297,15 @@ void Encoder::encodeFrame()
     exit(1);
   }
   frame_count++;
-  picYUV->pts += av_rescale_q(1, videoStream->codec->time_base, videoStream->time_base);
+ // if(frame_count == 11 ){
 
+	////picYUV->pts += av_rescale_q(1, videoStream->codec->time_base, videoStream->time_base);
+	//picYUV->pts -= 36000;
+ // }
+	picYUV->pts += av_rescale_q(1, videoStream->codec->time_base, videoStream->time_base);
+  
+  //int64_t hjkljkhl = av_rescale_q(1, videoStream->codec->time_base, videoStream->time_base);
+  int ghgh = 0;
 }
 
 void Encoder::finish()

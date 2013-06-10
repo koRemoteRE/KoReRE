@@ -11,12 +11,16 @@ extern "C" {
 #include <libswscale/swscale.h>
 }
 
+struct QueuePacket{
+	int id;
+	AVPacket framePacket;
+};
 
 class ConcurrentQueue
 {
 private:
 	ConcurrentQueue(void);
-	std::queue<AVPacket> theQueue;
+	std::queue<QueuePacket> theQueue;
 	mutable boost::mutex theMutex;
 	boost::condition_variable theConditionVariable;
 public:
@@ -25,10 +29,10 @@ public:
 		return &queue;
 	};
 	~ConcurrentQueue();
-	void push(AVPacket const &data);
+	void push(QueuePacket const &data);
 	bool empty() const;
-	bool tryPop(AVPacket &poppedValue);
-	void waitAndPop(AVPacket &poppedValue);
+	bool tryPop(QueuePacket &poppedValue);
+	void waitAndPop(QueuePacket &poppedValue);
 	int getLenght();
 };
 #endif
