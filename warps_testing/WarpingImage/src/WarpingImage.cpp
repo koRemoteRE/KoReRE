@@ -12,6 +12,7 @@
 #include "Util.h"
 #include "Box.h"
 #include "Rectangle.h"
+#include "loadTexture.h"
 
 const int WINDOW_HEIGHT = 768;
 const int WINDOW_WIDTH = 1024;
@@ -28,12 +29,15 @@ GLuint progTxt, vertTxt, fragTxt;
 float aspect = (float) (WINDOW_WIDTH) / WINDOW_HEIGHT;
 float textureAspect = (float) (TEXTURE_WIDTH) / TEXTURE_HEIGHT;
 GLuint progTexture, vertTexture, fragTexture;
-GLuint boxBuffer[3], recBuffer[3], txtQuadBuffer[2];
+GLuint boxBuffer[4], recBuffer[3], txtQuadBuffer[2];
 GLuint firstFrameTexture, firstFrameFBO;
+GLuint textureHandle;
+
 
 GLuint vao[4];
 glm::vec3 pos(0.0f, 0.0f, 0.0f);
-float rot = 0.0f;
+float rotY = 0.0f;
+float rotZ = 0.0f;
 
 glm::mat4 projMatrix, modelMatrix;
 glm::mat4 firstProjMatrix, firstModelMatrix;
@@ -44,6 +48,7 @@ void displayFirstFrame();
 void display();
 void setupBuffers();
 void keyAction(unsigned char key, int x, int y);
+void mouseAction(int button, int state, int x, int y);
 
 int main(int argc, char **argv) {
 	glutInit(&argc, argv);
@@ -53,6 +58,7 @@ int main(int argc, char **argv) {
 	glutCreateWindow("Wapring Image");
 
 	glutKeyboardFunc(keyAction);
+	glutMouseFunc(mouseAction)
 
 	GLenum err = glewInit();
 	if (GLEW_OK != err) {
@@ -63,7 +69,7 @@ int main(int argc, char **argv) {
 	std::cout << glGetString(GL_VERSION) << std::endl;
 
 	glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
-
+	glEnable(GL_DEPTH_TEST);
 	utl = new Util();
 	matState = new MatrixState();
 
@@ -96,9 +102,10 @@ void displayFirstFrame() {
 
 	matState->matrixMode(matState->VIEW);
 	matState->loadIdentity();
-	matState->lookAt(0.0f, 0.0f, 15.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+	matState->lookAt(0.0f, 0.0f, 15.0f,0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 	matState->translate(pos.x, pos.y, pos.z);
-	matState->rotate(rot, 0.0f, 1.0f, 0.0f);
+	matState->rotate(rotY, 0.0f, 1.0f, 0.0f);
+	matState->rotate(rotZ, 0.0f, 0.0f, 1.0f);
 	firstModelMatrix = matState->getCurrentMatrix();
 
 	glUseProgram(prog);
@@ -113,6 +120,8 @@ void displayFirstFrame() {
 			glm::value_ptr(firstProjMatrix));
 	glUniformMatrix4fv(glGetUniformLocation(prog, "viewMatrix"), 1, false,
 			glm::value_ptr(firstModelMatrix));
+
+
 	glBindVertexArray(vao[0]);
 	glDrawElements(GL_TRIANGLES, sizeof(rectangleIndices), GL_UNSIGNED_SHORT,
 			0);
@@ -125,9 +134,13 @@ void displayFirstFrame() {
 			glm::value_ptr(firstProjMatrix));
 	glUniformMatrix4fv(glGetUniformLocation(prog, "viewMatrix"), 1, false,
 			glm::value_ptr(firstModelMatrix));
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D,textureHandle);
+	glUniform1i(glGetUniformLocation(prog, "frameTex"), 0);
+
 	glBindVertexArray(vao[1]);
 	glDrawElements(GL_TRIANGLES, sizeof(boxIndices), GL_UNSIGNED_SHORT, 0);
-
+	glDisable(GL_TEXTURE_2D);
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 
 	glutSwapBuffers();
@@ -148,9 +161,10 @@ void display() {
 
 	matState->matrixMode(matState->VIEW);
 	matState->loadIdentity();
-	matState->lookAt(0.0f, 0.0f, 15.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+	matState->lookAt(0.0f, 0.0f,15.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 	matState->translate(pos.x, pos.y, pos.z);
-	matState->rotate(rot, 0.0f, 1.0f, 0.0f);
+	matState->rotate(rotY, 0.0f, 1.0f, 0.0f);
+	matState->rotate(rotZ, 0.0f, 0.0f, 1.0f);
 	modelMatrix = matState->getCurrentMatrix();
 
 	glUseProgram(progNorm);
@@ -172,7 +186,7 @@ void display() {
 	glUniform2iv(glGetUniformLocation(progNorm,"texDim"),1,glm::value_ptr(dim));
 	glBindVertexArray(vao[3]);
 	glDrawElements(GL_TRIANGLES, sizeof(boxIndices), GL_UNSIGNED_SHORT, 0);
-
+	glDisable(GL_TEXTURE_2D);
 	glutSwapBuffers();
 //
 //	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -188,7 +202,7 @@ void display() {
 //	glUseProgram(0);
 //	glutSwapBuffers();
 
-	if(counter > 200){
+	if(counter > 2000){
 		glutDisplayFunc(displayFirstFrame);
 		glutIdleFunc(displayFirstFrame);
 		counter = 0;
@@ -198,6 +212,10 @@ void display() {
 }
 
 void setupBuffers() {
+
+
+	//Textur laden
+	textureHandle = loadTexture("resources\\test.png");
 
 	glGenVertexArrays(4, vao);
 
@@ -229,7 +247,7 @@ void setupBuffers() {
 	// Box
 	glBindVertexArray(vao[1]);
 
-	glGenBuffers(3, boxBuffer);
+	glGenBuffers(4, boxBuffer);
 
 	glBindBuffer(GL_ARRAY_BUFFER, boxBuffer[0]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(boxVertices), boxVertices,
@@ -249,6 +267,12 @@ void setupBuffers() {
 	glEnableVertexAttribArray(glGetAttribLocation(prog, "color"));
 	glVertexAttribPointer(glGetAttribLocation(prog, "color"), 4, GL_FLOAT, 0, 0,
 			0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, boxBuffer[3]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(uvCoordinates), uvCoordinates, GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(glGetAttribLocation(prog,"uvAttr"));
+	glVertexAttribPointer(glGetAttribLocation(prog,"uvAttr"), 2, GL_FLOAT, 0, 0, 0);
 
 	glBindVertexArray(0);
 
@@ -303,25 +327,28 @@ void setupBuffers() {
 }
 
 void keyAction(unsigned char key, int x, int y) {
-	switch (key) {
-	case 'w':
-		pos += glm::vec3(0.0f, 0.0f, 1.0f);
-		break;
-	case 'a':
-		pos += glm::vec3(1.0f, 0.0f, 0.0f);
-		break;
-	case 'd':
-		pos += glm::vec3(-1.0f, 0.0f, 0.0f);
-		break;
-	case 's':
-		pos += glm::vec3(0.0f, 0.0f, -1.0f);
-		break;
-	case 'r':
-		pos = glm::vec3(0.0f, 0.0f, 0.0f);
-		break;
-	case 'q':
-		exit(1);
-	default:
-		break;
+	float schritt = 0.3f;
+	if(key == 'w'){
+		pos += glm::vec3(0.0f, 0.0f, schritt);
 	}
+	if(key == 'a'){
+		pos += glm::vec3(schritt, 0.0f, 0.0f);
+	}
+	if(key == 'd'){
+		pos += glm::vec3(-schritt, 0.0f, 0.0f);
+	}
+	if(key == 's'){
+		pos += glm::vec3(0.0f, 0.0f, -schritt);
+	}
+	if(key == 'r'){
+		pos = glm::vec3(0.0f, 0.0f, 0.0f);
+	}
+	if(key == 'q'){
+		exit(1);
+	}
+}
+int old_x, old_y;
+
+void mouseAction(int button, int state, int x, int y){
+
 }
