@@ -58,7 +58,7 @@ int main(int argc, char **argv) {
 	glutCreateWindow("Wapring Image");
 
 	glutKeyboardFunc(keyAction);
-	glutMouseFunc(mouseAction)
+	glutMouseFunc(mouseAction);
 
 	GLenum err = glewInit();
 	if (GLEW_OK != err) {
