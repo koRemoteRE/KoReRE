@@ -69,14 +69,18 @@ else()
 	  )
 	 target_link_libraries(ReReClient ${VS_LIBS})
   else()
+    set(EXT_LIBS ${CMAKE_SOURCE_DIR}/MinGWLibs)
     link_directories(${EXT_LIBS})
     link_directories(${CMAKE_LIBRARY_PATH})
     include_directories(${CMAKE_LIBRARY_PATH})
-    set(
-    assimp
-    glfw
+    set(MINGW_LIBS
+    ${EXT_LIBS}/libassimp.dll.a
+    ${EXT_LIBS}/libglfw.a
     opengl32
+    ${EXT_LIBS}/libglew32.dll.a
+    ${EXT_LIBS}/libIL.dll.a
     )
+    target_link_libraries(ReReClient ${MINGW_LIBS})
   endif()
 endif()
 
