@@ -34,8 +34,16 @@ private:
         GLuint glui_vaoBuffer;
         GLuint glui_textureIndex;
         GLuint glui_numFace;
+        GLuint glui_materialIndex = 0;
     };
-    vector<st_meshVAO> stm_meshList;
+    vector<st_meshVAO> v_stm_meshList;
+    
+    struct st_material
+    {
+        glm::vec4 v_diffuse = glm::vec4(0.8, 0.8, 0.8, 1);
+        GLfloat glf_textureCount = 0;
+    };
+    vector<st_material> v_stmat_materialList;
     
     //
     Assimp::Importer imp_asImporter;
@@ -47,11 +55,11 @@ private:
     
     //
     aiMesh** aim_p_asMesh;
-    int i_numMesh;
+    GLint gli_numMesh;
     aiMaterial** aim_p_asMaterial;
-    int i_numMaterial;
+    GLint gli_numMaterial;
     aiTexture** ait_p_asTexture;
-    int i_numTexture;
+    GLint gli_numTexture;
     
     //
     map<string, GLuint> map_strglui_textureID;
@@ -60,7 +68,7 @@ private:
 public:
     //
     CSceneManager(std::string st_filename);         // Konstruktor
-    
+    ~CSceneManager();                               // Destruktor
     //
     void drawScene(GLuint glui_shaderProgram);            // Szene zeichnen
     
@@ -86,7 +94,7 @@ private:
     //
     void bindUniform(GLuint glui_shaderProgram);    // View- und Projection-Matrix an Shader binden
     void bindUniformModelMatrix(CSceneNode* sn_p_drawNode, GLuint glui_shaderProgram); // Model- und Normal-Matrix an Shader binden
-    void bindUniformMaterial(unsigned int ui_meshNum, GLuint glui_shaderProgram);    // Material an Shader binden
+    void bindUniformTextureMaterial(unsigned int ui_meshNum, GLuint glui_shaderProgram);    // Material an Shader binden
     
     // Vertex Array Objekt konfigurieren
     void bindVAO();

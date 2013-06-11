@@ -30,6 +30,7 @@ private:
 public:
     CSceneNode(aiNode* ain_asNode);
     CSceneNode(aiNode* ain_asNode, glm::mat4 m_parnetTransform);
+    ~CSceneNode();
     
     vector<CSceneNode*> returnChildren()
         { return v_p_sceneNodeChildren; };
@@ -62,7 +63,8 @@ private:
     glm::vec3* v_p_lightDiffuse;
     
 public:
-    CLight(aiLight* ail_asLight, aiMatrix4x4* aim_nodeTransform);
+    CLight();
+    ~CLight();
     
     glm::vec3* returnPosition()
         { return v_p_lightPosition; };

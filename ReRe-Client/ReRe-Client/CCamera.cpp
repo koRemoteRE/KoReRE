@@ -141,16 +141,22 @@ isVisible(const glm::vec3& rSphereCenterWS, const float fRadius) const {
 //--------------------------------------------------
 //--------------------------------------------------
 
-
-CCamera::CCamera(aiCamera* aic_asCamera, aiMatrix4x4* aim_nodeTransform)
+CCamera::CCamera()
 {
+    f_RotationX = f_RotationY = 0.0f;
+    
     m_viewMatrix = new glm::mat4(1);
     m_projectionMatrix = new glm::mat4(1);
     
-    f_RotationX = f_RotationY = 0.0f;
+    // Intrinsische Kameraparameter definieren
+    stcpi_intrinsic.f_fieldOfView = 27;
+    stcpi_intrinsic.f_aspect = 1.7;
+    stcpi_intrinsic.f_near = 0.1;
+    stcpi_intrinsic.f_far = 100;
+    setProjectionPerspMatrix();
     
-    setViewMatrix(aic_asCamera, aim_nodeTransform);
-    setProjectionPerspMatrix(aic_asCamera);
+    setViewMatrix(glm::vec3(3,10,30), glm::vec3(0,0,0), glm::vec3(0,1,0));
+    //setViewMatrix(glm::vec3(6.8,-5.9,4.9), glm::vec3(0,0,0), glm::vec3(-0.3,0.3,0.9));
 }
 
 glm::vec3 returnPosition()
@@ -203,35 +209,4 @@ bool CCamera::viewVisible(CSceneNode* sc_rootSceneNode)
     //View Frustum Culling
     return false;
 }
-
-void CCamera::setViewMatrix(aiCamera* aic_asCamera, aiMatrix4x4* aim_nodeTransform)
-{
-    glm::vec3 v_eyePosition = glm::vec3(aic_asCamera->mPosition.x,
-                                        aic_asCamera->mPosition.y,
-                                        aic_asCamera->mPosition.z);
-    
-    glm::vec3 v_eyeLookAt = glm::vec3(aic_asCamera->mLookAt.x,
-                                      aic_asCamera->mLookAt.y,
-                                      aic_asCamera->mLookAt.z);
-    
-    glm::vec3 v_eyeUp = glm::vec3(aic_asCamera->mUp.x,
-                                  aic_asCamera->mUp.y,
-                                  aic_asCamera->mUp.z);
-    
-    *m_viewMatrix = glm::lookAt(v_eyePosition, v_eyeLookAt, v_eyeUp);
-    
-    //Transformation mit Kamerakoordinaten kombinieren
-    *m_viewMatrix = glm::inverse( *CTransformAiToGlm::TransformMat4P(*aim_nodeTransform) * (*m_viewMatrix) );
-}
-
-void CCamera::setProjectionPerspMatrix(aiCamera* aic_asCamera)
-{
-    float fov = glm::degrees(aic_asCamera->mHorizontalFOV)/ aic_asCamera->mAspect;
-//  float aspect = (float)WIDTH/HEIGHT;
-    *m_projectionMatrix = glm::perspective(fov,
-                                           aic_asCamera->mAspect,
-                                           aic_asCamera->mClipPlaneNear,
-                                           aic_asCamera->mClipPlaneFar);
-}
-
 

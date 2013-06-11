@@ -20,6 +20,7 @@ CSceneManager::CSceneManager(std::string st_filename)
                                                             aiProcess_Triangulate |
                                                             aiProcess_JoinIdenticalVertices |
                                                             aiProcess_SortByPType);
+            
         // Neuen Root-SceneNode für eigenen Szenegraph anlegen
         sn_p_rootSceneNode = new CSceneNode(ais_p_asImportScene->mRootNode);
         
@@ -27,20 +28,20 @@ CSceneManager::CSceneManager(std::string st_filename)
         createLightNode(ais_p_asImportScene);
         createCameraNode(ais_p_asImportScene);
         
-        i_numMesh = ais_p_asImportScene->mNumMeshes;
-        i_numMaterial = ais_p_asImportScene->mNumMaterials;
-        i_numTexture = ais_p_asImportScene->mNumTextures;
+        gli_numMesh = ais_p_asImportScene->mNumMeshes;
+        gli_numMaterial = ais_p_asImportScene->mNumMaterials;
+        gli_numTexture = ais_p_asImportScene->mNumTextures;
         
-        aim_p_asMesh = new aiMesh*[i_numMesh];
-        for (int i_mesh = 0; i_mesh < i_numMesh; i_mesh++)
+        aim_p_asMesh = new aiMesh*[gli_numMesh];
+        for (int i_mesh = 0; i_mesh < gli_numMesh; i_mesh++)
             aim_p_asMesh[i_mesh] = new aiMesh(*ais_p_asImportScene->mMeshes[i_mesh]);
         
-        aim_p_asMaterial = new aiMaterial*[i_numMaterial];
-        for (int i_material = 0; i_material < i_numMaterial; i_material++)
+        aim_p_asMaterial = new aiMaterial*[gli_numMaterial];
+        for (int i_material = 0; i_material < gli_numMaterial; i_material++)
             aim_p_asMaterial[i_material] = new aiMaterial(*ais_p_asImportScene->mMaterials[i_material]);
         
-        ait_p_asTexture = new aiTexture*[i_numTexture];
-        for (int i_texture = 0; i_texture < i_numTexture; i_texture++)
+        ait_p_asTexture = new aiTexture*[gli_numTexture];
+        for (int i_texture = 0; i_texture < gli_numTexture; i_texture++)
             ait_p_asTexture[i_texture] = new aiTexture(*ais_p_asImportScene->mTextures[i_texture]);
         
         // Verwendete Texturen laden
@@ -50,12 +51,33 @@ CSceneManager::CSceneManager(std::string st_filename)
         bindVAO();
         
         // Assimp-Szene löschen
-        delete ais_p_asImportScene;
+        // delete ais_p_asImportScene;
     }
     else
     {
         std::cout << ".dae-Datei benoetigt" << std::endl;
     }
+}
+
+CSceneManager::~CSceneManager()
+{
+    delete sn_p_rootSceneNode;
+    delete c_p_cameraNode;
+    
+    v_stm_meshList.~vector();
+    v_stmat_materialList.~vector();
+    v_p_lightNode.~vector();
+    
+    map_strglui_textureID.~map();
+    
+    delete[] aim_p_asMesh;
+    delete  aim_p_asMesh;
+    
+    delete[] aim_p_asMaterial;
+    delete aim_p_asMaterial;
+    
+    delete[] ait_p_asTexture;
+    delete ait_p_asTexture;
 }
 
 void CSceneManager::drawScene(GLuint glui_shaderProgram)
@@ -70,14 +92,22 @@ void CSceneManager::drawScene(CSceneNode* sn_p_drawNode, GLuint glui_shaderProgr
     // Für alle Knoten zeichnen
     bindUniformModelMatrix(sn_p_drawNode, glui_shaderProgram);
     
-    for (unsigned int ui_numMesh = 0; ui_numMesh <  *(sn_p_drawNode->returnNumberOfMesh()); ui_numMesh++)
+    // Texture Uniform Location
+    GLint gli_texture = glGetUniformLocation(glui_shaderProgram,"texture2D");
+    GLint gli_meshIndex;
+    
+    for (GLuint glui_numMesh = 0; glui_numMesh <  *(sn_p_drawNode->returnNumberOfMesh()); glui_numMesh++)
     {
-        bindUniformMaterial(ui_numMesh, glui_shaderProgram);
+        gli_meshIndex = sn_p_drawNode->returnMeshIndex()[glui_numMesh];
         
-        //
-        glBindTexture(GL_TEXTURE_2D, stm_meshList[sn_p_drawNode->returnMeshIndex()[ui_numMesh]].glui_textureIndex);
-        glBindVertexArray(stm_meshList[sn_p_drawNode->returnMeshIndex()[ui_numMesh]].glui_vaoBuffer);
-        glDrawElements(GL_TRIANGLES,stm_meshList[sn_p_drawNode->returnMeshIndex()[ui_numMesh]].glui_numFace*3, GL_UNSIGNED_INT, 0);
+        bindUniformTextureMaterial(v_stm_meshList[gli_meshIndex].glui_materialIndex, glui_shaderProgram);
+        
+        // Texture anbinden (GL_TEXTURE_0) und an Shader übergeben
+        glBindTexture(GL_TEXTURE_2D, v_stm_meshList[sn_p_drawNode->returnMeshIndex()[glui_numMesh]].glui_textureIndex);
+        glUniform1i(gli_texture,0);
+        
+        glBindVertexArray(v_stm_meshList[sn_p_drawNode->returnMeshIndex()[glui_numMesh]].glui_vaoBuffer);
+        glDrawElements(GL_TRIANGLES,v_stm_meshList[sn_p_drawNode->returnMeshIndex()[glui_numMesh]].glui_numFace*3, GL_UNSIGNED_INT, 0);
     }
     
     //Rekursiv alle Kinderknoten aufrufen und zeichnen
@@ -127,21 +157,17 @@ void CSceneManager::bindUniformModelMatrix(CSceneNode* sn_p_drawNode, GLuint glu
 	glUniformMatrix3fv(gli_uniformNormalMatrix, 1, GL_FALSE, glm::value_ptr( m_normalMatrix ) ) ;
 }
 
-void CSceneManager::bindUniformMaterial(unsigned int ui_meshNum, GLuint glui_shaderProgram)
+void CSceneManager::bindUniformTextureMaterial(unsigned int ui_meshNum, GLuint glui_shaderProgram)
 {
-    aiColor4D diffuse;
-    glm::vec4 v_materialDiffuse;
+    GLint gli_uniformMaterial = glGetUniformLocation(glui_shaderProgram,"diffuseMaterialColor");
+    glUniform4f(gli_uniformMaterial,
+                v_stmat_materialList[ui_meshNum].v_diffuse[0],
+                v_stmat_materialList[ui_meshNum].v_diffuse[1],
+                v_stmat_materialList[ui_meshNum].v_diffuse[2],
+                v_stmat_materialList[ui_meshNum].v_diffuse[3]);
     
-    if (AI_SUCCESS == aiGetMaterialColor(aim_p_asMaterial[aim_p_asMesh[ui_meshNum]->mMaterialIndex], AI_MATKEY_COLOR_DIFFUSE, &diffuse))
-    {
-        v_materialDiffuse[0] = diffuse.r;
-        v_materialDiffuse[1] = diffuse.g;
-        v_materialDiffuse[2] = diffuse.b;
-        v_materialDiffuse[3] = diffuse.a;
-    }
-    
-    GLint gli_uniformMaterial = glGetUniformLocation(glui_shaderProgram,"materialDif");
-    glUniform4f(gli_uniformMaterial, v_materialDiffuse[0], v_materialDiffuse[1], v_materialDiffuse[2], v_materialDiffuse[3]);
+    gli_uniformMaterial = glGetUniformLocation(glui_shaderProgram,"textureCount");
+    glUniform1f(gli_uniformMaterial, v_stmat_materialList[ui_meshNum].glf_textureCount);
 }
 
 //
@@ -150,7 +176,7 @@ void CSceneManager::bindVAO()
     //Vertexliste für jedes Mesh in der Szene anlegen
     GLuint glui_vertexArrayObjBuffer;
     
-    for (unsigned int ui_meshNum = 0; ui_meshNum < i_numMesh; ui_meshNum++)
+    for (unsigned int ui_meshNum = 0; ui_meshNum < gli_numMesh; ui_meshNum++)
     {
         cout << "Create VAO-" << ui_meshNum << "..." << endl;
         st_meshVAO stm_meshVAO;
@@ -217,14 +243,35 @@ void CSceneManager::bindVAO()
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
         
-        // Material und Textur von Objekt
+        // Material oder Texture anbinden
+        st_material stm_matBuffer;
         aiString aistr_texPath;
-        if (AI_SUCCESS == aim_p_asMaterial[aim_p_asMesh[ui_meshNum]->mMaterialIndex]->GetTexture(aiTextureType_DIFFUSE, 0, &aistr_texPath))
+        
+        GLuint glui_matIndexBuffer = aim_p_asMesh[ui_meshNum]->mMaterialIndex;
+        
+        if (AI_SUCCESS == aim_p_asMaterial[glui_matIndexBuffer]->GetTexture(aiTextureType_DIFFUSE, 0, &aistr_texPath))
         {
             stm_meshVAO.glui_textureIndex = map_strglui_textureID[aistr_texPath.data];
+            stm_meshVAO.glui_materialIndex = glui_matIndexBuffer;
+            stm_matBuffer.glf_textureCount = 1;
         }
         
-        stm_meshList.push_back(stm_meshVAO);
+        else
+        {
+            stm_meshVAO.glui_materialIndex = v_stmat_materialList.size();
+            stm_matBuffer.glf_textureCount = 0;
+        }
+        
+        aiColor4D diffuse(0.8,0.8,0.8,1);
+        if(AI_SUCCESS == aiGetMaterialColor(aim_p_asMaterial[glui_matIndexBuffer], AI_MATKEY_COLOR_DIFFUSE, &diffuse))
+        {
+            stm_matBuffer.v_diffuse.r = diffuse.r;
+            stm_matBuffer.v_diffuse.g = diffuse.g;
+            stm_matBuffer.v_diffuse.b = diffuse.b;
+            stm_matBuffer.v_diffuse.a = diffuse.a;
+        }
+        v_stm_meshList.push_back(stm_meshVAO);
+        v_stmat_materialList.push_back(stm_matBuffer);
         
         delete ui_p_faceVertexArrayObjArray;
     }
@@ -236,7 +283,7 @@ void CSceneManager::loadTexture()
     ilInit();
     
     // Szenen Material nach Texturen durchsuchen
-    for (int i_material = 0, i_texIndex; i_material < i_numMaterial; i_material++, i_texIndex = 0)
+    for (int i_material = 0, i_texIndex; i_material < gli_numMaterial; i_material++, i_texIndex = 0)
     {
         aiString aistr_path;
         while (aim_p_asMaterial[i_material]->GetTexture(aiTextureType_DIFFUSE, i_texIndex, &aistr_path) == AI_SUCCESS)
@@ -290,18 +337,14 @@ void CSceneManager::loadTexture()
 void CSceneManager::createCameraNode(const aiScene* ais_asScene)
 {
     // Name der Kameraquelle nutzen um SceneNode-Transformation mit zu uebergeben
-    c_p_cameraNode = new CCamera(ais_asScene->mCameras[0],
-                               &ais_asScene->mRootNode->FindNode( ais_asScene->mCameras[0]->mName )->mTransformation);
+    c_p_cameraNode = new CCamera();
 }
 
 void CSceneManager::createLightNode(const aiScene* ais_asScene)
 {
     // Über alle Lichtquellen gehen
     // Name der Lichtquelle nutzen um SceneNode-Transformation mit zu uebergeben
-    for (int i_numLightSource = 0; i_numLightSource < ais_asScene->mNumLights; i_numLightSource++)
-    {
-        v_p_lightNode.push_back(new CLight(ais_asScene->mLights[i_numLightSource],
-                                           &ais_asScene->mRootNode->FindNode( ais_asScene->mLights[i_numLightSource]->mName )->mTransformation));
-    }
+    
+    v_p_lightNode.push_back(new CLight());
 }
 
