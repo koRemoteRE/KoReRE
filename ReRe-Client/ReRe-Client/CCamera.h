@@ -30,6 +30,7 @@ private:
         float f_fieldOfView;
     };
     
+    st_cameraParameterIntern stcpi_intrinsic;
     int i_MouseX, i_MouseY;
     float f_RotationSpeed, f_MoveSpeed;
     
@@ -48,10 +49,10 @@ private:
     glm::mat4* m_viewMatrix;
     glm::mat4* m_projectionMatrix;
     
-    aiMatrix4x4* m_Transform;
-    
 public:
     CCamera();
+    
+    glm::vec3 returnPosition();
     
     glm::mat4 returnViewMatrix()
         { return *m_viewMatrix; };
