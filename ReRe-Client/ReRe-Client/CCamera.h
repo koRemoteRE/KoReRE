@@ -14,6 +14,7 @@
 #include <math.h>
 #include <vector>
 
+#include <GL/glfw.h>
 #include "CSceneNode.h"
 #include "CDefinitions.h"
 
@@ -29,16 +30,28 @@ private:
         float f_fieldOfView;
     };
     
-    float f_RotationX;
-    float f_RotationY;
-        
+    int i_MouseX, i_MouseY;
+    float f_RotationSpeed, f_MoveSpeed;
+    
+    float f_VerticalAngle, f_HorizontalAngle;
+    float f_FOV;
+    
+    double d_LastTime;
+    
+    glm::vec3 v_eyePosition;
+    glm::vec3 v_eyeLookAt;
+    glm::vec3 v_eyeUp;
+    
+    glm::vec3 v_rightVec;
+    glm::vec3 v_viewVec;
+    
     glm::mat4* m_viewMatrix;
     glm::mat4* m_projectionMatrix;
     
+    aiMatrix4x4* m_Transform;
+    
 public:
     CCamera(aiCamera* aic_asCamera, aiMatrix4x4* aim_nodeTransform);
-    
-    glm::vec3 returnPosition();
     
     glm::mat4 returnViewMatrix()
         { return *m_viewMatrix; };
@@ -54,9 +67,7 @@ public:
     
     void automaticMovement(int i);
     
-    void updateCameraView(int i_mouseWayX, int i_mouseWayY);
-    
-    
+    void updateCameraView();
     
     bool viewVisible(CSceneNode* sc_rootSceneNode);     // View Frustum Culling
     

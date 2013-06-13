@@ -13,6 +13,8 @@
 #define WIDTH 1024
 #define HEIGHT 576
 
+#define PI 3.1454
+
 // Define indices of the generic vertex attributes
 #define SHADER_LIGHT_POS_LOC 0
 #define SHADER_POSITION_LOC 1

@@ -147,15 +147,18 @@ CCamera::CCamera(aiCamera* aic_asCamera, aiMatrix4x4* aim_nodeTransform)
     m_viewMatrix = new glm::mat4(1);
     m_projectionMatrix = new glm::mat4(1);
     
-    f_RotationX = f_RotationY = 0.0f;
+    // vertical angle : 0, look at the horizon
+    f_VerticalAngle = 0.0f;
+    // horizontal angle : toward -Z
+    f_HorizontalAngle = 3.1454f;
+    
+    f_RotationSpeed = 0.005f;
+    f_MoveSpeed = 3.0f; // 3 units per second
+    
+    d_LastTime = glfwGetTime();
     
     setViewMatrix(aic_asCamera, aim_nodeTransform);
     setProjectionPerspMatrix(aic_asCamera);
-}
-
-glm::vec3 returnPosition()
-{
-    return glm::vec3(  );
 }
 
 void CCamera::automaticMovement(int i)
@@ -165,37 +168,89 @@ void CCamera::automaticMovement(int i)
     *m_viewMatrix = glm::translate(*m_viewMatrix, f_newPositionX, 0.0f, 0.0f);
 }
 
-void CCamera::updateCameraView(int i_mouseWayX, int i_mouseWayY)
+/*void CCamera::updateCameraView()
 {
-   float f_newPositionX = 0, f_newPositionY = 0, f_newPositionZ = 0;
-    
-    if (i_mouseWayX == WIDTH / 2)
-        f_RotationX = 0;
-    else
-        f_RotationX+=(WIDTH/2 - (float)i_mouseWayX)*0.001f;
+    // Get mouse Position
+    glfwGetMousePos(&i_MouseX, &i_MouseY);
     
     
-    if (i_mouseWayY == HEIGHT / 2)
-        f_RotationY = 0;
-    else
-    {
-        f_RotationY+=(HEIGHT/2 - (float)i_mouseWayY)*0.001f;
     
-        // Clamp the camera to max/min rotationY angle
-        if(f_RotationY > 90.0f)
-            f_RotationY = 90.0f;
+    // Reset mouse Position for next frame
+    glfwSetMousePos(WIDTH/2, HEIGHT/2);
+}*/
+
+void CCamera::updateCameraView()
+{
+    // Get mouse position
+    glfwGetMousePos(&i_MouseX, &i_MouseY);
     
-        if(f_RotationY < -90.0f)
-            f_RotationY = -90.0f;
+    double currentTime = glfwGetTime();
+    float deltaTime = float(currentTime - d_LastTime);
+    d_LastTime = currentTime;
+    
+    // Compute new orientation
+    f_HorizontalAngle -= f_RotationSpeed * deltaTime * float( WIDTH/2 - i_MouseX );
+    f_VerticalAngle   -= f_RotationSpeed * deltaTime * float( HEIGHT/2 - i_MouseY );
+    
+    // Direction : Spherical coordinates to Cartesian coordinates conversion
+    glm::vec3 direction(cos(f_VerticalAngle) * sin(f_HorizontalAngle),
+                        sin(f_VerticalAngle),
+                        cos(f_VerticalAngle) * cos(f_HorizontalAngle));
+    
+    // Right vector
+    glm::vec3 right = glm::vec3(sin(f_HorizontalAngle - 3.14f/2.0f),
+                                0,
+                                cos(f_HorizontalAngle - 3.14f/2.0f));
+    
+    // Up vector : perpendicular to both direction and right
+    v_eyeUp = glm::cross( right, direction );
+    
+    // Move forward
+    if (glfwGetKey( GLFW_KEY_UP ) == GLFW_PRESS || glfwGetKey( 'W' ) == GLFW_PRESS){
+        v_eyePosition -= direction * deltaTime * f_MoveSpeed;
+    }
+    // Move backward
+    if (glfwGetKey( GLFW_KEY_DOWN ) == GLFW_PRESS || glfwGetKey( 'S' ) == GLFW_PRESS){
+        v_eyePosition += direction * deltaTime * f_MoveSpeed;
+    }
+    // Strafe right
+    if (glfwGetKey( GLFW_KEY_RIGHT ) == GLFW_PRESS || glfwGetKey( 'D' ) == GLFW_PRESS){
+        v_eyePosition -= right * deltaTime * f_MoveSpeed;
+    }
+    // Strafe left
+    if (glfwGetKey( GLFW_KEY_LEFT ) == GLFW_PRESS || glfwGetKey( 'A' ) == GLFW_PRESS){
+        v_eyePosition += right * deltaTime * f_MoveSpeed;
+    }
+    // Move up
+    if (glfwGetKey( 'Q' ) == GLFW_PRESS){
+        v_eyePosition -= v_eyeUp * deltaTime * f_MoveSpeed;
+    }
+    // Move down
+    if (glfwGetKey( 'E' ) == GLFW_PRESS){
+        v_eyePosition += v_eyeUp * deltaTime * f_MoveSpeed;
     }
     
-    *m_viewMatrix=glm::inverse(*m_viewMatrix);
+    v_eyeLookAt = v_eyePosition + direction;
     
-    *m_viewMatrix = glm::rotate(*m_viewMatrix, f_RotationY, glm::vec3(1,0,0));
-    *m_viewMatrix = glm::rotate(*m_viewMatrix, f_RotationX, glm::vec3(0,1,0));
-    *m_viewMatrix = glm::translate(*m_viewMatrix, f_newPositionX, f_newPositionY, f_newPositionZ);
+    // TODO: Down here something goes definitely very very very wrong...
     
-    *m_viewMatrix=glm::inverse(*m_viewMatrix);
+    *m_viewMatrix= glm::lookAt(v_eyePosition,
+                               v_eyeLookAt,
+                               v_eyeUp);
+    
+    //*m_viewMatrix = glm::rotate(glm::mat4(1.0f), f_VerticalAngle, right);
+    //*m_viewMatrix = glm::rotate(*m_viewMatrix, f_HorizontalAngle, v_eyeUp);
+    //*m_viewMatrix = glm::translate(*m_viewMatrix, glm::vec3(-v_eyePosition.x, -v_eyePosition.y, -v_eyePosition.z));
+
+    
+   // *m_viewMatrix = glm::inverse( *CTransformAiToGlm::TransformMat4P(*m_Transform) * (*m_viewMatrix));
+    
+    glm::vec3 up = glm::vec3(glm::inverse(*m_viewMatrix)[1]);
+    cout << up.x << " " << up.y << " " << up.z << endl;
+
+    
+    // Reset mouse position for next frame
+    glfwSetMousePos(WIDTH/2, HEIGHT/2);
 }
 
 bool CCamera::viewVisible(CSceneNode* sc_rootSceneNode)
@@ -206,17 +261,19 @@ bool CCamera::viewVisible(CSceneNode* sc_rootSceneNode)
 
 void CCamera::setViewMatrix(aiCamera* aic_asCamera, aiMatrix4x4* aim_nodeTransform)
 {
-    glm::vec3 v_eyePosition = glm::vec3(aic_asCamera->mPosition.x,
-                                        aic_asCamera->mPosition.y,
-                                        aic_asCamera->mPosition.z);
+    m_Transform = aim_nodeTransform;
     
-    glm::vec3 v_eyeLookAt = glm::vec3(aic_asCamera->mLookAt.x,
-                                      aic_asCamera->mLookAt.y,
-                                      aic_asCamera->mLookAt.z);
+    v_eyePosition = glm::vec3(aic_asCamera->mPosition.x,
+                              aic_asCamera->mPosition.y,
+                              aic_asCamera->mPosition.z);
     
-    glm::vec3 v_eyeUp = glm::vec3(aic_asCamera->mUp.x,
-                                  aic_asCamera->mUp.y,
-                                  aic_asCamera->mUp.z);
+    v_eyeLookAt = glm::vec3(aic_asCamera->mLookAt.x,
+                            aic_asCamera->mLookAt.y,
+                            aic_asCamera->mLookAt.z);
+    
+    v_eyeUp = glm::vec3(aic_asCamera->mUp.x,
+                        aic_asCamera->mUp.y,
+                        aic_asCamera->mUp.z);
     
     *m_viewMatrix = glm::lookAt(v_eyePosition, v_eyeLookAt, v_eyeUp);
     
@@ -226,12 +283,10 @@ void CCamera::setViewMatrix(aiCamera* aic_asCamera, aiMatrix4x4* aim_nodeTransfo
 
 void CCamera::setProjectionPerspMatrix(aiCamera* aic_asCamera)
 {
-    float fov = glm::degrees(aic_asCamera->mHorizontalFOV)/ aic_asCamera->mAspect;
+    f_FOV = glm::degrees(aic_asCamera->mHorizontalFOV)/ aic_asCamera->mAspect;
 //  float aspect = (float)WIDTH/HEIGHT;
-    *m_projectionMatrix = glm::perspective(fov,
+    *m_projectionMatrix = glm::perspective(f_FOV,
                                            aic_asCamera->mAspect,
                                            aic_asCamera->mClipPlaneNear,
                                            aic_asCamera->mClipPlaneFar);
 }
-
-
