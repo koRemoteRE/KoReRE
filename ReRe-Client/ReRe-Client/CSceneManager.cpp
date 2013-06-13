@@ -20,7 +20,9 @@ CSceneManager::CSceneManager(std::string st_filename)
                                                             aiProcess_Triangulate |
                                                             aiProcess_JoinIdenticalVertices |
                                                             aiProcess_SortByPType);
-            
+        if (ais_p_asImportScene == NULL)
+            throw 0x01;
+        
         // Neuen Root-SceneNode für eigenen Szenegraph anlegen
         sn_p_rootSceneNode = new CSceneNode(ais_p_asImportScene->mRootNode);
         
@@ -55,7 +57,7 @@ CSceneManager::CSceneManager(std::string st_filename)
     }
     else
     {
-        std::cout << ".dae-Datei benoetigt" << std::endl;
+        throw 0x00;     // .dae-Datei benötigt
     }
 }
 

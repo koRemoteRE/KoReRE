@@ -16,6 +16,7 @@
 
 #include <GL/glew.h>
 #include <GL3/gl3.h>
+#include <GL/glfw.h>
 #include <IL/il.h>
 
 #include "CDefinitions.h"

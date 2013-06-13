@@ -16,11 +16,8 @@ CPreRendering::CPreRendering()
     initGLSL();
     
     glEnable(GL_CULL_FACE);
-#ifdef __APPLE_CC__
-    sceneMgr = new CSceneManager("../Assets/TestEnv.dae");
-#else
-    sceneMgr = new CSceneManager("./Assets/TestEnv.dae");
-#endif
+
+    sceneMgr = new CSceneManager(PATH "TestEnv.dae");
 }
 
 CPreRendering::~CPreRendering()
