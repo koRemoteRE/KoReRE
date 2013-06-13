@@ -31,20 +31,32 @@ private:
     };
     
     st_cameraParameterIntern stcpi_intrinsic;
-    int i_MouseX, i_MouseY;
-    float f_RotationSpeed, f_MoveSpeed;
     
-    float f_VerticalAngle, f_HorizontalAngle;
-    float f_FOV;
+    struct st_cameraVectors
+    {
+        glm::vec3 v_eyePosition;
+        glm::vec3 v_eyeLookAt;
+        glm::vec3 v_eyeUp;
+        
+        glm::vec3 v_rightVec;
+        glm::vec3 v_viewVec;
+    };
+    
+    st_cameraVectors stcv_update;
+    
+    struct st_cameraMovementParameters
+    {
+        int i_mouseX;
+        int i_mouseY;
+        float f_verticalAngle;
+        float f_horizontalAngle;
+        float f_rotationSpeed;
+        float f_moveSpeed;
+    };
+    
+    st_cameraMovementParameters stcmp_update;
     
     double d_LastTime;
-    
-    glm::vec3 v_eyePosition;
-    glm::vec3 v_eyeLookAt;
-    glm::vec3 v_eyeUp;
-    
-    glm::vec3 v_rightVec;
-    glm::vec3 v_viewVec;
     
     glm::mat4* m_viewMatrix;
     glm::mat4* m_projectionMatrix;

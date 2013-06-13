@@ -143,27 +143,32 @@ isVisible(const glm::vec3& rSphereCenterWS, const float fRadius) const {
 
 CCamera::CCamera()
 {
+    d_LastTime = glfwGetTime();
+    
     m_viewMatrix = new glm::mat4(1);
     m_projectionMatrix = new glm::mat4(1);
     
     // Intrinsische Kameraparameter definieren
-    stcpi_intrinsic.f_fieldOfView = 27;
-    stcpi_intrinsic.f_aspect = 1.7;
-    stcpi_intrinsic.f_near = 0.1;
-    stcpi_intrinsic.f_far = 100;
+    stcpi_intrinsic.f_fieldOfView   = 27;
+    stcpi_intrinsic.f_aspect        = 1.7;
+    stcpi_intrinsic.f_near          = 0.1;
+    stcpi_intrinsic.f_far           = 100;
+    
     setProjectionPerspMatrix();
     
-    // vertical angle : 0, look at the horizon
-    f_VerticalAngle = 0.0f;
-    // horizontal angle : toward -Z
-    f_HorizontalAngle = 3.1454f;
+    stcmp_update.f_verticalAngle    = 0.0f;
+    stcmp_update.f_horizontalAngle  = 3.1454f;
+    stcmp_update.f_rotationSpeed    = CAM_ROTATION_SPEED;
+    stcmp_update.f_moveSpeed        = CAM_MOVE_SPEED;
     
-    f_RotationSpeed = 0.005f;
-    f_MoveSpeed = 3.0f; // 3 units per second
+    stcv_update.v_eyePosition   = glm::vec3(CAM_POS_X,CAM_POS_Y,CAM_POS_Z);
+    stcv_update.v_eyeLookAt     = glm::vec3(CAM_LOOK_AT_X,CAM_LOOK_AT_Y,CAM_LOOK_AT_Z);
+    stcv_update.v_eyeUp         = glm::vec3(CAM_UP_X,CAM_UP_Y,CAM_UP_Z);
     
-    d_LastTime = glfwGetTime();
+    setViewMatrix(stcv_update.v_eyePosition,
+                  stcv_update.v_eyeLookAt,
+                  stcv_update.v_eyeUp);
     
-    setViewMatrix(glm::vec3(3,10,30), glm::vec3(0,0,0), glm::vec3(0,1,0));
     //setViewMatrix(glm::vec3(6.8,-5.9,4.9), glm::vec3(0,0,0), glm::vec3(-0.3,0.3,0.9));
 }
 
@@ -193,73 +198,71 @@ void CCamera::automaticMovement(int i)
 void CCamera::updateCameraView()
 {
     // Get mouse position
-    glfwGetMousePos(&i_MouseX, &i_MouseY);
+    glfwGetMousePos(&stcmp_update.i_mouseX, &stcmp_update.i_mouseY);
     
     double currentTime = glfwGetTime();
     float deltaTime = float(currentTime - d_LastTime);
     d_LastTime = currentTime;
     
     // Compute new orientation
-    f_HorizontalAngle -= f_RotationSpeed * deltaTime * float( WIDTH/2 - i_MouseX );
-    f_VerticalAngle   -= f_RotationSpeed * deltaTime * float( HEIGHT/2 - i_MouseY );
+    stcmp_update.f_horizontalAngle  += stcmp_update.f_rotationSpeed * deltaTime * float( WIDTH/2 - stcmp_update.i_mouseX );
+    stcmp_update.f_verticalAngle    += stcmp_update.f_rotationSpeed * deltaTime * float( HEIGHT/2 - stcmp_update.i_mouseY );
     
     // Direction : Spherical coordinates to Cartesian coordinates conversion
-    glm::vec3 direction(cos(f_VerticalAngle) * sin(f_HorizontalAngle),
-                        sin(f_VerticalAngle),
-                        cos(f_VerticalAngle) * cos(f_HorizontalAngle));
+    glm::vec3 direction(cos(stcmp_update.f_verticalAngle) * sin(stcmp_update.f_horizontalAngle),
+                        sin(stcmp_update.f_verticalAngle),
+                        cos(stcmp_update.f_verticalAngle) * cos(stcmp_update.f_horizontalAngle));
     
     // Right vector
-    glm::vec3 right = glm::vec3(sin(f_HorizontalAngle - 3.14f/2.0f),
+    glm::vec3 right = glm::vec3(sin(stcmp_update.f_horizontalAngle - 3.14f/2.0f),
                                 0,
-                                cos(f_HorizontalAngle - 3.14f/2.0f));
+                                cos(stcmp_update.f_horizontalAngle - 3.14f/2.0f));
     
     // Up vector : perpendicular to both direction and right
-    v_eyeUp = glm::cross( right, direction );
+    stcv_update.v_eyeUp = glm::cross( right, direction );
+    
+    // Move faster
+    if (glfwGetKey( GLFW_KEY_LSHIFT ) == GLFW_PRESS)
+        stcmp_update.f_moveSpeed = 2.5f * CAM_MOVE_SPEED;
+    // Slow down to standard CAM_MOVE_SPEED
+    else
+        stcmp_update.f_moveSpeed = CAM_MOVE_SPEED;
     
     // Move forward
-    if (glfwGetKey( GLFW_KEY_UP ) == GLFW_PRESS || glfwGetKey( 'W' ) == GLFW_PRESS){
-        v_eyePosition -= direction * deltaTime * f_MoveSpeed;
-    }
+    if (glfwGetKey( GLFW_KEY_UP ) == GLFW_PRESS || glfwGetKey( 'W' ) == GLFW_PRESS)
+        stcv_update.v_eyePosition += direction * deltaTime * stcmp_update.f_moveSpeed;
     // Move backward
-    if (glfwGetKey( GLFW_KEY_DOWN ) == GLFW_PRESS || glfwGetKey( 'S' ) == GLFW_PRESS){
-        v_eyePosition += direction * deltaTime * f_MoveSpeed;
-    }
+    if (glfwGetKey( GLFW_KEY_DOWN ) == GLFW_PRESS || glfwGetKey( 'S' ) == GLFW_PRESS)
+        stcv_update.v_eyePosition -= direction * deltaTime * stcmp_update.f_moveSpeed;
+    
     // Strafe right
-    if (glfwGetKey( GLFW_KEY_RIGHT ) == GLFW_PRESS || glfwGetKey( 'D' ) == GLFW_PRESS){
-        v_eyePosition -= right * deltaTime * f_MoveSpeed;
-    }
+    if (glfwGetKey( GLFW_KEY_RIGHT ) == GLFW_PRESS || glfwGetKey( 'D' ) == GLFW_PRESS)
+        stcv_update.v_eyePosition += right * deltaTime * stcmp_update.f_moveSpeed;
     // Strafe left
-    if (glfwGetKey( GLFW_KEY_LEFT ) == GLFW_PRESS || glfwGetKey( 'A' ) == GLFW_PRESS){
-        v_eyePosition += right * deltaTime * f_MoveSpeed;
-    }
+    if (glfwGetKey( GLFW_KEY_LEFT ) == GLFW_PRESS || glfwGetKey( 'A' ) == GLFW_PRESS)
+        stcv_update.v_eyePosition -= right * deltaTime * stcmp_update.f_moveSpeed;
+    
     // Move up
-    if (glfwGetKey( 'Q' ) == GLFW_PRESS){
-        v_eyePosition -= v_eyeUp * deltaTime * f_MoveSpeed;
-    }
+    if (glfwGetKey( 'Q' ) == GLFW_PRESS)
+        stcv_update.v_eyePosition += stcv_update.v_eyeUp * deltaTime * stcmp_update.f_moveSpeed;
     // Move down
-    if (glfwGetKey( 'E' ) == GLFW_PRESS){
-        v_eyePosition += v_eyeUp * deltaTime * f_MoveSpeed;
+    if (glfwGetKey( 'E' ) == GLFW_PRESS)
+        stcv_update.v_eyePosition -= stcv_update.v_eyeUp * deltaTime * stcmp_update.f_moveSpeed;
+    
+    stcv_update.v_eyeLookAt = stcv_update.v_eyePosition + direction;
+    
+    *m_viewMatrix= glm::lookAt(stcv_update.v_eyePosition,
+                               stcv_update.v_eyeLookAt,
+                               stcv_update.v_eyeUp);
+    
+    // Decide whether to show Camera Data (Position, LookAt, Up)
+    if (glfwGetKey( GLFW_KEY_SPACE ) == GLFW_PRESS)
+    {
+        cout << "Position: ( " << stcv_update.v_eyePosition.x << ", " << stcv_update.v_eyePosition.y << ", " << stcv_update.v_eyePosition.z << " )" <<endl;
+        cout << "Look At: ( " << stcv_update.v_eyeLookAt.x << ", " << stcv_update.v_eyeLookAt.y << ", " << stcv_update.v_eyeLookAt.z << " )" << endl;
+        cout << "Up: ( " << stcv_update.v_eyeUp.x << ", " << stcv_update.v_eyeUp.y << ", " << stcv_update.v_eyeUp.z << " ) \n" << endl;
     }
-    
-    v_eyeLookAt = v_eyePosition + direction;
-    
-    // TODO: Down here something goes definitely very very very wrong...
-    
-    *m_viewMatrix= glm::lookAt(v_eyePosition,
-                               v_eyeLookAt,
-                               v_eyeUp);
-    
-    //*m_viewMatrix = glm::rotate(glm::mat4(1.0f), f_VerticalAngle, right);
-    //*m_viewMatrix = glm::rotate(*m_viewMatrix, f_HorizontalAngle, v_eyeUp);
-    //*m_viewMatrix = glm::translate(*m_viewMatrix, glm::vec3(-v_eyePosition.x, -v_eyePosition.y, -v_eyePosition.z));
-
-    
-   // *m_viewMatrix = glm::inverse( *CTransformAiToGlm::TransformMat4P(*m_Transform) * (*m_viewMatrix));
-    
-    glm::vec3 up = glm::vec3(glm::inverse(*m_viewMatrix)[1]);
-    cout << up.x << " " << up.y << " " << up.z << endl;
-
-    
+        
     // Reset mouse position for next frame
     glfwSetMousePos(WIDTH/2, HEIGHT/2);
 }

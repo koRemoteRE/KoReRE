@@ -15,6 +15,21 @@
 
 #define PI 3.1454
 
+#define CAM_POS_X 0.0
+#define CAM_POS_Y 15.0
+#define CAM_POS_Z 25.0
+
+#define CAM_LOOK_AT_X -2.0
+#define CAM_LOOK_AT_Y 15.0
+#define CAM_LOOK_AT_Z 25.0
+
+#define CAM_UP_X 0.0
+#define CAM_UP_Y 1.0
+#define CAM_UP_Z 0.0
+
+#define CAM_ROTATION_SPEED 0.05
+#define CAM_MOVE_SPEED 15
+
 // Define indices of the generic vertex attributes
 #define SHADER_LIGHT_POS_LOC 0
 #define SHADER_POSITION_LOC 1
