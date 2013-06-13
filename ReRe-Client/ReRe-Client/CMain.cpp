@@ -46,6 +46,8 @@ void MainLoop(void)
     } // Check if the ESC key was pressed or the window was closed
     while( glfwGetKey( GLFW_KEY_ESC ) != GLFW_PRESS &&
           glfwGetWindowParam( GLFW_OPENED ) );
+    
+    delete renderer;
 }
 
 
@@ -89,7 +91,18 @@ int main(int argc, const char * argv[])
     glfwDisable( GLFW_MOUSE_CURSOR);
     glfwSetMousePos(WIDTH/2, HEIGHT/2);
     
-    MainLoop();
+    try
+    {
+        MainLoop();
+    }
+    catch (int i_ex)
+    {
+        cout << "Fehlercode: " << i_ex << endl;
+        if (i_ex == 0x00)
+            cout << "Keine .dae-Datei" << endl;
+        else if (i_ex == 0x01)
+            cout << "Fehler beim Laden der Datei" << endl;
+    }
     
     // Close window and terminate GLFW
     glfwTerminate();

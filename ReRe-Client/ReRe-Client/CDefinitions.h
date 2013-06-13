@@ -21,4 +21,10 @@
 #define SHADER_NORMAL_LOC 2
 #define SHADER_TEX_COORD_LOC 3
 
+#ifdef __APPLE_CC__
+#define PATH "../Assets/"
+#else
+#define PATH "./Assets/"
+#endif
+
 #endif

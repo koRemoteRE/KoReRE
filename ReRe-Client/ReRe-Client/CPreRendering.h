@@ -9,8 +9,6 @@
 #ifndef __ReRe_Client__PreRendering__
 #define __ReRe_Client__PreRendering__
 
-#include <GL/glew.h>
-#include <GL/glfw.h>
 #include <iostream>
 #include <string>
 #include <fstream>
