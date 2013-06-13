@@ -112,7 +112,6 @@ int main(int argc, const char * argv[])
             cout << "Fehler beim Laden der Datei" << endl;
     }
     
-    throw <#expression#>
     // Close window and terminate GLFW
     glfwTerminate();
     
