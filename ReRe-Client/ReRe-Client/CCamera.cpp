@@ -141,9 +141,10 @@ isVisible(const glm::vec3& rSphereCenterWS, const float fRadius) const {
 //--------------------------------------------------
 //--------------------------------------------------
 
-
-CCamera::CCamera(aiCamera* aic_asCamera, aiMatrix4x4* aim_nodeTransform)
+CCamera::CCamera()
 {
+    f_RotationX = f_RotationY = 0.0f;
+    
     m_viewMatrix = new glm::mat4(1);
     m_projectionMatrix = new glm::mat4(1);
     
@@ -157,8 +158,8 @@ CCamera::CCamera(aiCamera* aic_asCamera, aiMatrix4x4* aim_nodeTransform)
     
     d_LastTime = glfwGetTime();
     
-    setViewMatrix(aic_asCamera, aim_nodeTransform);
-    setProjectionPerspMatrix(aic_asCamera);
+    setViewMatrix(glm::vec3(3,10,30), glm::vec3(0,0,0), glm::vec3(0,1,0));
+    //setViewMatrix(glm::vec3(6.8,-5.9,4.9), glm::vec3(0,0,0), glm::vec3(-0.3,0.3,0.9));
 }
 
 void CCamera::automaticMovement(int i)

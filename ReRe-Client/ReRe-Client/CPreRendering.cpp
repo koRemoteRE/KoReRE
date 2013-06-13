@@ -15,7 +15,12 @@ CPreRendering::CPreRendering()
     createFBO();
     initGLSL();
     
+    glEnable(GL_CULL_FACE);
+#ifdef __APPLE_CC__
     sceneMgr = new CSceneManager("../Assets/TestEnv.dae");
+#else
+    sceneMgr = new CSceneManager("./Assets/TestEnv.dae");
+#endif
 }
 
 CPreRendering::~CPreRendering()
@@ -218,8 +223,13 @@ void CPreRendering::initGLSL()
     // Create empty shader object (vertex shader)
     currentImgVertexShader = glCreateShader(GL_VERTEX_SHADER);
     
+    string shaderSource;
     // Read vertex shader source
-    string shaderSource = readFile("../Shader/CDiffuseImage.vert");
+#ifdef __APPLE_CC__
+    shaderSource = readFile("../Shader/CDiffuseImage.vert");
+#else
+    shaderSource = readFile("./Shader/CDiffuseImage.vert");
+#endif
     const char* sourcePtr = shaderSource.c_str();
     
     // Attach shader code
@@ -233,7 +243,11 @@ void CPreRendering::initGLSL()
     currentImgFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     
     // Read fragment shader source
+#ifdef __APPLE_CC__
     shaderSource = readFile("../Shader/CDiffuseImage.frag");
+#else
+    shaderSource = readFile("./Shader/CDiffuseImage.frag");
+#endif
     sourcePtr = shaderSource.c_str();
     
     // Attach shader code

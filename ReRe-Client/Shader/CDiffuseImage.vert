@@ -2,7 +2,7 @@
 
 in vec3 v_position;
 in vec3 v_normal;
-//in vec2 v_texture;
+in vec2 v_texture;
 
 uniform mat4 m_projection;
 uniform mat4 m_view;
@@ -13,12 +13,12 @@ uniform vec3 lightPos;
 
 out vec3 f_lightVec;
 out vec3 f_normal;
-//out vec3 f_texture;
+out vec3 f_texture;
 
 void main()
 {
     f_normal = normalize(m_normal * v_normal);
-//  f_texture = vec3(v_texture, 1.0f);
+    f_texture = vec3(v_texture, 1.0f);
     
     vec4 transformed_position = m_view * m_model * vec4(v_position, 1.0f);
     transformed_position.xyz = transformed_position.xyz / transformed_position.w;

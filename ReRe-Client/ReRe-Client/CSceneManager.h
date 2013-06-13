@@ -9,11 +9,14 @@
 #ifndef __ReRe_Client__SceneManager__
 #define __ReRe_Client__SceneManager__
 
+#include <map>
+
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 
 #include <GL/glew.h>
 #include <GL3/gl3.h>
+#include <IL/il.h>
 
 #include "CDefinitions.h"
 #include "CSceneNode.h"
@@ -31,12 +34,19 @@ private:
         GLuint glui_vaoBuffer;
         GLuint glui_textureIndex;
         GLuint glui_numFace;
+        GLuint glui_materialIndex = 0;
     };
-    vector<st_meshVAO> stm_meshList;
+    vector<st_meshVAO> v_stm_meshList;
+    
+    struct st_material
+    {
+        glm::vec4 v_diffuse = glm::vec4(0.8, 0.8, 0.8, 1);
+        GLfloat glf_textureCount = 0;
+    };
+    vector<st_material> v_stmat_materialList;
     
     //
     Assimp::Importer imp_asImporter;
-    const aiScene* ais_asScene;
     
     //
     CSceneNode* sn_p_rootSceneNode;
@@ -45,17 +55,20 @@ private:
     
     //
     aiMesh** aim_p_asMesh;
-    int* i_p_numMesh;
+    GLint gli_numMesh;
     aiMaterial** aim_p_asMaterial;
-    int* i_p_numMaterial;
-    aiTexture** ait_p_mTexture;
-    int* i_p_numTexture;
+    GLint gli_numMaterial;
+    aiTexture** ait_p_asTexture;
+    GLint gli_numTexture;
+    
+    //
+    map<string, GLuint> map_strglui_textureID;
     
     // Methoden
 public:
     //
     CSceneManager(std::string st_filename);         // Konstruktor
-    
+    ~CSceneManager();                               // Destruktor
     //
     void drawScene(GLuint glui_shaderProgram);            // Szene zeichnen
     
@@ -79,16 +92,19 @@ private:
     void drawScene(CSceneNode* sn_p_drawNode, GLuint glui_shaderProgram);
     
     //
+    void bindUniform(GLuint glui_shaderProgram);    // View- und Projection-Matrix an Shader binden
+    void bindUniformModelMatrix(CSceneNode* sn_p_drawNode, GLuint glui_shaderProgram); // Model- und Normal-Matrix an Shader binden
+    void bindUniformTextureMaterial(unsigned int ui_meshNum, GLuint glui_shaderProgram);    // Material an Shader binden
+    
+    // Vertex Array Objekt konfigurieren
     void bindVAO();
     
     //
-    void bindUniform(GLuint glui_shaderProgram);    // View- und Projection-Matrix an Shader binden
-    void bindUniformModelMatrix(CSceneNode* sn_p_drawNode, GLuint glui_shaderProgram);
-                                                    // Model- und Normal-Matrix an Shader binden
+    void loadTexture();
     
     //
-    void createCameraNode();                     // Legt eine Kamera an
-    void createLightNode();                      // Legt eine neue Lichtquelle an
+    void createCameraNode(const aiScene* ais_asScene);  // Legt eine Kamera an
+    void createLightNode(const aiScene* ais_asScene);   // Legt eine neue Lichtquelle an
 };
 
 #endif /* defined(__ReRe_Client__SceneManager__) */

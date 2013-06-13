@@ -22,14 +22,15 @@ class CSceneNode
     // Variablen
 private:
     vector<CSceneNode*> v_p_sceneNodeChildren;  // Liste aller Kinder eines Knotens
-    glm::mat4* m_sceneNodeTransform;          // Transformation des Knoten
-    unsigned int* i_p_nodeMesh;                 // Index auf Mesh
-    int i_nodeMeshNum;                          // Anzahl an Meshes
+    glm::mat4* m_sceneNodeTransform;            // Transformation des Knoten
+    unsigned int* ui_p_nodeMesh;                 // Index auf Mesh
+    int i_nodeMeshNum;                        // Anzahl an Meshes
     
     // Methoden
 public:
     CSceneNode(aiNode* ain_asNode);
     CSceneNode(aiNode* ain_asNode, glm::mat4 m_parnetTransform);
+    ~CSceneNode();
     
     vector<CSceneNode*> returnChildren()
         { return v_p_sceneNodeChildren; };
@@ -38,7 +39,7 @@ public:
         { return m_sceneNodeTransform; };
     
     unsigned int* returnMeshIndex()
-        { return i_p_nodeMesh; };
+        { return ui_p_nodeMesh; };
     
     int* returnNumberOfMesh()
         { return &i_nodeMeshNum; };
@@ -62,7 +63,8 @@ private:
     glm::vec3* v_p_lightDiffuse;
     
 public:
-    CLight(aiLight* ail_asLight, aiMatrix4x4* aim_nodeTransform);
+    CLight();
+    ~CLight();
     
     glm::vec3* returnPosition()
         { return v_p_lightPosition; };

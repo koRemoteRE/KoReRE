@@ -35,6 +35,9 @@ IF(APPLE)
    add_library( glfw STATIC IMPORTED )
    set_target_properties( glfw PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/MacLibs/libglfw.a )
 
+   add_library( devil STATIC IMPORTED )
+   set_target_properties( devil PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/MacLibs/libIL.a )
+
    add_library( dyassimp SHARED IMPORTED )
    set_target_properties( assimp PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/MacLibs/libassimp.3.0.0.dylib )
 
@@ -44,10 +47,14 @@ IF(APPLE)
    add_library( dyglfw SHARED IMPORTED )
    set_target_properties( glfw PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/MacLibs/libglfw.dylib )
 
+   add_library( dydevil SHARED IMPORTED )
+   set_target_properties( devil PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/MacLibs/libIL.1.dylib )
    
+
    target_link_libraries(ReReClient assimp)
    target_link_libraries(ReReClient glfw)
    target_link_libraries(ReReClient glew)
+   target_link_libraries(ReReClient devil)
 
    target_link_libraries(ReReClient ${EXTRA_LIBS})
 else()
@@ -62,14 +69,18 @@ else()
 	  )
 	 target_link_libraries(ReReClient ${VS_LIBS})
   else()
+    set(EXT_LIBS ${CMAKE_SOURCE_DIR}/MinGWLibs)
     link_directories(${EXT_LIBS})
     link_directories(${CMAKE_LIBRARY_PATH})
     include_directories(${CMAKE_LIBRARY_PATH})
-    set(
-    assimp
-    glfw
+    set(MINGW_LIBS
+    ${EXT_LIBS}/libassimp.dll.a
+    ${EXT_LIBS}/libglfw.a
     opengl32
+    ${EXT_LIBS}/libglew32.dll.a
+    ${EXT_LIBS}/libIL.dll.a
     )
+    target_link_libraries(ReReClient ${MINGW_LIBS})
   endif()
 endif()
 

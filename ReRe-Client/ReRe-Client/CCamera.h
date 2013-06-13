@@ -51,7 +51,7 @@ private:
     aiMatrix4x4* m_Transform;
     
 public:
-    CCamera(aiCamera* aic_asCamera, aiMatrix4x4* aim_nodeTransform);
+    CCamera();
     
     glm::mat4 returnViewMatrix()
         { return *m_viewMatrix; };
@@ -72,8 +72,13 @@ public:
     bool viewVisible(CSceneNode* sc_rootSceneNode);     // View Frustum Culling
     
 private:
-    void setViewMatrix(aiCamera* aic_asCamera, aiMatrix4x4* aim_nodeTransform);
-    void setProjectionPerspMatrix(aiCamera* aic_asCamera);
+    void setViewMatrix(glm::vec3 v_eyePosition, glm::vec3 v_eyeLookAt, glm::vec3 v_eyeUp)
+        { *m_viewMatrix = glm::lookAt(v_eyePosition, v_eyeLookAt, v_eyeUp); };
+    void setProjectionPerspMatrix()
+        {*m_projectionMatrix = glm::perspective(stcpi_intrinsic.f_fieldOfView,
+                                                stcpi_intrinsic.f_aspect,
+                                                stcpi_intrinsic.f_near,
+                                                stcpi_intrinsic.f_far);};
 };
 
 

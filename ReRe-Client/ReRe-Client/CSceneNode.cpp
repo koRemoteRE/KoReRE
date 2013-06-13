@@ -15,10 +15,13 @@ CSceneNode::CSceneNode(aiNode* ain_asNode)
     // Überprüfen, ob Mesh vorhanden
     if (ain_asNode->mNumMeshes != 0)
     {
-        // Mesh speichern
-        i_p_nodeMesh = ain_asNode->mMeshes;
         // Anzahl der Meshes speichern
         i_nodeMeshNum = ain_asNode->mNumMeshes;
+        
+        // Mesh speichern
+        ui_p_nodeMesh = new unsigned int[i_nodeMeshNum];
+        for (int i_mesh = 0; i_mesh< i_nodeMeshNum; i_mesh++)
+            ui_p_nodeMesh[i_mesh] = ain_asNode->mMeshes[i_mesh];
     }
     
     // Transformation im Objekt speichern
@@ -29,15 +32,25 @@ CSceneNode::CSceneNode(aiNode* ain_asNode)
 
 CSceneNode::CSceneNode(aiNode* ain_asNode, glm::mat4 m_parnetTransform)
 {
-    // Mesh speichern
-    i_p_nodeMesh = ain_asNode->mMeshes;
     // Anzahl der Meshes speichern
     i_nodeMeshNum = ain_asNode->mNumMeshes;
+    
+    // Mesh speichern
+    ui_p_nodeMesh = new unsigned int[i_nodeMeshNum];
+    for (int i_mesh = 0; i_mesh< i_nodeMeshNum; i_mesh++)
+        ui_p_nodeMesh[i_mesh] = ain_asNode->mMeshes[i_mesh];
     
     // Transformation im Objekt speichern
     m_sceneNodeTransform = CTransformAiToGlm::TransformMat4P(ain_asNode->mTransformation);
     
     findNextMeshNode(ain_asNode, *m_sceneNodeTransform);
+}
+
+CSceneNode::~CSceneNode()
+{
+    v_p_sceneNodeChildren.~vector();
+    delete  m_sceneNodeTransform;
+    delete ui_p_nodeMesh;
 }
 
 void CSceneNode::findNextMeshNode(aiNode* ain_asNode, glm::mat4 m_nextTransform)
@@ -66,14 +79,17 @@ void CSceneNode::findNextMeshNode(aiNode* ain_asNode, glm::mat4 m_nextTransform)
 //-----------------------------------------------
 //-----------------------------------------------
 
-CLight::CLight(aiLight* ail_asLight, aiMatrix4x4* aim_nodeTransform)
+CLight::CLight()
 {
     // Speichern des diffusen Lichts
-    v_p_lightDiffuse = CTransformAiToGlm::TransformCol3P(ail_asLight->mColorDiffuse);
+    v_p_lightDiffuse = new glm::vec3(0.8,0.8,0.8);
     
     // Speichern der Lichtposition (ohne Richtung)
-    v_p_lightPosition = CTransformAiToGlm::TransformVec3P(ail_asLight->mPosition);
-    v_p_lightPosition->x += aim_nodeTransform->a4;
-    v_p_lightPosition->y += aim_nodeTransform->b4;
-    v_p_lightPosition->z += aim_nodeTransform->c4;
+    v_p_lightPosition = new glm::vec3(3, 30, 10);
+}
+
+CLight::~CLight()
+{
+    delete v_p_lightPosition;
+    delete v_p_lightDiffuse;
 }
