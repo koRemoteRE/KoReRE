@@ -518,7 +518,7 @@ int main(void) {
     kore::RenderManager::getInstance()->renderFrame();
 
     glfwSwapBuffers();
-    encoder->encodeFrame();
+    encoder->encodeFrame(12);
 
     //server.streamFrame();
     kore::GLerror::gl_ErrorCheckFinish("Main Loop");

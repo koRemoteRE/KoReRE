@@ -221,7 +221,7 @@ bool Encoder::init( char* filename, int width, int height )
   return true;
 }
 
-void Encoder::encodeFrame()
+void Encoder::encodeFrame( uint8_t ID )
 {
   //frameReadyForStream = false;
   if(!_recording) return;
@@ -257,16 +257,20 @@ void Encoder::encodeFrame()
     pkt.size          = sizeof(AVFrame);
 
     ret = av_write_frame(fc, &pkt);
-  } else {
+    }
+  else {
     AVPacket pkt = { 0 };
     int got_packet;
     av_init_packet(&pkt);
-
-	QueuePacket qPkt = { 0 };
-	timeval tv = { 0 };
+    av_packet_new_side_data(&pkt,AV_PKT_DATA_NEW_EXTRADATA,sizeof(uint8_t));
+    pkt.side_data->data = &ID;
+   
+    //uint8_t* test = av_packet_get_side_data(&pkt,AV_PKT_DATA_NEW_EXTRADATA,NULL);
+    QueuePacket qPkt = { 0 };
+    timeval tv = { 0 };
 
     // encode the image 
-	loger.printTime("Encoding start");
+    loger.printTime("Encoding start");
     ret = avcodec_encode_video2(codecContext, &pkt, picYUV, &got_packet);
     if (ret < 0) {
       fprintf(stderr, "Error encoding video frame: %s\n");
@@ -275,21 +279,21 @@ void Encoder::encodeFrame()
     // If size is zero, it means the image was buffered. 
 
     if (!ret && got_packet && pkt.size) {
-		pkt.stream_index = videoStream->index;
+    pkt.stream_index = videoStream->index;
 
        
-		loger.printTime("Encoding done");
-		//currPacket = &pkt;
+    loger.printTime("Encoding done");
+    //currPacket = &pkt;
 
-		qPkt.framePacket = pkt;
+    qPkt.framePacket = pkt;
 
-		queue->push(qPkt);
-		//std::cout << queue->getLenght() << std::endl;
-		// Write the compressed frame to the media file.
-		//ret = av_write_frame(fc, &pkt);
+    queue->push(qPkt);
+    //std::cout << queue->getLenght() << std::endl;
+    // Write the compressed frame to the media file.
+    //ret = av_write_frame(fc, &pkt);
     } else {
-		loger.printTime("Didn't push encoded Frame");
-		ret = 0;
+    loger.printTime("Didn't push encoded Frame");
+    ret = 0;
     }
   }
   if (ret != 0) {
@@ -299,10 +303,10 @@ void Encoder::encodeFrame()
   frame_count++;
  // if(frame_count == 11 ){
 
-	////picYUV->pts += av_rescale_q(1, videoStream->codec->time_base, videoStream->time_base);
-	//picYUV->pts -= 36000;
+  ////picYUV->pts += av_rescale_q(1, videoStream->codec->time_base, videoStream->time_base);
+  //picYUV->pts -= 36000;
  // }
-	picYUV->pts += av_rescale_q(1, videoStream->codec->time_base, videoStream->time_base);
+  picYUV->pts += av_rescale_q(1, videoStream->codec->time_base, videoStream->time_base);
   
   //int64_t hjkljkhl = av_rescale_q(1, videoStream->codec->time_base, videoStream->time_base);
   int ghgh = 0;

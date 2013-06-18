@@ -25,7 +25,7 @@ public:
   ~Encoder(void);
  
   bool init(char* Filename, int width, int height);
-  void encodeFrame();
+  void encodeFrame(uint8_t ID);
   AVPacket* getCurrentPacket();
   void finish();
   void start();
