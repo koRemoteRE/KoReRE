@@ -32,17 +32,19 @@ private:
     //
     struct st_meshVAO
     {
+        st_meshVAO():glui_materialIndex(0){}
         GLuint glui_vaoBuffer;
         GLuint glui_textureIndex;
         GLuint glui_numFace;
-        GLuint glui_materialIndex = 0;
+        GLuint glui_materialIndex ;
     };
     vector<st_meshVAO> v_stm_meshList;
     
     struct st_material
     {
-        glm::vec4 v_diffuse = glm::vec4(0.8, 0.8, 0.8, 1);
-        GLfloat glf_textureCount = 0;
+        st_material():v_diffuse(glm::vec4(0.8, 0.8, 0.8, 1)),glf_textureCount(0){}
+        glm::vec4 v_diffuse;
+        GLfloat glf_textureCount;
     };
     vector<st_material> v_stmat_materialList;
     

@@ -20,13 +20,15 @@ void drawWarpedImg(void)
 {
     // TODO: Warping
 }
-
+glm::mat4 lastView;
+glm::mat4 lastProj;
 void MainLoop(void)
 {
     CPreRendering* renderer = new CPreRendering();
 
     int i = 0;
-    
+    int frameCounter = 0;
+    int frameThreshold = 30;
     do{
         // Update Camera Matrix
         renderer->getSceneGraph()->returnCameraNode()->updateCameraView();
@@ -38,14 +40,25 @@ void MainLoop(void)
         //renderer->writeToFBO();
         renderer->testDraw();
         
-        drawWarpedImg();
-        
+        if(frameCounter == 0){
+            renderer->writeToFBO();
+            // renderer->testDraw();
+            frameCounter =frameThreshold;
+
+            lastView = renderer->getViewMatrix();
+            lastProj = renderer->getProjectionMatrix();
+        }else{
+            renderer->testWarpDraw(lastView,lastProj);
+
+            frameCounter--;
+        }
+
         // Swap buffers
         glfwSwapBuffers();
         
     } // Check if the ESC key was pressed or the window was closed
     while( glfwGetKey( GLFW_KEY_ESC ) != GLFW_PRESS &&
-          glfwGetWindowParam( GLFW_OPENED ) );
+           glfwGetWindowParam( GLFW_OPENED ) );
     
     delete renderer;
 }
@@ -59,12 +72,12 @@ int main(int argc, const char * argv[])
         fprintf( stderr, "Failed to initialize GLFW\n" );
         return -1;
     }
-        
+
     glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 4); // 4x antialiasing
     glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 3); // OpenGL 3.2
     glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 2);
     glfwOpenWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //We don't want the old OpenGL
-        
+
     // Open a window and create its OpenGL context
     if( !glfwOpenWindow( WIDTH, HEIGHT, 0,0,0,0, 32,0, GLFW_WINDOW ) )
     {
@@ -72,14 +85,14 @@ int main(int argc, const char * argv[])
         glfwTerminate();
         return -1;
     }
-        
+
     // Initialize GLEW
     glewExperimental=true; // Needed in core profile
     if (glewInit() != GLEW_OK) {
         fprintf(stderr, "Failed to initialize GLEW\n");
         return -1;
     }
-        
+
     glfwSetWindowTitle( "Hello World!" );
     
     // Ensure we can capture the escape key being pressed below

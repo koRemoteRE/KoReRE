@@ -269,6 +269,63 @@ void CPreRendering::initGLSL()
     // Link program
     glLinkProgram(currentImgShaderProgram);
     printProgramInfoLog(currentImgShaderProgram);
+
+
+
+
+    // Initialize warping shaders
+    warpingVertexShader = glCreateShader(GL_VERTEX_SHADER);
+
+    // Read vertex shader source
+#ifdef __APPLE_CC__
+    shaderSource = readFile("../Shader/warping.vert");
+#else
+    shaderSource = readFile("./Shader/warping.vert");
+#endif
+    sourcePtr = shaderSource.c_str();
+
+    // Attach shader code
+    glShaderSource(warpingVertexShader, 1, &sourcePtr, NULL);
+
+    // Compile
+    glCompileShader(warpingVertexShader);
+    printShaderInfoLog(warpingVertexShader);
+
+
+    // Create empty shader object (fragment shader)
+    warpingFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+
+    // Read fragment shader source
+#ifdef __APPLE_CC__
+    shaderSource = readFile("../Shader/warping.frag");
+#else
+    shaderSource = readFile("./Shader/warping.frag");
+#endif
+    sourcePtr = shaderSource.c_str();
+
+    // Attach shader code
+    glShaderSource(warpingFragmentShader, 1, &sourcePtr, NULL);
+
+    // Compile
+    glCompileShader(warpingFragmentShader);
+    printShaderInfoLog(warpingFragmentShader);
+
+    // Create shader program
+    warpingShaderProgram = glCreateProgram();
+
+    // Attach shader
+    glAttachShader(warpingShaderProgram, warpingVertexShader);
+    glAttachShader(warpingShaderProgram, warpingFragmentShader);
+
+    // Bind Attributes
+    glBindAttribLocation(warpingShaderProgram, SHADER_POSITION_LOC, "v_position");
+    glBindAttribLocation(warpingShaderProgram, SHADER_NORMAL_LOC, "v_normal");
+    //glBindAttribLocation(currentImgShaderProgram, SHADER_TEX_COORD_LOC, "v_texture");
+
+    // Link program
+    glLinkProgram(warpingShaderProgram);
+    printProgramInfoLog(warpingShaderProgram);
+
 }
 
 // --- Just Testing ---- TODO: Delete! -------------------------------
@@ -282,6 +339,30 @@ void CPreRendering::testDraw()
     
     sceneMgr->drawScene(currentImgShaderProgram);
     
+    glUseProgram(0);
+}
+
+void CPreRendering::testWarpDraw(glm::mat4 &oldView,glm::mat4 &oldProj)
+{
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glUseProgram(warpingShaderProgram);
+    glm::ivec2 dim(WIDTH,HEIGHT);
+    glUniformMatrix4fv(glGetUniformLocation(warpingShaderProgram, "oldProjMatrix"), 1,
+                false, glm::value_ptr(oldProj));
+        glUniformMatrix4fv(glGetUniformLocation(warpingShaderProgram, "oldViewMatrix"), 1,
+                false, glm::value_ptr(oldView));
+    glUniform2iv(glGetUniformLocation(warpingShaderProgram,"texDim"),1,glm::value_ptr(dim));
+    GLuint texLoc = glGetUniformLocationARB(warpingShaderProgram, "frameTex");
+
+    glActiveTextureARB(GL_TEXTURE6_ARB);
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, currentImgTexture);
+    glUniform1i(texLoc, 6);
+    glActiveTextureARB(GL_TEXTURE3_ARB);
+    sceneMgr->drawScene(warpingShaderProgram);
+ glBindTexture(GL_TEXTURE_2D, 0);
     glUseProgram(0);
 }
 
