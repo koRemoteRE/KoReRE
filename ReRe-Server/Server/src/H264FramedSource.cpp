@@ -125,9 +125,10 @@ void H264FramedSource::deliverFrame() {
 
 	currPacket = qPkt.framePacket;
 
-
     u_int8_t* newFrameDataStart = currPacket.data + 4; //+4 skip startcode
     unsigned newFrameSize = currPacket.size;
+
+	
 
     // Deliver the data here:
     if (newFrameSize > fMaxSize) {

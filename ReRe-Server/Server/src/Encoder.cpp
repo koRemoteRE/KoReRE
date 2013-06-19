@@ -262,6 +262,10 @@ void Encoder::encodeFrame()
     int got_packet;
     av_init_packet(&pkt);
 
+	uint8_t *sideData;		//init side data
+
+	
+
 	QueuePacket qPkt = { 0 };
 	timeval tv = { 0 };
 
@@ -281,7 +285,14 @@ void Encoder::encodeFrame()
 		loger.printTime("Encoding done");
 		//currPacket = &pkt;
 
+		//side data stuff
 		qPkt.framePacket = pkt;
+		sideData = av_packet_new_side_data(&pkt, AV_PKT_DATA_STRINGS_METADATA,frame_count);
+		*sideData = frame_count;
+
+		av_packet_merge_side_data(&pkt);
+
+		//side data end
 
 		queue->push(qPkt);
 		//std::cout << queue->getLenght() << std::endl;
