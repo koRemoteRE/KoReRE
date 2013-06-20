@@ -15,7 +15,7 @@ void main()
 	vec4 frameCoord = FrameCoord/FrameCoord.w;
 	vec2 texCoord = (frameCoord.xy + vec2(1,1))/2;
 	
-	vec4 c = texture2D(frameTex,texCoord);
+	vec4 c = texture(frameTex,texCoord);
 	if(c.w == 0){
 		vec3 color = vec3(0.0);
 		int num = 0;
@@ -25,7 +25,7 @@ void main()
 				tempPos.x = texCoord.x + x*texel.x;
 				tempPos.y = texCoord.y + y*texel.y;
 			
-				vec4 tempColor = vec4(texture2D(frameTex,tempPos));
+				vec4 tempColor = vec4(texture(frameTex,tempPos));
 				if(tempColor.w != 0.0){
 					num++;
 					color += tempColor.xyz;
