@@ -264,7 +264,7 @@ void CPreRendering::initGLSL()
     // Bind Attributes
     glBindAttribLocation(currentImgShaderProgram, SHADER_POSITION_LOC, "v_position");
     glBindAttribLocation(currentImgShaderProgram, SHADER_NORMAL_LOC, "v_normal");
-    //glBindAttribLocation(currentImgShaderProgram, SHADER_TEX_COORD_LOC, "v_texture");
+    glBindAttribLocation(currentImgShaderProgram, SHADER_TEX_COORD_LOC, "v_texture");
     
     // Link program
     glLinkProgram(currentImgShaderProgram);
@@ -326,20 +326,6 @@ void CPreRendering::initGLSL()
     glLinkProgram(warpingShaderProgram);
     printProgramInfoLog(warpingShaderProgram);
 
-}
-
-// --- Just Testing ---- TODO: Delete! -------------------------------
-
-void CPreRendering::testDraw()
-{
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
-    glUseProgram(currentImgShaderProgram);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    
-    sceneMgr->drawScene(currentImgShaderProgram);
-    
-    glUseProgram(0);
 }
 
 void CPreRendering::testWarpDraw(glm::mat4 &oldView,glm::mat4 &oldProj)

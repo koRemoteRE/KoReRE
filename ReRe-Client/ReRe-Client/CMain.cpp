@@ -16,33 +16,21 @@
 #include <GL/glfw.h>
 #include <glm/glm.hpp>
 
-void drawWarpedImg(void)
-{
-    // TODO: Warping
-}
 glm::mat4 lastView;
 glm::mat4 lastProj;
+
 void MainLoop(void)
 {
     CPreRendering* renderer = new CPreRendering();
 
-    int i = 0;
     int frameCounter = 0;
-    int frameThreshold = 30;
+    int frameThreshold = 5;
     do{
         // Update Camera Matrix
         renderer->getSceneGraph()->returnCameraNode()->updateCameraView();
         
-        // Test Movement
-        i++;
-        //renderer->getSceneGraph()->returnCameraNode()->automaticMovement(i);
-        
-        //renderer->writeToFBO();
-        renderer->testDraw();
-        
         if(frameCounter == 0){
             renderer->writeToFBO();
-            // renderer->testDraw();
             frameCounter =frameThreshold;
 
             lastView = renderer->getViewMatrix();

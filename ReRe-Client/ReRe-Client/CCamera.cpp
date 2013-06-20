@@ -152,7 +152,7 @@ CCamera::CCamera()
     stcpi_intrinsic.f_fieldOfView   = 27;
     stcpi_intrinsic.f_aspect        = 1.7;
     stcpi_intrinsic.f_near          = 0.1;
-    stcpi_intrinsic.f_far           = 100;
+    stcpi_intrinsic.f_far           = 1000;
     
     setProjectionPerspMatrix();
     

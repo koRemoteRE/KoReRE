@@ -53,7 +53,7 @@ CSceneManager::CSceneManager(std::string st_filename)
         bindVAO();
         
         // Assimp-Szene löschen
-        // delete ais_p_asImportScene;
+        delete ais_p_asImportScene;
     }
     else
     {
@@ -103,8 +103,8 @@ void CSceneManager::drawScene(CSceneNode* sn_p_drawNode, GLuint glui_shaderProgr
         gli_meshIndex = sn_p_drawNode->returnMeshIndex()[glui_numMesh];
         
         bindUniformTextureMaterial(v_stm_meshList[gli_meshIndex].glui_materialIndex, glui_shaderProgram);
-        
         // Texture anbinden (GL_TEXTURE_0) und an Shader übergeben
+        glActiveTextureARB(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, v_stm_meshList[sn_p_drawNode->returnMeshIndex()[glui_numMesh]].glui_textureIndex);
         glUniform1i(gli_texture,0);
         
@@ -170,6 +170,9 @@ void CSceneManager::bindUniformTextureMaterial(unsigned int ui_meshNum, GLuint g
     
     gli_uniformMaterial = glGetUniformLocation(glui_shaderProgram,"textureCount");
     glUniform1f(gli_uniformMaterial, v_stmat_materialList[ui_meshNum].glf_textureCount);
+    
+    gli_uniformMaterial = glGetUniformLocation(glui_shaderProgram,"textureActiv");
+    glUniform1i(gli_uniformMaterial, TEXTURE_ACTIVITY);
 }
 
 //
@@ -321,7 +324,7 @@ void CSceneManager::loadTexture()
         {
             // Bild in RGBA umwandeln
             ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
-            
+            glActiveTextureARB(GL_TEXTURE0);
             // OpenGL Texture erstellen und laden
             glBindTexture(GL_TEXTURE_2D, glui_textureID[i_index]);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

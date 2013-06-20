@@ -13,8 +13,6 @@
 #define WIDTH 1024
 #define HEIGHT 576
 
-#define PI 3.1454
-
 #define CAM_POS_X 0.0
 #define CAM_POS_Y 15.0
 #define CAM_POS_Z 25.0
@@ -35,6 +33,8 @@
 #define SHADER_POSITION_LOC 1
 #define SHADER_NORMAL_LOC 2
 #define SHADER_TEX_COORD_LOC 3
+
+#define TEXTURE_ACTIVITY 0
 
 #ifdef __APPLE_CC__
 #define PATH "../Assets/"
