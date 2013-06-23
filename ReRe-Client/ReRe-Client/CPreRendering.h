@@ -63,7 +63,6 @@ public:
     
     // --- Just Testing --- TODO: Delete! ----------------
     
-    void testDraw();
     void testWarpDraw(glm::mat4 &oldView,glm::mat4 &oldProj);
     // ---------------------------------------------------
 };

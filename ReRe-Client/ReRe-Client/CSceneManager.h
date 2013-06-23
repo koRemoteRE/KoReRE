@@ -73,7 +73,7 @@ public:
     CSceneManager(std::string st_filename);         // Konstruktor
     ~CSceneManager();                               // Destruktor
     //
-    void drawScene(GLuint glui_shaderProgram);            // Szene zeichnen
+    void drawScene(GLuint& glui_shaderProgram);            // Szene zeichnen
     
     //
     inline CSceneNode* returnRootSceneNode()              // Gibt den Wurzelknoten des Szenegraphen zurück
@@ -92,12 +92,12 @@ public:
 
 private:
     //
-    void drawScene(CSceneNode* sn_p_drawNode, GLuint glui_shaderProgram);
+    void drawScene(CSceneNode* sn_p_drawNode, GLuint& glui_shaderProgram);
     
     //
-    void bindUniform(GLuint glui_shaderProgram);    // View- und Projection-Matrix an Shader binden
-    void bindUniformModelMatrix(CSceneNode* sn_p_drawNode, GLuint glui_shaderProgram); // Model- und Normal-Matrix an Shader binden
-    void bindUniformTextureMaterial(unsigned int ui_meshNum, GLuint glui_shaderProgram);    // Material an Shader binden
+    void bindUniform(GLuint& glui_shaderProgram);    // View- und Projection-Matrix an Shader binden
+    void bindUniformModelMatrix(CSceneNode* sn_p_drawNode, GLuint& glui_shaderProgram); // Model- und Normal-Matrix an Shader binden
+    void bindUniformTextureMaterial(GLuint& ui_meshNum, GLuint& glui_shaderProgram);    // Material an Shader binden
     
     // Vertex Array Objekt konfigurieren
     void bindVAO();
@@ -106,8 +106,8 @@ private:
     void loadTexture();
     
     //
-    void createCameraNode(const aiScene* ais_asScene);  // Legt eine Kamera an
-    void createLightNode(const aiScene* ais_asScene);   // Legt eine neue Lichtquelle an
+    void createCameraNode(void);  // Legt eine Kamera an
+    void createLightNode(void);   // Legt eine neue Lichtquelle an
 };
 
 #endif /* defined(__ReRe_Client__SceneManager__) */

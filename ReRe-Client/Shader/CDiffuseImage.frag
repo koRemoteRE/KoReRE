@@ -21,7 +21,7 @@ void main()
     vec4 diffuseReflection = vec4( diffuseMaterialColor.rgb * diffuseLightColor * cosinus, 1.0f);
     
     if (textureCount != 0 && textureActiv != 0)
-        { out_diffColor = vec4(texel * diffuseReflection,1.0f); }
+        { out_diffColor = clamp(texel * diffuseReflection, 0.0, 1.0); }
     else
         { out_diffColor = clamp(diffuseReflection, 0.0, 1.0); }
 }

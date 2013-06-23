@@ -340,13 +340,13 @@ void CPreRendering::testWarpDraw(glm::mat4 &oldView,glm::mat4 &oldProj)
         glUniformMatrix4fv(glGetUniformLocation(warpingShaderProgram, "oldViewMatrix"), 1,
                 false, glm::value_ptr(oldView));
     glUniform2iv(glGetUniformLocation(warpingShaderProgram,"texDim"),1,glm::value_ptr(dim));
-    GLuint texLoc = glGetUniformLocationARB(warpingShaderProgram, "frameTex");
+    GLuint texLoc = glGetUniformLocation(warpingShaderProgram, "frameTex");
 
-    glActiveTextureARB(GL_TEXTURE6_ARB);
+    glActiveTexture(GL_TEXTURE6);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, currentImgTexture);
     glUniform1i(texLoc, 6);
-    glActiveTextureARB(GL_TEXTURE3_ARB);
+    glActiveTexture(GL_TEXTURE3);
     sceneMgr->drawScene(warpingShaderProgram);
  glBindTexture(GL_TEXTURE_2D, 0);
     glUseProgram(0);

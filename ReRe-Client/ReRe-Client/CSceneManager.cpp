@@ -13,13 +13,11 @@ CSceneManager::CSceneManager(std::string st_filename)
 {
     if (st_filename.substr(st_filename.find_last_of('.')) == ".dae")
     {
-        const aiScene* ais_p_asImportScene;
-        
         // Mit Assimp Collada-Datei laden
-        ais_p_asImportScene = imp_asImporter.ReadFile(st_filename,  aiProcess_CalcTangentSpace |
-                                                            aiProcess_Triangulate |
-                                                            aiProcess_JoinIdenticalVertices |
-                                                            aiProcess_SortByPType);
+        const aiScene* ais_p_asImportScene = imp_asImporter.ReadFile(st_filename,  aiProcess_CalcTangentSpace |
+                                                                     aiProcess_Triangulate |
+                                                                     aiProcess_JoinIdenticalVertices |
+                                                                     aiProcess_SortByPType);
         if (ais_p_asImportScene == NULL)
             throw 0x01;
         
@@ -27,9 +25,9 @@ CSceneManager::CSceneManager(std::string st_filename)
         sn_p_rootSceneNode = new CSceneNode(ais_p_asImportScene->mRootNode);
         
         // Licht und Kamera anlegen
-        createLightNode(ais_p_asImportScene);
-        createCameraNode(ais_p_asImportScene);
-        
+        createLightNode();
+        createCameraNode();
+
         gli_numMesh = ais_p_asImportScene->mNumMeshes;
         gli_numMaterial = ais_p_asImportScene->mNumMaterials;
         gli_numTexture = ais_p_asImportScene->mNumTextures;
@@ -82,13 +80,13 @@ CSceneManager::~CSceneManager()
     delete ait_p_asTexture;
 }
 
-void CSceneManager::drawScene(GLuint glui_shaderProgram)
+void CSceneManager::drawScene(GLuint& glui_shaderProgram)
 {
     bindUniform(glui_shaderProgram);
     drawScene(sn_p_rootSceneNode, glui_shaderProgram);
 }
 
-void CSceneManager::drawScene(CSceneNode* sn_p_drawNode, GLuint glui_shaderProgram)
+void CSceneManager::drawScene(CSceneNode* sn_p_drawNode, GLuint& glui_shaderProgram)
 {
     // Vertexliste zeichnen
     // Für alle Knoten zeichnen
@@ -96,15 +94,15 @@ void CSceneManager::drawScene(CSceneNode* sn_p_drawNode, GLuint glui_shaderProgr
     
     // Texture Uniform Location
     GLint gli_texture = glGetUniformLocation(glui_shaderProgram,"texture2D");
-    GLint gli_meshIndex;
+    GLint* gli_meshIndex = new GLint;
     
     for (GLuint glui_numMesh = 0; glui_numMesh <  *(sn_p_drawNode->returnNumberOfMesh()); glui_numMesh++)
     {
-        gli_meshIndex = sn_p_drawNode->returnMeshIndex()[glui_numMesh];
+        *gli_meshIndex = sn_p_drawNode->returnMeshIndex()[glui_numMesh];
         
-        bindUniformTextureMaterial(v_stm_meshList[gli_meshIndex].glui_materialIndex, glui_shaderProgram);
+        bindUniformTextureMaterial(v_stm_meshList[*gli_meshIndex].glui_materialIndex, glui_shaderProgram);
         // Texture anbinden (GL_TEXTURE_0) und an Shader übergeben
-        glActiveTextureARB(GL_TEXTURE0);
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, v_stm_meshList[sn_p_drawNode->returnMeshIndex()[glui_numMesh]].glui_textureIndex);
         glUniform1i(gli_texture,0);
         
@@ -118,7 +116,7 @@ void CSceneManager::drawScene(CSceneNode* sn_p_drawNode, GLuint glui_shaderProgr
         drawScene(sn_p_drawNode->returnChildren()[ui_numNode], glui_shaderProgram);
     }
 }
-void CSceneManager::bindUniform(GLuint glui_shaderProgram)
+void CSceneManager::bindUniform(GLuint& glui_shaderProgram)
 {
     // ProjectionsMatrix an Shader übergeben
     GLint gli_uniformProjectionMatrix = glGetUniformLocation(glui_shaderProgram,"m_projection");
@@ -143,7 +141,7 @@ void CSceneManager::bindUniform(GLuint glui_shaderProgram)
                 (returnLightNode()[0]->returnDiffuse())->z);
 }
 
-void CSceneManager::bindUniformModelMatrix(CSceneNode* sn_p_drawNode, GLuint glui_shaderProgram)
+void CSceneManager::bindUniformModelMatrix(CSceneNode* sn_p_drawNode, GLuint& glui_shaderProgram)
 {
     // ModelMatrix an Shader übergeben
     GLint gli_uniformModelMatrix = glGetUniformLocation(glui_shaderProgram,"m_model");
@@ -159,7 +157,7 @@ void CSceneManager::bindUniformModelMatrix(CSceneNode* sn_p_drawNode, GLuint glu
 	glUniformMatrix3fv(gli_uniformNormalMatrix, 1, GL_FALSE, glm::value_ptr( m_normalMatrix ) ) ;
 }
 
-void CSceneManager::bindUniformTextureMaterial(unsigned int ui_meshNum, GLuint glui_shaderProgram)
+void CSceneManager::bindUniformTextureMaterial(GLuint& ui_meshNum, GLuint& glui_shaderProgram)
 {
     GLint gli_uniformMaterial = glGetUniformLocation(glui_shaderProgram,"diffuseMaterialColor");
     glUniform4f(gli_uniformMaterial,
@@ -324,7 +322,7 @@ void CSceneManager::loadTexture()
         {
             // Bild in RGBA umwandeln
             ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
-            glActiveTextureARB(GL_TEXTURE0);
+            glActiveTexture(GL_TEXTURE0);
             // OpenGL Texture erstellen und laden
             glBindTexture(GL_TEXTURE_2D, glui_textureID[i_index]);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -339,13 +337,13 @@ void CSceneManager::loadTexture()
     delete [] glui_textureID;
 }
 
-void CSceneManager::createCameraNode(const aiScene* ais_asScene)
+void CSceneManager::createCameraNode(void)
 {
     // Name der Kameraquelle nutzen um SceneNode-Transformation mit zu uebergeben
     c_p_cameraNode = new CCamera();
 }
 
-void CSceneManager::createLightNode(const aiScene* ais_asScene)
+void CSceneManager::createLightNode(void)
 {
     // Über alle Lichtquellen gehen
     // Name der Lichtquelle nutzen um SceneNode-Transformation mit zu uebergeben
