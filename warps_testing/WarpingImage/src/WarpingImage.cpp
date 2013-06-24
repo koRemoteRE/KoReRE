@@ -33,22 +33,25 @@ GLuint boxBuffer[4], recBuffer[3], txtQuadBuffer[2];
 GLuint firstFrameTexture, firstFrameFBO;
 GLuint textureHandle;
 
-
 GLuint vao[4];
-glm::vec3 pos(0.0f, 0.0f, 0.0f);
+glm::vec3 pos(0.0f, 0.0f, -15.0f);
 float rotY = 0.0f;
 float rotZ = 0.0f;
 
 glm::mat4 projMatrix, modelMatrix;
 glm::mat4 firstProjMatrix, firstModelMatrix;
 
-int counter = 0;
+long timeCounter = 0;
+long timeSwitch = 2000;
+
+bool mouseDown = false;
 
 void displayFirstFrame();
 void display();
 void setupBuffers();
 void keyAction(unsigned char key, int x, int y);
 void mouseAction(int button, int state, int x, int y);
+void mousePassive(int x, int y);
 
 int main(int argc, char **argv) {
 	glutInit(&argc, argv);
@@ -57,8 +60,10 @@ int main(int argc, char **argv) {
 	glutInitWindowPosition(200, 100);
 	glutCreateWindow("Wapring Image");
 
+	glutSetKeyRepeat(GLUT_KEY_REPEAT_ON);
 	glutKeyboardFunc(keyAction);
 	glutMouseFunc(mouseAction);
+	glutPassiveMotionFunc(mousePassive);
 
 	GLenum err = glewInit();
 	if (GLEW_OK != err) {
@@ -70,6 +75,7 @@ int main(int argc, char **argv) {
 
 	glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 	utl = new Util();
 	matState = new MatrixState();
 
@@ -102,10 +108,11 @@ void displayFirstFrame() {
 
 	matState->matrixMode(matState->VIEW);
 	matState->loadIdentity();
-	matState->lookAt(0.0f, 0.0f, 15.0f,0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-	matState->translate(pos.x, pos.y, pos.z);
+	matState->lookAt(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f);
 	matState->rotate(rotY, 0.0f, 1.0f, 0.0f);
-	matState->rotate(rotZ, 0.0f, 0.0f, 1.0f);
+	matState->rotate(rotZ, 1.0f, 0.0f, 0.0f);
+	matState->translate(pos.x, pos.y, pos.z);
+
 	firstModelMatrix = matState->getCurrentMatrix();
 
 	glUseProgram(prog);
@@ -121,7 +128,6 @@ void displayFirstFrame() {
 	glUniformMatrix4fv(glGetUniformLocation(prog, "viewMatrix"), 1, false,
 			glm::value_ptr(firstModelMatrix));
 
-
 	glBindVertexArray(vao[0]);
 	glDrawElements(GL_TRIANGLES, sizeof(rectangleIndices), GL_UNSIGNED_SHORT,
 			0);
@@ -135,7 +141,7 @@ void displayFirstFrame() {
 	glUniformMatrix4fv(glGetUniformLocation(prog, "viewMatrix"), 1, false,
 			glm::value_ptr(firstModelMatrix));
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D,textureHandle);
+	glBindTexture(GL_TEXTURE_2D, textureHandle);
 	glUniform1i(glGetUniformLocation(prog, "frameTex"), 0);
 
 	glBindVertexArray(vao[1]);
@@ -147,10 +153,10 @@ void displayFirstFrame() {
 
 	glutDisplayFunc(display);
 	glutIdleFunc(display);
+	timeCounter = glutGet(GLUT_ELAPSED_TIME ) + timeSwitch;
 }
 
 void display() {
-	counter++;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 //
 	glViewport(0, 0, (GLsizei) WINDOW_WIDTH, (GLsizei) WINDOW_HEIGHT);
@@ -161,10 +167,11 @@ void display() {
 
 	matState->matrixMode(matState->VIEW);
 	matState->loadIdentity();
-	matState->lookAt(0.0f, 0.0f,15.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-	matState->translate(pos.x, pos.y, pos.z);
+	matState->lookAt(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f);
 	matState->rotate(rotY, 0.0f, 1.0f, 0.0f);
-	matState->rotate(rotZ, 0.0f, 0.0f, 1.0f);
+	matState->rotate(rotZ, 1.0f, 0.0f, 0.0f);
+	matState->translate(pos.x, pos.y, pos.z);
+
 	modelMatrix = matState->getCurrentMatrix();
 
 	glUseProgram(progNorm);
@@ -181,9 +188,10 @@ void display() {
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, firstFrameTexture);
 	glUniform1i(glGetUniformLocation(progNorm, "frameTex"), 0);
-	glm::ivec2 dim(TEXTURE_WIDTH,TEXTURE_HEIGHT);
+	glm::ivec2 dim(TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
-	glUniform2iv(glGetUniformLocation(progNorm,"texDim"),1,glm::value_ptr(dim));
+	glUniform2iv(glGetUniformLocation(progNorm, "texDim"), 1,
+			glm::value_ptr(dim));
 	glBindVertexArray(vao[3]);
 	glDrawElements(GL_TRIANGLES, sizeof(boxIndices), GL_UNSIGNED_SHORT, 0);
 	glDisable(GL_TEXTURE_2D);
@@ -202,17 +210,16 @@ void display() {
 //	glUseProgram(0);
 //	glutSwapBuffers();
 
-	if(counter > 2000){
+	if (glutGet(GLUT_ELAPSED_TIME ) >= timeCounter) {
 		glutDisplayFunc(displayFirstFrame);
 		glutIdleFunc(displayFirstFrame);
-		counter = 0;
+		timeCounter = glutGet(GLUT_ELAPSED_TIME ) + timeSwitch;
 		std::cout << "switching display func" << std::endl;
 	}
 
 }
 
 void setupBuffers() {
-
 
 	//Textur laden
 	textureHandle = loadTexture("resources\\test.png");
@@ -269,10 +276,12 @@ void setupBuffers() {
 			0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, boxBuffer[3]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(uvCoordinates), uvCoordinates, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(uvCoordinates), uvCoordinates,
+			GL_STATIC_DRAW);
 
-	glEnableVertexAttribArray(glGetAttribLocation(prog,"uvAttr"));
-	glVertexAttribPointer(glGetAttribLocation(prog,"uvAttr"), 2, GL_FLOAT, 0, 0, 0);
+	glEnableVertexAttribArray(glGetAttribLocation(prog, "uvAttr"));
+	glVertexAttribPointer(glGetAttribLocation(prog, "uvAttr"), 2, GL_FLOAT, 0,
+			0, 0);
 
 	glBindVertexArray(0);
 
@@ -328,27 +337,55 @@ void setupBuffers() {
 
 void keyAction(unsigned char key, int x, int y) {
 	float schritt = 0.3f;
-	if(key == 'w'){
+	if (key == 'w') {
 		pos += glm::vec3(0.0f, 0.0f, schritt);
 	}
-	if(key == 'a'){
+	if (key == 'a') {
 		pos += glm::vec3(schritt, 0.0f, 0.0f);
 	}
-	if(key == 'd'){
+	if (key == 'd') {
 		pos += glm::vec3(-schritt, 0.0f, 0.0f);
 	}
-	if(key == 's'){
+	if (key == 's') {
 		pos += glm::vec3(0.0f, 0.0f, -schritt);
 	}
-	if(key == 'r'){
+	if (key == 'r') {
 		pos = glm::vec3(0.0f, 0.0f, 0.0f);
 	}
-	if(key == 'q'){
+	if (key == 'q') {
 		exit(1);
 	}
 }
 int old_x, old_y;
+bool firstMouse = true;
 
-void mouseAction(int button, int state, int x, int y){
+void mouseAction(int button, int state, int x, int y) {
+	if (state == GLUT_DOWN && button == GLUT_LEFT_BUTTON) {
+		mouseDown = true;
+		old_x = x;
+		old_y = y;
+		std::cout << "DOWN " << x << std::endl;
+	} else if (state == GLUT_UP && button == GLUT_LEFT_BUTTON) {
+		mouseDown = false;
+		std::cout << "UP " << x << std::endl;
 
+	}
+}
+
+void mousePassive(int x, int y) {
+	if (firstMouse) {
+		old_x = x;
+		old_y = y;
+		firstMouse = false;
+	} else {
+		float deltaX = x - old_x;
+		float amount = (deltaX / WINDOW_HEIGHT) * 30.0f;
+		rotY += amount;
+		float deltaY = y - old_y;
+		amount = (deltaY / WINDOW_HEIGHT) * 30.0f;
+		rotZ += amount;
+		old_x = x;
+		old_y = y;
+		std::cout << "MOVING DOWN " << x << std::endl;
+	}
 }
