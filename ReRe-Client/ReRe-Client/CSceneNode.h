@@ -12,22 +12,38 @@
 #include <iostream>
 #include <vector>
 
+#include "assimp/scene.h"
+#include "glm/glm.hpp"
+
+
 using namespace std;
 
 // CSceneNode-Klasse
 class CSceneNode
 {
 private:
-    int* i_p_nodeID;                          //Identifier des Knotens
-    vector<CSceneNode*>* l_p_sceneNodeChildren; //Liste aller Kinder eines Knotens
+    CSceneNode* sn_p_sceneNodeChildren;     // Liste aller Kinder eines Knotens
+    glm::mat4x4* m_sceneNodeTransform;      // Transformation des Knoten
+    unsigned int* i_p_nodeMesh;             // Index auf Mesh
+    int i_nodeMeshNum;                      // Anzahl an Meshes
     
 public:
     CSceneNode();
-    CSceneNode(int* i_p_sceneNodeID);
+    CSceneNode(aiNode* ain_asNode);
+    CSceneNode(aiNode* ain_asNode, CSceneNode* sn_parentNode, glm::mat4x4 m_parnetTransform);
     
-    CSceneNode* createChild();
-    CSceneNode* returnChild();
+    void findNextMeshNode(aiNode* ain_asNode, glm::mat4x4 m_parnetTransform);
+    CSceneNode* returnChildren();
+    unsigned int* returnMeshIndex();
+    int* returnMeshNum();
 };
+
+
+
+
+
+
+
 
 //-----------------------------------------------
 //-----------------------------------------------
@@ -36,13 +52,15 @@ public:
 class CLight
 {
 private:
-    int* i_p_lightID;
+    glm::vec3* v_p_lightPosition;
+    glm::vec3* v_p_lightDiffuse;
     
 public:
     CLight();
-    CLight(int* i_p_lightNodeID);
+    CLight(aiLight ail_asLight);
     
-    int* getID();
+    glm::vec3* getPosition();
+    glm::vec3* getDiffuse();
 };
 
 #endif /* defined(__ReRe_Client__SceneNode__) */

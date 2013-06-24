@@ -8,10 +8,21 @@
 
 #include "CSceneManager.h"
 
-CSceneManager::CSceneManager()
+CSceneManager::CSceneManager(std::string st_filename)
 {
-    ais_asScene = imp_asImporter.ReadFile("XXX", aiProcess_SortByPType);
-    sn_p_rootSceneNode = new CSceneNode();
+    if (st_filename.substr(st_filename.find_last_of('.')) == ".dae")
+    {
+    
+        ais_asScene = imp_asImporter.ReadFile(st_filename,  aiProcess_CalcTangentSpace |
+                                                            aiProcess_Triangulate |
+                                                            aiProcess_JoinIdenticalVertices |
+                                                            aiProcess_SortByPType);
+        sn_p_rootSceneNode = new CSceneNode(ais_asScene->mRootNode);
+    }
+    else
+    {
+        std::cout << ".dae-Datei benoetigt" << std::endl;
+    }
 }
 
 CSceneNode* CSceneManager::returnRootSceneNode()
@@ -38,18 +49,14 @@ CCamera* CSceneManager::returnCameraNode()
 //
 CLight* CSceneManager::createLightNode()
 {
-    v_lightNode.push_back(new CLight(new int()));
+    v_lightNode.push_back(new CLight());
     return v_lightNode.back();
 }
 
-void CSceneManager::deleteLightNode(int i_lightNodeID)
-{
-    v_lightNode.erase(v_lightNode.begin()+i_lightNodeID);
-}
 
-CLight* CSceneManager::returnLightNode(int i_lightNodeID)
+CLight* CSceneManager::returnLightNode()
 {
-    return v_lightNode.at(i_lightNodeID);
+    return v_lightNode.at(0);
 }
 
 int CSceneManager::returnLightNodeSize()
