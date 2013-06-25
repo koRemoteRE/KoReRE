@@ -1,1 +1,0 @@
-Da ist ein Bug in Boost (meta_utils.hpp, Zeilen: 94, 96). Die Benutzen dort ne Typdefinition, die "Boolean" heisst. Ich hab sie einfach in "temp" umbenannt und es l�uft. Deshalb muss die Datei im ensprechenden Ordner mit meiner �berschrieben werden.

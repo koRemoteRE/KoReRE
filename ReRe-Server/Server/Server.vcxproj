@@ -9,14 +9,6 @@
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="MinSizeRel|Win32">
-      <Configuration>MinSizeRel</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="RelWithDebInfo|Win32">
-      <Configuration>RelWithDebInfo</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGUID>{E4B145D1-8B28-43E0-B661-5F653232729B}</ProjectGUID>
@@ -32,18 +24,6 @@
     <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseOfMfc>false</UseOfMfc>
-    <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseOfMfc>false</UseOfMfc>
-    <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
@@ -70,23 +50,10 @@
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.exe</TargetExt>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</GenerateManifest>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">$(SolutionDir)\bin\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">$(ProjectDir)\obj\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Server_$(Configuration)</TargetName>
-    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">.exe</TargetExt>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkIncremental>
-    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">true</GenerateManifest>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">$(SolutionDir)\bin\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">$(ProjectDir)\obj\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Server_$(Configuration)</TargetName>
-    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">.exe</TargetExt>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">true</LinkIncremental>
-    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">true</GenerateManifest>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <AdditionalOptions> /Zm1000 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(BOOST_ROOT);$(SolutionDir)ext/include;$(ProjectDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(OPENCV_DIR)\include;$(BOOST_ROOT);$(SolutionDir)ext/include;$(ProjectDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <CompileAs>CompileAsCpp</CompileAs>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -99,7 +66,6 @@
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;GLFW_INCLUDE_GL3;CMAKE_INTDIR="Debug";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AssemblerListingLocation>Debug</AssemblerListingLocation>
       <ObjectFileName>$(IntDir)</ObjectFileName>
-      <ProgramDataBaseFileName>$(OutDir)\Server.pdb</ProgramDataBaseFileName>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <ResourceCompile>
@@ -115,19 +81,18 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>..\ext\lib\tinyxml.lib;kernel32.lib;ws2_32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;..\ext\lib\KoRE.lib;OpenGL32.lib;$(SolutionDir)ext\lib\msvc100\GLFW.lib;..\ext\lib\glew32.lib;..\ext\lib\assimp_release-dll_win32\assimp.lib;..\ext\lib\avcodec.lib;..\ext\lib\swscale.lib;..\ext\lib\avformat.lib;..\ext\lib\avutil.lib;..\ext\lib\live555\libUsageEnvironment.lib;..\ext\lib\live555\libBasicUsageEnvironment.lib;..\ext\lib\live555\libgroupsock.lib;..\ext\lib\live555\libliveMedia.lib;boost_thread-vc110-mt-gd-1_53.lib;boost_system-vc110-mt-gd-1_53.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(BOOST_ROOT)\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;ws2_32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;OpenGL32.lib;..\ext\lib\KoRE.lib;..\ext\lib\msvc110\GLFW.lib;..\ext\lib\glew32.lib;..\ext\lib\assimp_release-dll_win32\assimp.lib;..\ext\lib\tinyxml.lib;opencv_core245d.lib;opencv_imgproc245d.lib;opencv_highgui245d.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OPENCV_DIR)\x86\vc11\lib;$(BOOST_ROOT)\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ImportLibrary>
       </ImportLibrary>
       <LinkIncremental>true</LinkIncremental>
-      <ProgramDataBaseFile>$(SolutionDir)bin/Server.pdb</ProgramDataBaseFile>
-      <StackReserveSize>10000000</StackReserveSize>
       <SubSystem>Console</SubSystem>
       <Version>
       </Version>
       <ImageHasSafeExceptionHandlers>
       </ImageHasSafeExceptionHandlers>
+      <AdditionalOptions>/NODEFAULTLIB:MSVCRT /NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
@@ -143,8 +108,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalOptions> /Zm1000 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(SolutionDir)ext/include;$(SolutionDir)../../KoRE/src;$(ProjectDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(OPENCV_DIR)\include;$(BOOST_ROOT);$(ProjectDir)src;$(SolutionDir)ext/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
       <ExceptionHandling>Sync</ExceptionHandling>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
@@ -158,7 +122,6 @@
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;GLFW_INCLUDE_GL3;CMAKE_INTDIR="Release";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AssemblerListingLocation>Release</AssemblerListingLocation>
       <ObjectFileName>$(IntDir)</ObjectFileName>
-      <ProgramDataBaseFileName>E:/Users/Dominik/Documents/GitHub/KoRE/bin/Release/MainGLFW.pdb</ProgramDataBaseFileName>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;GLFW_INCLUDE_GL3;CMAKE_INTDIR=\"Release\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -174,106 +137,9 @@
     </Midl>
     <Link>
       <AdditionalOptions> /machine:X86 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>..\ext\lib\tinyxml.lib;kernel32.lib;ws2_32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;$(SolutionDir)lib\Debug\KoRE.lib;OpenGL32.lib;$(SolutionDir)ext\lib\msvc100\GLFW.lib;..\ext\lib\glew32.lib;..\ext\lib\assimp_release-dll_win32\assimp.lib;..\ext\lib\avcodec.lib;..\ext\lib\swscale.lib;..\ext\lib\avformat.lib;..\ext\lib\avutil.lib;..\ext\lib\live555\libUsageEnvironment.lib;..\ext\lib\live555\libBasicUsageEnvironment.lib;..\ext\lib\live555\libgroupsock.lib;..\ext\lib\live555\libliveMedia.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;ws2_32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;OpenGL32.lib;..\ext\lib\KoRE.lib;..\ext\lib\msvc110\GLFW.lib;..\ext\lib\glew32.lib;..\ext\lib\assimp_release-dll_win32\assimp.lib;..\ext\lib\tinyxml.lib;opencv_core245.lib;opencv_imgproc245.lib;opencv_highgui245.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OPENCV_DIR)\x86\vc11\lib;$(BOOST_ROOT)\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <ImportLibrary>E:/Users/Dominik/Documents/GitHub/KoRE/bin/Release/MainGLFW.lib</ImportLibrary>
-      <ProgramDataBaseFile>E:/Users/Dominik/Documents/GitHub/KoRE/bin/Release/MainGLFW.pdb</ProgramDataBaseFile>
-      <StackReserveSize>10000000</StackReserveSize>
-      <SubSystem>Console</SubSystem>
-      <Version>
-      </Version>
-    </Link>
-    <ProjectReference>
-      <LinkLibraryDependencies>false</LinkLibraryDependencies>
-    </ProjectReference>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">
-    <ClCompile>
-      <AdditionalOptions> /Zm1000 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(SolutionDir)ext/include;$(SolutionDir)../../KoRE/src;$(ProjectDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <CompileAs>CompileAsCpp</CompileAs>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <Optimization>MinSpace</Optimization>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <WarningLevel>Level3</WarningLevel>
-      <DebugInformationFormat>
-      </DebugInformationFormat>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;GLFW_INCLUDE_GL3;CMAKE_INTDIR="MinSizeRel";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AssemblerListingLocation>MinSizeRel</AssemblerListingLocation>
-      <ObjectFileName>$(IntDir)</ObjectFileName>
-      <ProgramDataBaseFileName>E:/Users/Dominik/Documents/GitHub/KoRE/bin/MinSizeRel/MainGLFW.pdb</ProgramDataBaseFileName>
-    </ClCompile>
-    <ResourceCompile>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;GLFW_INCLUDE_GL3;CMAKE_INTDIR=\"MinSizeRel\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>E:/Users/Dominik/Documents/GitHub/KoRE/ext/include;E:/Users/Dominik/Documents/GitHub/KoRE/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ResourceCompile>
-    <Midl>
-      <AdditionalIncludeDirectories>E:/Users/Dominik/Documents/GitHub/KoRE/ext/include;E:/Users/Dominik/Documents/GitHub/KoRE/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <OutputDirectory>$(IntDir)</OutputDirectory>
-      <HeaderFileName>%(Filename).h</HeaderFileName>
-      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
-      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
-      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
-    </Midl>
-    <Link>
-      <AdditionalOptions> /machine:X86 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>..\ext\lib\tinyxml.lib;kernel32.lib;ws2_32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;$(SolutionDir)lib\Debug\KoRE.lib;OpenGL32.lib;$(SolutionDir)ext\lib\msvc100\GLFW.lib;..\ext\lib\glew32.lib;..\ext\lib\assimp_release-dll_win32\assimp.lib;..\ext\lib\avcodec.lib;..\ext\lib\swscale.lib;..\ext\lib\avformat.lib;..\ext\lib\avutil.lib;..\ext\lib\live555\libUsageEnvironment.lib;..\ext\lib\live555\libBasicUsageEnvironment.lib;..\ext\lib\live555\libgroupsock.lib;..\ext\lib\live555\libliveMedia.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
-      <ImportLibrary>E:/Users/Dominik/Documents/GitHub/KoRE/bin/MinSizeRel/MainGLFW.lib</ImportLibrary>
-      <ProgramDataBaseFile>E:/Users/Dominik/Documents/GitHub/KoRE/bin/MinSizeRel/MainGLFW.pdb</ProgramDataBaseFile>
-      <StackReserveSize>10000000</StackReserveSize>
-      <SubSystem>Console</SubSystem>
-      <Version>
-      </Version>
-    </Link>
-    <ProjectReference>
-      <LinkLibraryDependencies>false</LinkLibraryDependencies>
-    </ProjectReference>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">
-    <ClCompile>
-      <AdditionalOptions> /Zm1000 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(SolutionDir)ext/include;$(SolutionDir)../../KoRE/src;$(ProjectDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <CompileAs>CompileAsCpp</CompileAs>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <Optimization>MaxSpeed</Optimization>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;GLFW_INCLUDE_GL3;CMAKE_INTDIR="RelWithDebInfo";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AssemblerListingLocation>RelWithDebInfo</AssemblerListingLocation>
-      <ObjectFileName>$(IntDir)</ObjectFileName>
-      <ProgramDataBaseFileName>E:/Users/Dominik/Documents/GitHub/KoRE/bin/RelWithDebInfo/MainGLFW.pdb</ProgramDataBaseFileName>
-    </ClCompile>
-    <ResourceCompile>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;GLFW_INCLUDE_GL3;CMAKE_INTDIR=\"RelWithDebInfo\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>E:/Users/Dominik/Documents/GitHub/KoRE/ext/include;E:/Users/Dominik/Documents/GitHub/KoRE/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ResourceCompile>
-    <Midl>
-      <AdditionalIncludeDirectories>E:/Users/Dominik/Documents/GitHub/KoRE/ext/include;E:/Users/Dominik/Documents/GitHub/KoRE/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <OutputDirectory>$(IntDir)</OutputDirectory>
-      <HeaderFileName>%(Filename).h</HeaderFileName>
-      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
-      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
-      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
-    </Midl>
-    <Link>
-      <AdditionalOptions> /machine:X86 /debug %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>..\ext\lib\tinyxml.lib;kernel32.lib;ws2_32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;$(SolutionDir)lib\Debug\KoRE.lib;OpenGL32.lib;$(SolutionDir)ext\lib\msvc100\GLFW.lib;..\ext\lib\glew32.lib;..\ext\lib\assimp_release-dll_win32\assimp.lib;..\ext\lib\avcodec.lib;..\ext\lib\swscale.lib;..\ext\lib\avformat.lib;..\ext\lib\avutil.lib;..\ext\lib\live555\libUsageEnvironment.lib;..\ext\lib\live555\libBasicUsageEnvironment.lib;..\ext\lib\live555\libgroupsock.lib;..\ext\lib\live555\libliveMedia.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ImportLibrary>E:/Users/Dominik/Documents/GitHub/KoRE/bin/RelWithDebInfo/MainGLFW.lib</ImportLibrary>
-      <LinkIncremental>true</LinkIncremental>
-      <ProgramDataBaseFile>E:/Users/Dominik/Documents/GitHub/KoRE/bin/RelWithDebInfo/MainGLFW.pdb</ProgramDataBaseFile>
-      <StackReserveSize>10000000</StackReserveSize>
       <SubSystem>Console</SubSystem>
       <Version>
       </Version>
@@ -283,21 +149,11 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\ConcurrentQueue.cpp" />
     <ClCompile Include="src\Encoder.cpp" />
-    <ClCompile Include="src\H264FramedSource.cpp" />
-    <ClCompile Include="src\H264LiveVideoSubsession.cpp" />
-    <ClCompile Include="src\logger.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\RTSPOnDemandServer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\ConcurrentQueue.h" />
     <ClInclude Include="src\Encoder.h" />
-    <ClInclude Include="src\H264FramedSource.h" />
-    <ClInclude Include="src\H264LiveVideoSubsession.h" />
-    <ClInclude Include="src\logger.h" />
-    <ClInclude Include="src\RTSPOnDemandServer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

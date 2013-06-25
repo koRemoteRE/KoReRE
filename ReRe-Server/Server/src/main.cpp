@@ -31,8 +31,6 @@
 #include <ctime>
 #include <vector>
 
-#include <boost/thread/thread.hpp>
-
 #include "KoRE/GLerror.h"
 #include "KoRE/ShaderProgram.h"
 #include "KoRE/Components/MeshComponent.h"
@@ -55,19 +53,17 @@
 #include "KoRE/Passes/NodePass.h"
 #include "KoRE/Events.h"
 #include "Kore/Operations/OperationFactory.h"
-#include "encoder.h"
-#include "ConcurrentQueue.h"
 
-#include "live555/BasicUsageEnvironment.hh"
-#include "live555/GroupsockHelper.hh"
-#include "live555/liveMedia.hh"
-//#include "Streamer.h"
-#include "RTSPOnDemandServer.h"
+#include "Encoder.h"
+
 
 
 kore::SceneNode* rotationNode = NULL;
 kore::SceneNode* lightNode = NULL;
 kore::Camera* pCamera = NULL;
+Encoder* encoder;
+const int _screenWidth = 800;
+const int _screenHeight = 600;
 
 void setUpSimpleRendering(kore::SceneNode* renderNode, kore::ShaderProgramPass*
                           programPass, kore::Texture* texture, 
@@ -242,11 +238,12 @@ void init(){
   glfwOpenWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);*/
 
   // Open an OpenGL window
-  if (!glfwOpenWindow(800, 600, 8, 8, 8, 8, 24, 8, GLFW_WINDOW)) {
+  if (!glfwOpenWindow(_screenWidth,_screenHeight, 8, 8, 8, 8, 24, 8, GLFW_WINDOW)) {
     kore::Log::getInstance()->write("[ERROR] could not open render window\n");
     glfwTerminate();
     exit(EXIT_FAILURE);
   }
+  kore::RenderManager::getInstance()->setScreenResolution(glm::ivec2(_screenWidth,_screenHeight));
 
   // disable v-sync
   glfwSwapInterval(0);
@@ -288,6 +285,8 @@ void init(){
     ->write("GLEW version: %s\n",
             reinterpret_cast<const char*>(
             glewGetString(GLEW_VERSION)));
+
+    encoder = new Encoder();
 }
 
 void initScene(){
@@ -359,7 +358,7 @@ void initScene(){
   shaderProgPass->setShaderProgram(nmShader);
 
   // init operations
-  for (uint i = 0; i < vRenderNodes.size(); ++i) {
+  for (kore::uint i = 0; i < vRenderNodes.size(); ++i) {
 
     //setUpSimpleRendering(vRenderNodes[i],shaderProgPass,testTexture,pLight);
     setUpNMRendering(vRenderNodes[i],shaderProgPass,stoneTexture,stoneNormalmap,pLight);
@@ -376,60 +375,15 @@ void initScene(){
   rotationNode = vBigCubeNodes[0]; 
 
   glClearColor(1.0f,1.0f,1.0f,1.0f);
+
 }
 
-UsageEnvironment* env;
-char const* inputFileName = "slamtv60.264";
-H264VideoStreamFramer* videoSource;
-RTPSink* videoSink;
-
-void play(); // forward
-
-void afterPlaying(void* /*clientData*/) {
-  *env << "...done reading from file\n";
-  videoSink->stopPlaying();
-  Medium::close(videoSource);
-  // Note that this also closes the input file that this source read from.
-
-  // Start playing once again:
-  play();
-}
-
-void play() {
-  // Open the input file as a 'byte-stream file source':
-  ByteStreamFileSource* fileSource
-    = ByteStreamFileSource::createNew(*env, inputFileName);
-  if (fileSource == NULL) {
-    *env << "Unable to open file \"" << inputFileName
-      << "\" as a byte-stream file source\n";
-    exit(1);
-  }
-
-  FramedSource* videoES = fileSource;
-
-  // Create a framer for the Video Elementary Stream:
-  videoSource = H264VideoStreamFramer::createNew(*env, videoES);
-
-  // Finally, start playing:
-  *env << "Beginning to read from file...\n";
-  videoSink->startPlaying(*videoSource, afterPlaying, videoSink);
-}
-
-
-  
-void RTSPThread(){
-  char* watch = NULL;
-  RTSPOnDemandServer server = RTSPOnDemandServer();
-  server.startStreaming(watch);
-}
-
-static Encoder *encoder;
-static ConcurrentQueue *queue;
+ 
 
 int main(void) {
 
   int running = GL_TRUE;
-  
+
   init();
   initScene();
 
@@ -441,28 +395,16 @@ int main(void) {
   int oldMouseX = 0;
   int oldMouseY = 0;
   glfwGetMousePos(&oldMouseX,&oldMouseY);
-  
-  //queue = ConcurrentQueue::getInstance();
 
-  encoder = Encoder::getInstance();
-  encoder->init("test.h264",800,600);
 
-  boost::thread serverThread = boost::thread(RTSPThread);
- 
+  double encodeTime;
   // Main loop
-
-  //FPS LIMIT--------------------
-  float fpslimit = 1.0/10; //25fps
-  double frametime;
-  //-----------------------------
-
   while (running) {
     time = the_timer.timeSinceLastCall();
-    frametime = glfwGetTime();
-    
+
     kore::SceneManager::getInstance()->update();
     if (glfwGetKey(GLFW_KEY_UP) || glfwGetKey('W')) {
-     pCamera->moveForward(cameraMoveSpeed * static_cast<float>(time));
+      pCamera->moveForward(cameraMoveSpeed * static_cast<float>(time));
     }
 
     if (glfwGetKey(GLFW_KEY_DOWN) || glfwGetKey('S')) {
@@ -490,21 +432,10 @@ int main(void) {
     if (glfwGetMouseButton(GLFW_MOUSE_BUTTON_1) == GLFW_PRESS ) {
       if (glm::abs(mouseMoveX) > 0 || glm::abs(mouseMoveY) > 0) {
         pCamera->rotateFromMouseMove((float)-mouseMoveX / 5.0f,
-                                     (float)-mouseMoveY / 5.0f);
+          (float)-mouseMoveY / 5.0f);
       }
     }
 
-    if (glfwGetKey(GLFW_KEY_F1)) {
-      encoder->start();
-    }
-    if (glfwGetKey(GLFW_KEY_F2)) {
-      encoder->stop();
-    }
-    if (glfwGetKey(GLFW_KEY_F3)) {
-      //server.startStreaming();
-      //encoder->finish();
-    }
-    
     oldMouseX = mouseX;
     oldMouseY = mouseY;
 
@@ -517,24 +448,18 @@ int main(void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT |GL_STENCIL_BUFFER_BIT);
     kore::RenderManager::getInstance()->renderFrame();
 
-    glfwSwapBuffers();
-    encoder->encodeFrame(12);
 
-    //server.streamFrame();
+    glfwSwapBuffers();
+    encodeTime = glfwGetTime();
+    encoder->encodeFrame();
+    std::cout << "encode time: " << glfwGetTime()-encodeTime << std::endl;
     kore::GLerror::gl_ErrorCheckFinish("Main Loop");
 
     // Check if ESC key was pressed or window was closed
     running = !glfwGetKey(GLFW_KEY_ESC) && glfwGetWindowParam(GLFW_OPENED);
-   
-    frametime = glfwGetTime()-frametime;
-    glfwSleep(fpslimit-frametime);
+
   }
 
-  // Test XML writing
-  kore::ResourceManager::getInstance()->saveProject("xmltest.kore");
-  
-
- 
 
   // Close window and terminate GLFW
   glfwTerminate();
