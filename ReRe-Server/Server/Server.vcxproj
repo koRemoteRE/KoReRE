@@ -149,11 +149,13 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ImageQueue.cpp" />
     <ClCompile Include="src\Encoder.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ImageQueue.h" />
     <ClInclude Include="src\Encoder.h" />
     <ClInclude Include="src\Scene.h" />
   </ItemGroup>

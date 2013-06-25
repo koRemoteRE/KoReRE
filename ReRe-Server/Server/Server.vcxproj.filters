@@ -15,12 +15,18 @@
     <ClCompile Include="src\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\ImageQueue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Encoder.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Scene.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ImageQueue.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

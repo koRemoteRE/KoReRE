@@ -37,6 +37,8 @@
 #include "Encoder.h"
 #include "KoRE/Timer.h"
 #include "Scene.h"
+#include "ImageQueue.h"
+#include "MatrixQueue.h"
 #include "KoRE/Components/Camera.h"
 #include "KoRE/SceneManager.h"
 #include "KoRE/GLerror.h"
@@ -47,6 +49,9 @@
 Encoder* encoder;
 const int _screenWidth = 800;
 const int _screenHeight = 600;
+
+ImageQueue *imageQueue;
+MatrixQueue *matrixQueue;
 
 void init(){
    // Initialize GLFW
@@ -107,6 +112,8 @@ void init(){
             glewGetString(GLEW_VERSION)));
 
   encoder = new Encoder();
+  imageQueue = ImageQueue::getInstance();
+  matrixQueue = MatrixQueue::getInstance();
 }
 
 void renderOnDemand(Scene* scene, glm::vec3 position){
@@ -116,10 +123,17 @@ void renderOnDemand(Scene* scene, glm::vec3 position){
   kore::RenderManager::getInstance()->renderFrame();
   kore::GLerror::gl_ErrorCheckFinish("Main Loop");
   glfwSwapBuffers();
+  ImageQueuePacket imPkt = {0};
+
   double encodeTime = glfwGetTime();
-  encoder->encodeFrame();
+
+  imPkt.buffer = *encoder->encodeFrame();
+
   std::cout << "encode time: " << glfwGetTime()-encodeTime << std::endl;
 
+  imageQueue->push(imPkt);
+
+  //std::cout << "queue: " << imageQueue->getLenght() << std::endl;
 }
 
  
