@@ -1,11 +1,13 @@
 #include "Server.h"
 
-Server::Server(void){
+Server::Server(){}
+
+Server::~Server(){}
+
+void Server::init(){
 	imageQueue = ImageQueue::getInstance();
 	matrixQueue = MatrixQueue::getInstance();
 }
-
-Server::~Server(void){}
 
 void Server::start(){
 
