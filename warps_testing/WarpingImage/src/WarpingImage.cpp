@@ -364,11 +364,8 @@ void mouseAction(int button, int state, int x, int y) {
 		mouseDown = true;
 		old_x = x;
 		old_y = y;
-		std::cout << "DOWN " << x << std::endl;
 	} else if (state == GLUT_UP && button == GLUT_LEFT_BUTTON) {
 		mouseDown = false;
-		std::cout << "UP " << x << std::endl;
-
 	}
 }
 
@@ -386,6 +383,5 @@ void mousePassive(int x, int y) {
 		rotZ += amount;
 		old_x = x;
 		old_y = y;
-		std::cout << "MOVING DOWN " << x << std::endl;
 	}
 }
