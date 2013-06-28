@@ -8,29 +8,24 @@
 
 #include "CPreRendering.h"
 
-// GLSL related variables
-GLuint diffImgVertexShader;
-GLuint diffImgFragmentShader;
-GLuint diffImgShaderProgram;
-
-GLuint texturePosition0;
-GLuint texturePosition1;
-//GLuint texturePosition2;
-//GLuint texturePosition3;
-//GLuint texturePosition4;
-
-GLuint diffImgFBO;
-GLuint depthBuffer;
- 
-// TODO: Update Window size
-
-// Window size
-int width = 1024;
-int height = 768;
 
 CPreRendering::CPreRendering()
 {
+    createTextures();
+    createFBO();
+    initGLSL();
+    
+    sceneMgr = new CSceneManager("../Assets/TestEnv.dae");
+}
 
+CPreRendering::~CPreRendering()
+{
+    // Delete resources
+    glDeleteTextures(1, &currentImgTexture);
+    
+    // Delete Framebuffer
+    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+    glDeleteFramebuffersEXT(1, &currentImgFBO);
 }
 
 // Print information about the compiling step
@@ -82,141 +77,49 @@ string CPreRendering::readFile(string fileName)
 	return fileContent;
 }
 
-void CPreRendering::initGLSL()
-{
-    // Create shader which renders to the FBO
-    
-    // Create empty shader object (vertex shader)
-    diffImgVertexShader = glCreateShader(GL_VERTEX_SHADER);
-    
-    // Read vertex shader source
-    string shaderSource = readFile("Shader/CDiffuseImage.vert");
-    const char* sourcePtr = shaderSource.c_str();
-    
-    // Attach shader code
-    glShaderSource(diffImgVertexShader, 1, &sourcePtr, NULL);
-    
-    // Compile
-    glCompileShader(diffImgVertexShader);
-    printShaderInfoLog(diffImgVertexShader);
-    
-    // Create empty shader object (fragment shader)
-    diffImgFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    
-    // Read fragment shader source
-    shaderSource = readFile("Shader/CDiffuseImage.frag");
-    sourcePtr = shaderSource.c_str();
-    
-    // Attach shader code
-    glShaderSource(diffImgFragmentShader, 1, &sourcePtr, NULL);
-    
-    // Compile
-    glCompileShader(diffImgFragmentShader);
-    printShaderInfoLog(diffImgFragmentShader);
-    
-    // Create shader program
-    diffImgShaderProgram = glCreateProgram();
-    
-    // Attach shader
-    glAttachShader(diffImgShaderProgram, diffImgVertexShader);
-    glAttachShader(diffImgShaderProgram, diffImgFragmentShader);
-    
-    // Link program
-    glLinkProgram(diffImgShaderProgram);
-    printProgramInfoLog(diffImgShaderProgram);
-}
-
 void CPreRendering::createTextures()
 {
     // Current DiffImg
     // Create texture and bind to texture unit 0
 	glActiveTexture(GL_TEXTURE0);
-	glGenTextures(1, &texturePosition0);
-	glBindTexture(GL_TEXTURE_2D, texturePosition0);
+	glGenTextures(1, &currentImgTexture);
+	glBindTexture(GL_TEXTURE_2D, currentImgTexture);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F_ARB, width, height, 0,
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, WIDTH, HEIGHT, 0,
                  GL_RGBA, GL_FLOAT, NULL);
-    
-    // Current DepthImg
-	// Create texture and bind to texture unit 1
-	glActiveTexture(GL_TEXTURE1);
-	glGenTextures(1, &texturePosition1);
-	glBindTexture(GL_TEXTURE_2D, texturePosition1);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F_ARB, width, height, 0,
-                 GL_RGBA, GL_FLOAT, NULL);
-    
-    // Todo: Where to save the following images?
-    /*
-    // Sent DiffImg
-	// Create texture and bind to texture unit 2
-	glActiveTexture(GL_TEXTURE2);
-	glGenTextures(1, &texturePosition2);
-	glBindTexture(GL_TEXTURE_2D, texturePosition2);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F_ARB, width, height, 0,
-                 GL_RGBA, GL_FLOAT, NULL);
-    
-    // Sent DepthImg
-	// Create texture and bind to texture unit 3
-	glActiveTexture(GL_TEXTURE3);
-	glGenTextures(1, &texturePosition3);
-	glBindTexture(GL_TEXTURE_2D, texturePosition3);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F_ARB, width, height, 0,
-                 GL_RGBA, GL_FLOAT, NULL);
-    
-    // Latest ServerImg
-	// Create texture and bind to texture unit 4
-	glActiveTexture(GL_TEXTURE4);
-	glGenTextures(1, &texturePosition4);
-	glBindTexture(GL_TEXTURE_2D, texturePosition4);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F_ARB, width, height, 0,
-                 GL_RGBA, GL_FLOAT, NULL);
-    */
-	// Texture unit 0 should be active again
-	glActiveTexture(GL_TEXTURE0);
 }
 
 void CPreRendering::createFBO()
 {
-    // --- Extensions can be removed when using OpenGL >= 3.0
+    // --- Remove extensions when using OpenGL >= 3.0
     
     // Create FBO
-    glGenFramebuffersEXT(1, &diffImgFBO);
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, diffImgFBO);
+    glGenFramebuffersEXT(1, &currentImgFBO);
+    // Bind it as the target for rendering and reading commands
+    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, currentImgFBO);
     
     // Attach textures to FBO
     glFramebufferTexture2DEXT(
         GL_FRAMEBUFFER_EXT,
         GL_COLOR_ATTACHMENT0_EXT,
         GL_TEXTURE_2D,
-        texturePosition0,
-        0);
-
-    glFramebufferTexture2DEXT(
-        GL_FRAMEBUFFER_EXT,
-        GL_COLOR_ATTACHMENT1_EXT,
-        GL_TEXTURE_2D,
-        texturePosition1,
+        currentImgTexture,
         0);
     
     // Attach depth buffer
-    glGenRenderbuffersEXT(1, &depthBuffer);
-    glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, depthBuffer);
-    glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, width, height);
-    glFramebufferRenderbufferEXT(
-        GL_FRAMEBUFFER_EXT,
-        GL_DEPTH_ATTACHMENT_EXT,
-        GL_RENDERBUFFER_EXT,
-        depthBuffer);
-    
+	GLuint depthBuffer;
+	glGenRenderbuffersEXT(1, &depthBuffer);
+	glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, depthBuffer);
+	glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT,
+                             WIDTH, HEIGHT);
+	glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,
+                                 GL_DEPTH_ATTACHMENT_EXT,
+                                 GL_RENDERBUFFER_EXT, 
+                                 depthBuffer);
+
     // Disable FBO for now
     glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 }
@@ -224,29 +127,25 @@ void CPreRendering::createFBO()
 void CPreRendering::writeToFBO()
 {
     // Bind framebuffer
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, diffImgFBO);
+    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, currentImgFBO);
     checkFrameBuffer();
-    
+
     // Draw into textures
-    GLenum buffers[2];
-    buffers[0] = GL_COLOR_ATTACHMENT0_EXT;
-    buffers[1] = GL_COLOR_ATTACHMENT1_EXT;
-    glDrawBuffers(2, buffers);
+    GLenum buffers[1] = {GL_COLOR_ATTACHMENT0_EXT};
+    glDrawBuffers(1, buffers);
     
     // Use FBO shader
-    glUseProgram(diffImgShaderProgram);
-    
-    // TODO: Attach Uniform Variables
+    glUseProgram(currentImgShaderProgram);
     
     // Clear content of FBO
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
        
-    // TODO: Draw DiffImg - Buffers[0]
-    
-    // TODO: Draw DepthImg - Buffers[1]
+    // Draw Scene
+    sceneMgr->drawScene(currentImgShaderProgram);
     
     // Stop rendering to FBO
     glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+    glUseProgram(0);
 }
 
 void CPreRendering::checkFrameBuffer()
@@ -284,9 +183,69 @@ void CPreRendering::checkFrameBuffer()
         default:
             cout << "Unknown ERROR\n";	  
 	}
-    
-    // ----- Softwaretesting ----------------------------------------------------
-    
-    // Todo: Show images for testing
-    
 }
+
+void CPreRendering::initGLSL()
+{
+    // Create shader which renders to the FBO
+    
+    // Create empty shader object (vertex shader)
+    currentImgVertexShader = glCreateShader(GL_VERTEX_SHADER);
+    
+    // Read vertex shader source
+    string shaderSource = readFile("../Shader/CDiffuseImage.vert");
+    const char* sourcePtr = shaderSource.c_str();
+    
+    // Attach shader code
+    glShaderSource(currentImgVertexShader, 1, &sourcePtr, NULL);
+    
+    // Compile
+    glCompileShader(currentImgVertexShader);
+    printShaderInfoLog(currentImgVertexShader);
+    
+    // Create empty shader object (fragment shader)
+    currentImgFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    
+    // Read fragment shader source
+    shaderSource = readFile("../Shader/CDiffuseImage.frag");
+    sourcePtr = shaderSource.c_str();
+    
+    // Attach shader code
+    glShaderSource(currentImgFragmentShader, 1, &sourcePtr, NULL);
+    
+    // Compile
+    glCompileShader(currentImgFragmentShader);
+    printShaderInfoLog(currentImgFragmentShader);
+    
+    // Create shader program
+    currentImgShaderProgram = glCreateProgram();
+    
+    // Attach shader
+    glAttachShader(currentImgShaderProgram, currentImgVertexShader);
+    glAttachShader(currentImgShaderProgram, currentImgFragmentShader);
+    
+    // Bind Attributes
+    glBindAttribLocation(currentImgShaderProgram, SHADER_POSITION_LOC, "v_position");
+    glBindAttribLocation(currentImgShaderProgram, SHADER_NORMAL_LOC, "v_normal");
+    //glBindAttribLocation(currentImgShaderProgram, SHADER_TEX_COORD_LOC, "v_texture");
+    
+    // Link program
+    glLinkProgram(currentImgShaderProgram);
+    printProgramInfoLog(currentImgShaderProgram);
+}
+
+// --- Just Testing ---- TODO: Delete! -------------------------------
+
+void CPreRendering::testDraw()
+{
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    glUseProgram(currentImgShaderProgram);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    
+    sceneMgr->drawScene(currentImgShaderProgram);
+    
+    glUseProgram(0);
+}
+
+// -------------------------------------------------------------------

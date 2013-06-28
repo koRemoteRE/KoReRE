@@ -10,6 +10,7 @@
 #define __ReRe_Client__PreRendering__
 
 #include <GL/glew.h>
+#include <GL/glfw.h>
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -30,13 +31,32 @@ private:
     
     void createTextures();
     void createFBO();
-    void writeToFBO();
     
     void checkFrameBuffer();
+    
+    
+    CSceneManager* sceneMgr;
+    
+    // GLSL related variables
+    GLuint currentImgVertexShader;
+    GLuint currentImgFragmentShader;
+    GLuint currentImgShaderProgram;
+    
+    GLuint currentImgTexture;
+    
+    GLuint currentImgFBO;
     
 public:
     CPreRendering();
     ~CPreRendering();
+    
+    void writeToFBO();
+    
+    // --- Just Testing --- TODO: Delete! ----------------
+    
+    void testDraw();
+    
+    // ---------------------------------------------------
 };
 
 #endif /* defined(__ReRe_Client__PreRendering__) */

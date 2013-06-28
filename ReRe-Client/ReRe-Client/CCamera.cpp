@@ -1,5 +1,5 @@
 //
-//   CCamera.cpp
+//   Camera.cpp
 //  ReRe-Client
 //
 //  Created by Ina Schröder on 23.04.13.
@@ -8,136 +8,8 @@
 
 #include "CCamera.h"
 
-#include <iostream>
-#include <math.h>
-#include <vector>
-
-CCamera::CCamera()
-:_fMovementSpeed(50.0f),
-_fFovDeg(0.0f),
-_fFar(0.0f),
-_fNear(0.0f),
-_matView(1.0f),
-_matProjection(1.0f),
-_matViewInverse(1.0f),
-_matViewProj(1.0f),
-_fFocalLength(0.0f),
-_bIsOrtho(false),
-_fWidth(1.0f),
-_fHeight(1.0),
-_name("")
-{}
-
-CCamera::~CCamera() {
-}
-
-
-glm::vec3 CCamera::getSide() const {
-    // Note: assume the camera's view matrix is not scaled
-    // (otherwise the return-vec would have to be normalized)
-    return glm::vec3(_matViewInverse[ 0 ]);
-}
-
-glm::vec3 CCamera::getUp() const {
-    // Note: assume the camera's view matrix is not scaled
-    // (otherwise the return-vec would have to be normalized)
-    return glm::vec3(_matViewInverse[ 1 ]);
-}
-
-glm::vec3 CCamera::getForward() const {
-    // Note: assume the camera's view matrix is not scaled
-    // (otherwise the return-vec would have to be normalized)
-    return glm::vec3(_matViewInverse[ 2 ]);
-}
-
-glm::vec3 CCamera::getPosition() const {
-    return glm::vec3(_matViewInverse[ 3 ]);
-}
-
-void CCamera::setProjectionOrtho(float fLeft, float fRight, float fBottom,
-                                      float fTop, float fNear, float fFar) {
-    _matProjection = glm::ortho(fLeft, fRight, fBottom, fTop, fNear, fFar);
-    _fFar = fFar;
-    _fNear = fNear;
-    _fFovDeg = -1.0f;  // Not valid in this case -> Mark as negative.
-    _bIsOrtho = true;
-    
-    paramsChanged();
-}
-
-void CCamera::setProjectionPersp(float yFov_deg, float fWidth,
-                                      float fHeight, float fNear, float fFar) {
-  
-    _matProjection = glm::perspectiveFov(yFov_deg, fWidth,
-                                         fHeight, fNear, fFar);
-    _fNear = fNear;
-    _fFar = fFar;
-    _fFovDeg = yFov_deg;
-    _bIsOrtho = false;
-    _fWidth = fWidth;
-    _fHeight = fHeight;
-    
-    // Calculate focal length
-    float fFovHor2 = glm::atan(
-                               getAspectRatio() * glm::tan(getFovRad() / 2.0f));
-    
-    _fFocalLength = 1.0f / glm::tan(fFovHor2);
-    paramsChanged();
-}
-
-void CCamera::setProjectionPersp(float yFov_deg, float fAspect,
-                                      float fNear, float fFar) {
-    float fWidth = 1.0f;
-    float fHeight = fWidth / fAspect;
-    
-    _matProjection = glm::perspectiveFov(yFov_deg, fWidth, fHeight, fNear, fFar);
-    _fNear = fNear;
-    _fFar = fFar;
-    _fFovDeg = yFov_deg;
-    _bIsOrtho = false;
-    _fWidth = fWidth;
-    _fHeight = fHeight;
-    
-    // Calculate focal length
-    float fFovHor2 = glm::atan(
-                               getAspectRatio() * glm::tan(getFovRad() / 2.0f));
-    
-    _fFocalLength = 1.0f / glm::tan(fFovHor2);
-    paramsChanged();
-}
-
-void CCamera::paramsChanged() {
-    _matViewProj = _matProjection * _matView;
-    updateFrustumPlanes();
-}
-
-
-void CCamera::rotateFromMouseMove(float dx, float dy) {
-    // Ugly hack incoming here...
-    static bool bFistTime = true;
-    
-    if (bFistTime) {
-        bFistTime = false;
-        return;
-    }
-    
-    rotateViewQuat(dx, glm::vec3(0.0f, 1.0f, 0.0f));
-    rotateViewQuat(dy, getSide());
-}
-
-void CCamera::rotateViewQuat(const float angle, const glm::vec3 v3Axis) {
-//to do
-}
-
-void CCamera::moveForward(float fSpeed) {
-// to do
-}
-
-void CCamera::moveSideways(float fSpeed) {
-// to do
-}
-
-std::vector<glm::vec3> CCamera::getWSfrustumCorners() {
+/*
+std::vector<glm::vec3> Camera::getWSfrustumCorners() {
     glm::mat4 matViewInv = getViewInv();
     // calculate frustum corner coordinates
     float fFov2 = getFovRad() / 2.0f;
@@ -177,7 +49,7 @@ std::vector<glm::vec3> CCamera::getWSfrustumCorners() {
     return vReturnCorners;
 }
 
-void CCamera::updateFrustumPlanes() {
+void Camera::updateFrustumPlanes() {
     // If the camera's projection matrix is an orthogonal projection,
     // the frustum planes have to be derived
     // from the general projection matrix
@@ -230,7 +102,7 @@ void CCamera::updateFrustumPlanes() {
     }
 }
 
-bool CCamera::
+bool Camera::
 isVisible(const glm::vec3& rSphereCenterWS, const float fRadius) const {
     glm::vec4 bSphereVS =  _matView * glm::vec4(rSphereCenterWS, 1.0f);
     const glm::vec3 v3Center = glm::vec3(bSphereVS);
@@ -264,4 +136,57 @@ isVisible(const glm::vec3& rSphereCenterWS, const float fRadius) const {
         return false;
     }
     return true;
+}*/
+
+//--------------------------------------------------
+//--------------------------------------------------
+
+
+CCamera::CCamera(aiCamera* aic_asCamera, aiMatrix4x4* aim_nodeTransform)
+{
+    m_viewMatrix = new glm::mat4;
+    m_projectionMatrix = new glm::mat4;
+    
+    setViewMatrix(aic_asCamera, aim_nodeTransform);
+    setProjectionPerspMatrix(aic_asCamera);
+    
 }
+
+bool CCamera::viewFrustumCullingVisible(CSceneNode* sc_rootSceneNode)
+{
+    //View Frustum Culling
+    return false;
+}
+
+void CCamera::setViewMatrix(aiCamera* aic_asCamera, aiMatrix4x4* aim_nodeTransform)
+{
+    // Position: (0,0,0), LookAt: (0,0,-1), Up: (0,1,0)
+    
+    glm::vec3 v_eyePosition = glm::vec3(aic_asCamera->mPosition.x,
+                                        aic_asCamera->mPosition.y,
+                                        aic_asCamera->mPosition.z);
+    
+    glm::vec3 v_eyeLookAt = glm::vec3(aic_asCamera->mLookAt.x,
+                                      aic_asCamera->mLookAt.y,
+                                      aic_asCamera->mLookAt.z);
+    
+    glm::vec3 v_eyeUp = glm::vec3(aic_asCamera->mUp.x,
+                                  aic_asCamera->mUp.y,
+                                  aic_asCamera->mUp.z);
+    
+    *m_viewMatrix = glm::lookAt(v_eyePosition, v_eyeLookAt, v_eyeUp);
+    
+    *m_viewMatrix = glm::inverse( *CTransformAiToGlm::TransformMat4P(*aim_nodeTransform) * (*m_viewMatrix) );
+}
+
+void CCamera::setProjectionPerspMatrix(aiCamera* aic_asCamera)
+{
+    float fov = glm::degrees(aic_asCamera->mHorizontalFOV)/ aic_asCamera->mAspect;
+//  float aspect = (float)WIDTH/HEIGHT;
+    *m_projectionMatrix = glm::perspective(fov,
+                                           aic_asCamera->mAspect,
+                                           aic_asCamera->mClipPlaneNear,
+                                           aic_asCamera->mClipPlaneFar);
+}
+
+

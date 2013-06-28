@@ -5,13 +5,9 @@
 //  Created by Thomas Kipshagen on 23.04.13.
 //  Copyright (c) 2013 Thomas Kipshagen. All rights reserved.
 //
+// Knotensortierung(Pseudocode): assimp.sourceforge.net
 
 #include "CSceneNode.h"
-
-CSceneNode::CSceneNode()
-{
-
-}
 
 CSceneNode::CSceneNode(aiNode* ain_asNode)
 {
@@ -26,16 +22,12 @@ CSceneNode::CSceneNode(aiNode* ain_asNode)
     }
     
     // Transformation im Objekt speichern
-    aiMatrix4x4 m_transBuffer_AI_GLM = ain_asNode->mTransformation;
-    m_sceneNodeTransform = new glm::mat4x4(m_transBuffer_AI_GLM.a1, m_transBuffer_AI_GLM.a2, m_transBuffer_AI_GLM.a3, m_transBuffer_AI_GLM.a4,
-                                           m_transBuffer_AI_GLM.b1, m_transBuffer_AI_GLM.b2, m_transBuffer_AI_GLM.b3, m_transBuffer_AI_GLM.b4,
-                                           m_transBuffer_AI_GLM.c1, m_transBuffer_AI_GLM.c2, m_transBuffer_AI_GLM.c3, m_transBuffer_AI_GLM.c4,
-                                           m_transBuffer_AI_GLM.d1, m_transBuffer_AI_GLM.d2, m_transBuffer_AI_GLM.d3, m_transBuffer_AI_GLM.d4);
+    m_sceneNodeTransform = CTransformAiToGlm::TransformMat4P(ain_asNode->mTransformation);
     
     findNextMeshNode(ain_asNode, *m_sceneNodeTransform);
 }
 
-CSceneNode::CSceneNode(aiNode* ain_asNode, CSceneNode* sn_parentNode, glm::mat4x4 m_parnetTransform)
+CSceneNode::CSceneNode(aiNode* ain_asNode, glm::mat4 m_parnetTransform)
 {
     // Mesh speichern
     i_p_nodeMesh = ain_asNode->mMeshes;
@@ -43,16 +35,12 @@ CSceneNode::CSceneNode(aiNode* ain_asNode, CSceneNode* sn_parentNode, glm::mat4x
     i_nodeMeshNum = ain_asNode->mNumMeshes;
     
     // Transformation im Objekt speichern
-    aiMatrix4x4 m_transBuffer_AI_GLM = ain_asNode->mTransformation;
-    m_sceneNodeTransform = new glm::mat4x4(m_transBuffer_AI_GLM.a1, m_transBuffer_AI_GLM.a2, m_transBuffer_AI_GLM.a3, m_transBuffer_AI_GLM.a4,
-                                           m_transBuffer_AI_GLM.b1, m_transBuffer_AI_GLM.b2, m_transBuffer_AI_GLM.b3, m_transBuffer_AI_GLM.b4,
-                                           m_transBuffer_AI_GLM.c1, m_transBuffer_AI_GLM.c2, m_transBuffer_AI_GLM.c3, m_transBuffer_AI_GLM.c4,
-                                           m_transBuffer_AI_GLM.d1, m_transBuffer_AI_GLM.d2, m_transBuffer_AI_GLM.d3, m_transBuffer_AI_GLM.d4);
+    m_sceneNodeTransform = CTransformAiToGlm::TransformMat4P(ain_asNode->mTransformation);
     
     findNextMeshNode(ain_asNode, *m_sceneNodeTransform);
 }
 
-void CSceneNode::findNextMeshNode(aiNode* ain_asNode, glm::mat4x4 m_nextTransform)
+void CSceneNode::findNextMeshNode(aiNode* ain_asNode, glm::mat4 m_nextTransform)
 {
     // Überprüfen wie viele Kinder es gibt
     // Schleife über alle Kinder
@@ -61,61 +49,31 @@ void CSceneNode::findNextMeshNode(aiNode* ain_asNode, glm::mat4x4 m_nextTransfor
         // Überprüfen, ob Mesh in Kind vorhanden
         // Wenn ja: Neuen SceneNode anlegen und (Assimp-)Kind mitgeben
         if (ain_asNode->mChildren[i_childNum]->mNumMeshes > 0)
-            sn_p_sceneNodeChildren[i_childNum] = CSceneNode(ain_asNode->mChildren[i_childNum], this, *m_sceneNodeTransform);
+            v_p_sceneNodeChildren.push_back(new CSceneNode(ain_asNode->mChildren[i_childNum], *m_sceneNodeTransform));
         
         // Wenn Nein: Merke Transformation und gehe Unterkinder durch
         else
         {
-            aiMatrix4x4 m_transBuffer_AI_GLM = ain_asNode->mTransformation;
-            m_nextTransform += glm::mat4x4 (m_transBuffer_AI_GLM.a1, m_transBuffer_AI_GLM.a2, m_transBuffer_AI_GLM.a3, m_transBuffer_AI_GLM.a4,
-                                            m_transBuffer_AI_GLM.b1, m_transBuffer_AI_GLM.b2, m_transBuffer_AI_GLM.b3, m_transBuffer_AI_GLM.b4,
-                                            m_transBuffer_AI_GLM.c1, m_transBuffer_AI_GLM.c2, m_transBuffer_AI_GLM.c3, m_transBuffer_AI_GLM.c4,
-                                            m_transBuffer_AI_GLM.d1, m_transBuffer_AI_GLM.d2, m_transBuffer_AI_GLM.d3, m_transBuffer_AI_GLM.d4);
+            m_nextTransform += CTransformAiToGlm::TransformMat4(ain_asNode->mTransformation);
             findNextMeshNode(ain_asNode->mChildren[i_childNum], m_nextTransform);
         }
     }
 }
 
-CSceneNode* CSceneNode::returnChildren()
-{
-    return sn_p_sceneNodeChildren;
-}
-
-unsigned int* CSceneNode::returnMeshIndex()
-{
-    return i_p_nodeMesh;
-}
-
-int* CSceneNode::returnMeshNum()
-{
-    return &i_nodeMeshNum;
-}
-
-
-
 
 
 
 //-----------------------------------------------
 //-----------------------------------------------
 
-CLight::CLight()
+CLight::CLight(aiLight* ail_asLight, aiMatrix4x4* aim_nodeTransform)
 {
-
-}
-
-CLight::CLight(aiLight ail_asLight)
-{
+    // Speichern des diffusen Lichts
+    v_p_lightDiffuse = CTransformAiToGlm::TransformCol3P(ail_asLight->mColorDiffuse);
     
-}
-
-glm::vec3* CLight::getPosition()
-{
-    return v_p_lightPosition;
-}
-
-
-glm::vec3* CLight::getDiffuse()
-{
-    return v_p_lightDiffuse;
+    // Speichern der Lichtposition (ohne Richtung)
+    v_p_lightPosition = CTransformAiToGlm::TransformVec3P(ail_asLight->mPosition);
+    v_p_lightPosition->x += aim_nodeTransform->a4;
+    v_p_lightPosition->y += aim_nodeTransform->b4;
+    v_p_lightPosition->z += aim_nodeTransform->c4;
 }
