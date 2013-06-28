@@ -116,8 +116,9 @@ void init(){
   matrixQueue = MatrixQueue::getInstance();
 }
 
-void renderOnDemand(Scene* scene, glm::vec3 position){
-  //scene->getCam()->getSceneNode()->setTranslation(position);
+void renderOnDemand(Scene* scene, glm::mat4 transformation){
+  scene->getCam()->getSceneNode()->setTransform(transformation);
+
   kore::GLerror::gl_ErrorCheckStart();
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT |GL_STENCIL_BUFFER_BIT);
   kore::RenderManager::getInstance()->renderFrame();
@@ -205,7 +206,8 @@ int main(void) {
     if (glfwGetKey('R')) {
       if (!_oldR) {
         _oldR = true;
-       renderOnDemand(&scene, glm::vec3(1,1,1));
+       glm::mat4 tranformMat =  scene.getCam()->getSceneNode()->getTransform()->getLocal();
+       renderOnDemand(&scene, tranformMat);
       }
     } else {
       _oldR = false;

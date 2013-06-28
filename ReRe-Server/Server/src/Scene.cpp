@@ -7,6 +7,8 @@
 #include "KoRE/GLerror.h"
 #include "KoRE/Components/TexturesComponent.h"
 #include "KoRE/ResourceManager.h"
+#include "KoRE/Passes/FrameBufferStage.h"
+#include "KoRE/RenderManager.h"
 
 
 Scene::Scene(void)
@@ -90,11 +92,21 @@ void Scene::setUpNMRendering(kore::SceneNode* renderNode,
                       kore::LightComponent* light) {
 
         kore::NodePass* nodePass = new kore::NodePass;
-        const kore::ShaderProgram* nmShader = 
+        kore::ShaderProgram* nmShader = 
             programPass->getShaderProgram();
         kore::MeshComponent* pMeshComponent =
             static_cast<kore::MeshComponent*>
             (renderNode->getComponent(kore::COMPONENT_MESH));
+
+        //Set Sampler for mipmapping
+        kore::TexSamplerProperties props;
+        props.minfilter = GL_LINEAR_MIPMAP_NEAREST;
+        props.magfilter = GL_LINEAR;
+        props.type = GL_SAMPLER_2D;
+        props.wrapping = glm::vec3(GL_REPEAT);
+
+        nmShader->setSamplerProperties(0,props);
+        nmShader->setSamplerProperties(1,props);
 
         // Add Texture
         kore::GLerror::gl_ErrorCheckStart();
@@ -215,10 +227,12 @@ void Scene::init()
   kore::Texture* stoneTexture =
     kore::ResourceManager::getInstance()->
     loadTexture("./assets/textures/stonewall.png");
+  stoneTexture->genMipmapHierarchy();
 
   kore::Texture* stoneNormalmap =
     kore::ResourceManager::getInstance()->
     loadTexture("./assets/textures/stonewall_NM_height.png");
+  stoneNormalmap->genMipmapHierarchy();
 
   // find camera
   kore::SceneNode* pCameraNode = kore::SceneManager::getInstance()
@@ -238,10 +252,13 @@ void Scene::init()
     getSceneNodesByComponent(kore::COMPONENT_MESH, vRenderNodes);
 
 
-  GLenum drawBuffers[] = {GL_COLOR_ATTACHMENT0};
+  std::vector<GLenum> drawBufs;
+  drawBufs.clear();
+  drawBufs.push_back(GL_COLOR_ATTACHMENT0);
   kore::FrameBufferStage* backBufferStage = new kore::FrameBufferStage;
+  backBufferStage->setActiveAttachments(drawBufs);
   backBufferStage->setFrameBuffer(kore::FrameBuffer::BACKBUFFER);
-  backBufferStage->setActiveAttachments(drawBuffers, 1);
+  
 
   kore::ShaderProgramPass* shaderProgPass = new kore::ShaderProgramPass;
   //shaderProgPass->setShaderProgram(simpleShader);
