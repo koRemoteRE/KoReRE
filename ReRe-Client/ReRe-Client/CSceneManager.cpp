@@ -339,15 +339,13 @@ void CSceneManager::loadTexture()
 
 void CSceneManager::createCameraNode(void)
 {
-    // Name der Kameraquelle nutzen um SceneNode-Transformation mit zu uebergeben
+    // Kamera anlegen
     c_p_cameraNode = new CCamera();
 }
 
 void CSceneManager::createLightNode(void)
 {
-    // Über alle Lichtquellen gehen
-    // Name der Lichtquelle nutzen um SceneNode-Transformation mit zu uebergeben
-    
+    // Lichtquelle anlegen
     v_p_lightNode.push_back(new CLight());
 }
 

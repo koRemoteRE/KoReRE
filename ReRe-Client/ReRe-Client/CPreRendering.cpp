@@ -320,7 +320,7 @@ void CPreRendering::initGLSL()
     // Bind Attributes
     glBindAttribLocation(warpingShaderProgram, SHADER_POSITION_LOC, "v_position");
     glBindAttribLocation(warpingShaderProgram, SHADER_NORMAL_LOC, "v_normal");
-    //glBindAttribLocation(currentImgShaderProgram, SHADER_TEX_COORD_LOC, "v_texture");
+    glBindAttribLocation(currentImgShaderProgram, SHADER_TEX_COORD_LOC, "v_texture");
 
     // Link program
     glLinkProgram(warpingShaderProgram);
@@ -337,7 +337,7 @@ void CPreRendering::testWarpDraw(glm::mat4 &oldView,glm::mat4 &oldProj)
     glm::ivec2 dim(WIDTH,HEIGHT);
     glUniformMatrix4fv(glGetUniformLocation(warpingShaderProgram, "oldProjMatrix"), 1,
                 false, glm::value_ptr(oldProj));
-        glUniformMatrix4fv(glGetUniformLocation(warpingShaderProgram, "oldViewMatrix"), 1,
+    glUniformMatrix4fv(glGetUniformLocation(warpingShaderProgram, "oldViewMatrix"), 1,
                 false, glm::value_ptr(oldView));
     glUniform2iv(glGetUniformLocation(warpingShaderProgram,"texDim"),1,glm::value_ptr(dim));
     GLuint texLoc = glGetUniformLocation(warpingShaderProgram, "frameTex");
@@ -346,9 +346,8 @@ void CPreRendering::testWarpDraw(glm::mat4 &oldView,glm::mat4 &oldProj)
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, currentImgTexture);
     glUniform1i(texLoc, 6);
-    glActiveTexture(GL_TEXTURE3);
     sceneMgr->drawScene(warpingShaderProgram);
- glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
     glUseProgram(0);
 }
 

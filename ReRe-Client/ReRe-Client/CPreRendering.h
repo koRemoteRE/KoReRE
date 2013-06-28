@@ -32,7 +32,6 @@ private:
     
     void checkFrameBuffer();
     
-    
     CSceneManager* sceneMgr;
     
     // GLSL related variables
