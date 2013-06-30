@@ -1,5 +1,5 @@
 //
-//   CCamera.cpp
+//   Camera.cpp
 //  ReRe-Client
 //
 //  Created by Ina Schröder on 23.04.13.
@@ -8,136 +8,8 @@
 
 #include "CCamera.h"
 
-#include <iostream>
-#include <math.h>
-#include <vector>
-
-CCamera::CCamera()
-:_fMovementSpeed(50.0f),
-_fFovDeg(0.0f),
-_fFar(0.0f),
-_fNear(0.0f),
-_matView(1.0f),
-_matProjection(1.0f),
-_matViewInverse(1.0f),
-_matViewProj(1.0f),
-_fFocalLength(0.0f),
-_bIsOrtho(false),
-_fWidth(1.0f),
-_fHeight(1.0),
-_name("")
-{}
-
-CCamera::~CCamera() {
-}
-
-
-glm::vec3 CCamera::getSide() const {
-    // Note: assume the camera's view matrix is not scaled
-    // (otherwise the return-vec would have to be normalized)
-    return glm::vec3(_matViewInverse[ 0 ]);
-}
-
-glm::vec3 CCamera::getUp() const {
-    // Note: assume the camera's view matrix is not scaled
-    // (otherwise the return-vec would have to be normalized)
-    return glm::vec3(_matViewInverse[ 1 ]);
-}
-
-glm::vec3 CCamera::getForward() const {
-    // Note: assume the camera's view matrix is not scaled
-    // (otherwise the return-vec would have to be normalized)
-    return glm::vec3(_matViewInverse[ 2 ]);
-}
-
-glm::vec3 CCamera::getPosition() const {
-    return glm::vec3(_matViewInverse[ 3 ]);
-}
-
-void CCamera::setProjectionOrtho(float fLeft, float fRight, float fBottom,
-                                      float fTop, float fNear, float fFar) {
-    _matProjection = glm::ortho(fLeft, fRight, fBottom, fTop, fNear, fFar);
-    _fFar = fFar;
-    _fNear = fNear;
-    _fFovDeg = -1.0f;  // Not valid in this case -> Mark as negative.
-    _bIsOrtho = true;
-    
-    paramsChanged();
-}
-
-void CCamera::setProjectionPersp(float yFov_deg, float fWidth,
-                                      float fHeight, float fNear, float fFar) {
-  
-    _matProjection = glm::perspectiveFov(yFov_deg, fWidth,
-                                         fHeight, fNear, fFar);
-    _fNear = fNear;
-    _fFar = fFar;
-    _fFovDeg = yFov_deg;
-    _bIsOrtho = false;
-    _fWidth = fWidth;
-    _fHeight = fHeight;
-    
-    // Calculate focal length
-    float fFovHor2 = glm::atan(
-                               getAspectRatio() * glm::tan(getFovRad() / 2.0f));
-    
-    _fFocalLength = 1.0f / glm::tan(fFovHor2);
-    paramsChanged();
-}
-
-void CCamera::setProjectionPersp(float yFov_deg, float fAspect,
-                                      float fNear, float fFar) {
-    float fWidth = 1.0f;
-    float fHeight = fWidth / fAspect;
-    
-    _matProjection = glm::perspectiveFov(yFov_deg, fWidth, fHeight, fNear, fFar);
-    _fNear = fNear;
-    _fFar = fFar;
-    _fFovDeg = yFov_deg;
-    _bIsOrtho = false;
-    _fWidth = fWidth;
-    _fHeight = fHeight;
-    
-    // Calculate focal length
-    float fFovHor2 = glm::atan(
-                               getAspectRatio() * glm::tan(getFovRad() / 2.0f));
-    
-    _fFocalLength = 1.0f / glm::tan(fFovHor2);
-    paramsChanged();
-}
-
-void CCamera::paramsChanged() {
-    _matViewProj = _matProjection * _matView;
-    updateFrustumPlanes();
-}
-
-
-void CCamera::rotateFromMouseMove(float dx, float dy) {
-    // Ugly hack incoming here...
-    static bool bFistTime = true;
-    
-    if (bFistTime) {
-        bFistTime = false;
-        return;
-    }
-    
-    rotateViewQuat(dx, glm::vec3(0.0f, 1.0f, 0.0f));
-    rotateViewQuat(dy, getSide());
-}
-
-void CCamera::rotateViewQuat(const float angle, const glm::vec3 v3Axis) {
-//to do
-}
-
-void CCamera::moveForward(float fSpeed) {
-// to do
-}
-
-void CCamera::moveSideways(float fSpeed) {
-// to do
-}
-
-std::vector<glm::vec3> CCamera::getWSfrustumCorners() {
+/*
+std::vector<glm::vec3> Camera::getWSfrustumCorners() {
     glm::mat4 matViewInv = getViewInv();
     // calculate frustum corner coordinates
     float fFov2 = getFovRad() / 2.0f;
@@ -177,7 +49,7 @@ std::vector<glm::vec3> CCamera::getWSfrustumCorners() {
     return vReturnCorners;
 }
 
-void CCamera::updateFrustumPlanes() {
+void Camera::updateFrustumPlanes() {
     // If the camera's projection matrix is an orthogonal projection,
     // the frustum planes have to be derived
     // from the general projection matrix
@@ -230,7 +102,7 @@ void CCamera::updateFrustumPlanes() {
     }
 }
 
-bool CCamera::
+bool Camera::
 isVisible(const glm::vec3& rSphereCenterWS, const float fRadius) const {
     glm::vec4 bSphereVS =  _matView * glm::vec4(rSphereCenterWS, 1.0f);
     const glm::vec3 v3Center = glm::vec3(bSphereVS);
@@ -264,4 +136,140 @@ isVisible(const glm::vec3& rSphereCenterWS, const float fRadius) const {
         return false;
     }
     return true;
+}*/
+
+//--------------------------------------------------
+//--------------------------------------------------
+
+CCamera::CCamera()
+{
+    d_LastTime = glfwGetTime();
+    
+    m_viewMatrix = new glm::mat4(1);
+    m_projectionMatrix = new glm::mat4(1);
+    
+    // Intrinsische Kameraparameter definieren
+    stcpi_intrinsic.f_fieldOfView   = 27;
+    stcpi_intrinsic.f_aspect        = 1.7;
+    stcpi_intrinsic.f_near          = 0.1;
+    stcpi_intrinsic.f_far           = 1000;
+    
+    setProjectionPerspMatrix();
+    
+    stcmp_update.f_verticalAngle    = 0.0f;
+    stcmp_update.f_horizontalAngle  = 3.1454f;
+    stcmp_update.f_rotationSpeed    = CAM_ROTATION_SPEED;
+    stcmp_update.f_moveSpeed        = CAM_MOVE_SPEED;
+    
+    stcv_update.v_eyePosition   = glm::vec3(CAM_POS_X,CAM_POS_Y,CAM_POS_Z);
+    stcv_update.v_eyeLookAt     = glm::vec3(CAM_LOOK_AT_X,CAM_LOOK_AT_Y,CAM_LOOK_AT_Z);
+    stcv_update.v_eyeUp         = glm::vec3(CAM_UP_X,CAM_UP_Y,CAM_UP_Z);
+    
+    setViewMatrix(stcv_update.v_eyePosition,
+                  stcv_update.v_eyeLookAt,
+                  stcv_update.v_eyeUp);
+    
+    //setViewMatrix(glm::vec3(6.8,-5.9,4.9), glm::vec3(0,0,0), glm::vec3(-0.3,0.3,0.9));
 }
+
+glm::vec3 returnPosition()
+{
+    return glm::vec3(  );
+}
+
+void CCamera::automaticMovement(int i)
+{
+    i /= 30;
+    float f_newPositionX = sin(i) / 30;
+    *m_viewMatrix = glm::translate(*m_viewMatrix, f_newPositionX, 0.0f, 0.0f);
+}
+
+/*void CCamera::updateCameraView()
+{
+    // Get mouse Position
+    glfwGetMousePos(&i_MouseX, &i_MouseY);
+    
+    
+    
+    // Reset mouse Position for next frame
+    glfwSetMousePos(WIDTH/2, HEIGHT/2);
+}*/
+
+void CCamera::updateCameraView()
+{
+    // Get mouse position
+    glfwGetMousePos(&stcmp_update.i_mouseX, &stcmp_update.i_mouseY);
+    
+    double currentTime = glfwGetTime();
+    float deltaTime = float(currentTime - d_LastTime);
+    d_LastTime = currentTime;
+    
+    // Compute new orientation
+    stcmp_update.f_horizontalAngle  += stcmp_update.f_rotationSpeed * deltaTime * float( WIDTH/2 - stcmp_update.i_mouseX );
+    stcmp_update.f_verticalAngle    += stcmp_update.f_rotationSpeed * deltaTime * float( HEIGHT/2 - stcmp_update.i_mouseY );
+    
+    // Direction : Spherical coordinates to Cartesian coordinates conversion
+    glm::vec3 direction(cos(stcmp_update.f_verticalAngle) * sin(stcmp_update.f_horizontalAngle),
+                        sin(stcmp_update.f_verticalAngle),
+                        cos(stcmp_update.f_verticalAngle) * cos(stcmp_update.f_horizontalAngle));
+    
+    // Right vector
+    glm::vec3 right = glm::vec3(sin(stcmp_update.f_horizontalAngle - 3.14f/2.0f),
+                                0,
+                                cos(stcmp_update.f_horizontalAngle - 3.14f/2.0f));
+    
+    // Up vector : perpendicular to both direction and right
+    stcv_update.v_eyeUp = glm::cross( right, direction );
+    
+    // Move faster
+    if (glfwGetKey( GLFW_KEY_LSHIFT ) == GLFW_PRESS)
+        stcmp_update.f_moveSpeed = 2.5f * CAM_MOVE_SPEED;
+    // Slow down to standard CAM_MOVE_SPEED
+    else
+        stcmp_update.f_moveSpeed = CAM_MOVE_SPEED;
+    
+    // Move forward
+    if (glfwGetKey( GLFW_KEY_UP ) == GLFW_PRESS || glfwGetKey( 'W' ) == GLFW_PRESS)
+        stcv_update.v_eyePosition += direction * deltaTime * stcmp_update.f_moveSpeed;
+    // Move backward
+    if (glfwGetKey( GLFW_KEY_DOWN ) == GLFW_PRESS || glfwGetKey( 'S' ) == GLFW_PRESS)
+        stcv_update.v_eyePosition -= direction * deltaTime * stcmp_update.f_moveSpeed;
+    
+    // Strafe right
+    if (glfwGetKey( GLFW_KEY_RIGHT ) == GLFW_PRESS || glfwGetKey( 'D' ) == GLFW_PRESS)
+        stcv_update.v_eyePosition += right * deltaTime * stcmp_update.f_moveSpeed;
+    // Strafe left
+    if (glfwGetKey( GLFW_KEY_LEFT ) == GLFW_PRESS || glfwGetKey( 'A' ) == GLFW_PRESS)
+        stcv_update.v_eyePosition -= right * deltaTime * stcmp_update.f_moveSpeed;
+    
+    // Move up
+    if (glfwGetKey( 'Q' ) == GLFW_PRESS)
+        stcv_update.v_eyePosition += stcv_update.v_eyeUp * deltaTime * stcmp_update.f_moveSpeed;
+    // Move down
+    if (glfwGetKey( 'E' ) == GLFW_PRESS)
+        stcv_update.v_eyePosition -= stcv_update.v_eyeUp * deltaTime * stcmp_update.f_moveSpeed;
+    
+    stcv_update.v_eyeLookAt = stcv_update.v_eyePosition + direction;
+    
+    *m_viewMatrix= glm::lookAt(stcv_update.v_eyePosition,
+                               stcv_update.v_eyeLookAt,
+                               stcv_update.v_eyeUp);
+    
+    // Decide whether to show Camera Data (Position, LookAt, Up)
+    if (glfwGetKey( GLFW_KEY_SPACE ) == GLFW_PRESS)
+    {
+        cout << "Position: ( " << stcv_update.v_eyePosition.x << ", " << stcv_update.v_eyePosition.y << ", " << stcv_update.v_eyePosition.z << " )" <<endl;
+        cout << "Look At: ( " << stcv_update.v_eyeLookAt.x << ", " << stcv_update.v_eyeLookAt.y << ", " << stcv_update.v_eyeLookAt.z << " )" << endl;
+        cout << "Up: ( " << stcv_update.v_eyeUp.x << ", " << stcv_update.v_eyeUp.y << ", " << stcv_update.v_eyeUp.z << " ) \n" << endl;
+    }
+        
+    // Reset mouse position for next frame
+    glfwSetMousePos(WIDTH/2, HEIGHT/2);
+}
+
+bool CCamera::viewVisible(CSceneNode* sc_rootSceneNode)
+{
+    //View Frustum Culling
+    return false;
+}
+

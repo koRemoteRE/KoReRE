@@ -7,259 +7,111 @@
 //
 
 #include <iostream>
-
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "CPreRendering.h"
-#include "CH264Decoder.h"
 
 #include <GL/glew.h>
 #include <GL/glfw.h>
 #include <glm/glm.hpp>
 
-//_______________________________Decoder_______________________________________
+glm::mat4 lastView;
+glm::mat4 lastProj;
 
-#include <thread>
-#include <mutex>
-#include <vector>
-#include <array>
-
-//inlcude
-extern "C" {
-#include <libav/libavcodec/avcodec.h>
-#include <libav/libavformat/avformat.h>
-#include <libav/libswscale/swscale.h>
-#include <libav/libavutil/log.h>
-#include <libav/libavutil/avutil.h>
-}
+void MainLoop(void)
+{
+    CPreRendering* renderer = new CPreRendering();
+    CRemoteNetwork* network = new CRemoteNetwork();
     
-    int main(int argc, const char * argv[])
+    int frameCounter = 0;
+    int frameThreshold = 5;
+    
+    
+    do{
+        // Update Camera Matrix
+        renderer->getSceneGraph()->returnCameraNode()->updateCameraView();
+        
+        if(frameCounter == 0){
+            renderer->writeToFBO();
+            frameCounter =frameThreshold;
+
+            lastView = renderer->getViewMatrix();
+            lastProj = renderer->getProjectionMatrix();
+        }else{
+            renderer->testWarpDraw(lastView,lastProj);
+
+            frameCounter--;
+        }
+
+        // Swap buffers
+        glfwSwapBuffers();
+        
+    } // Check if the ESC key was pressed or the window was closed
+    while( glfwGetKey( GLFW_KEY_ESC ) != GLFW_PRESS &&
+           glfwGetWindowParam( GLFW_OPENED ) );
+    
+    delete renderer;
+}
+
+
+int main(int argc, const char * argv[])
+{
+    // Initialise GLFW
+    if( !glfwInit() )
     {
-        
-        CH264Decoder *Decoder = new CH264Decoder();
-        
-        //____________________Decoder_____________________________________________________
-        
-        
-        //different input types for testing
-    //    const char*  input_mp4  = "../test.mp4";
-        const char*  input_avi  = "../test.avi";
-    //    const char*  input_udp  = "udp://127.0.0.1:9111"; //make sure there is an open stream while running
-    //    const char*  input_rtsp = "rtsp://mi9.gv.filmon.com:1935/live/415.high.stream";     //rtsp://hostname[:port]/path //WORKS
-    //    const char*  input_http = "http://www.wowza.com/_h264/BigBuckBunny_115k.mov";
-    //    const char*  input_test = "rtsp://141.26.71.112:8554/h264Test";
-        
-        //allocate an AVFormatContext structure
-        AVFormatContext* avContext = nullptr;
-        
-        if (avformat_open_input(&avContext, input_avi, nullptr, nullptr) != 0) //set av input format?
-            throw std::runtime_error("Error while calling avformat_open_input (probably invalid file format)");
-        
-        std::shared_ptr<AVFormatContext> avFormat(avContext, &avformat_free_context);
-        
-        if (avformat_find_stream_info(avFormat.get(), nullptr) < 0)
-            throw std::runtime_error("Error while calling avformat_find_stream_info");
-        
-        //dump file information onto standard error
-       av_dump_format(avContext, 0, argv[1], 0);
-        
-        //find matching codec to the opened file
-        int videoStream = 1;
-        for (int i = 0; i < avFormat->nb_streams; i++) {
-            if (avFormat->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO) {
-                // stream found
-                videoStream=i;
-                break;
-            }
-        }
-        if (videoStream ==-1){
-            throw std::runtime_error("Didn't find any video stream in the file (probably audio file)");
-        }
-        
-        // Get a pointer to the codec context for the video stream
-        AVCodecContext  *pCodecCtx = NULL;
-        pCodecCtx = avFormat->streams[videoStream]->codec;
-        
-        
-        // Find the decoder for the video stream
-        AVCodec *pCodec = NULL;
-        pCodec = avcodec_find_decoder(pCodecCtx->codec_id);
-        if(pCodec == NULL) {
-            fprintf(stderr, "Unsupported codec!\n");
-            return -1; // Codec not found
-        }
-        
-        // Open codec
-        AVDictionary *optionsDict = NULL;
-        if(avcodec_open2(pCodecCtx, pCodec, &optionsDict)<0){
-            fprintf(stderr, "Could not open codec!\n");
-            return -1; // Could not open codec
-        }
-        
-        // Allocate video frame
-        AVFrame *pFrame = NULL;
-        pFrame = avcodec_alloc_frame();
-
-        // get picture information
-        struct SwsContext *sws_ctx = NULL;
-        sws_ctx =
-        sws_getContext
-        (
-         pCodecCtx->width,
-         pCodecCtx->height,
-         pCodecCtx->pix_fmt,
-         pCodecCtx->width,
-         pCodecCtx->height,
-         PIX_FMT_RGB24,
-         SWS_BICUBIC,
-         NULL,
-         NULL,
-         NULL
-         );
-        
-        // Read frames
-        // initialize packet, set data to NULL, let the demuxer fill it
-        AVPacket packet;
-        
-        av_init_packet(&packet);
-        packet.data = NULL;
-        packet.size = 0;
-        int frameFinished;
-        
-        // ______Show frame using GLFW_________
-        
-        // Initialise GLFW
-        if( !glfwInit() )
-        {
-            fprintf( stderr, "Failed to initialize GLFW\n" );
-            return -1;
-        }
-  
-        // Open a window and create its OpenGL context
-        if( !glfwOpenWindow( 800, 600, 0,0,0,0, 32,0, GLFW_WINDOW ) ) //HERE?
-
-        {
-            fprintf( stderr, "Failed to open GLFW window\n" );
-            glfwTerminate();
-            return -1;
-        }
-        
-        // Initialize GLEW
-        glewExperimental=true; // Needed in core profile
-        if (glewInit() != GLEW_OK) {
-            fprintf(stderr, "Failed to initialize GLEW\n");
-            return -1;
-        }
-        
-        glfwSetWindowTitle( "Show Frame" );
-        
-        // Enable keyboard (for Escaping)
-        glfwEnable( GLFW_STICKY_KEYS );
-       
-        // bind the frame as a texture to the window
-        int texture=0;
-        glGenTextures(1,(GLuint*)&texture);
-        glBindTexture(GL_TEXTURE_2D,texture);
-        
-        do{
-            if (av_read_frame(avContext, &packet)>=0) {
-                // Is this a packet from the video stream?
-                if(packet.stream_index==videoStream) {
-                    
-                    // Decode video frame
-                    avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished,&packet);
-                    
-                    // Did we get a video frame?
-                    if(frameFinished) {
-                        
-                        //allocate a picture
-                        AVFrame* avFrameRGB=avcodec_alloc_frame();
-                        
-                        
-                        int numBytes=avpicture_get_size(PIX_FMT_RGBA, pCodecCtx->width, pCodecCtx->height);
-                        std::vector<unsigned char> tmpImage(numBytes);
-                        
-                        avpicture_fill((AVPicture *)avFrameRGB, &tmpImage[0], PIX_FMT_RGB24, pCodecCtx->width, pCodecCtx->height);
-                        sws_scale(sws_ctx, pFrame->data, pFrame->linesize, 0, pCodecCtx->height, avFrameRGB->data, avFrameRGB->linesize);
-                        
-                        av_free(avFrameRGB);
-                        
-                        glBindTexture(GL_TEXTURE_2D, texture);
-                        
-                        static bool first=true;
-                        if (first)
-                        {
-                            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16, pCodecCtx->width, pCodecCtx->height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
-                            
-                            
-                            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-                            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-                            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-                            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-                            
-                            first=false;
-                        }
-                        
-                        glTexSubImage2D(GL_TEXTURE_2D, 0, 0,0, pCodecCtx->width, pCodecCtx->height, GL_RGB, GL_UNSIGNED_BYTE, &tmpImage[0]);
-                        glBindTexture(GL_TEXTURE_2D, 0);
-                        
-                    }
-                    
-                    // Free the packet that was allocated by av_read_frame
-                    av_free_packet(&packet);
-                }
-            }
-            
-            //TODO: CONVERT TO OPGENGL 3.0!
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            
-            glMatrixMode (GL_MODELVIEW);
-            glPushMatrix ();
-            glLoadIdentity ();
-            glMatrixMode (GL_PROJECTION);
-            glPushMatrix ();
-            glLoadIdentity ();
-            
-            glColor3f(1,1,1);
-            glBindTexture(GL_TEXTURE_2D, texture);
-            glEnable(GL_TEXTURE_2D);
-            glBegin(GL_QUADS);
-            glTexCoord2f(0,1);
-            glVertex3f(-1,-1,-1);
-            
-            glTexCoord2f(1,1);
-            glVertex3f(1,-1,-1);
-            
-            glTexCoord2f(1,0);
-            glVertex3f(1,1,-1);
-            
-            glTexCoord2f(0,0);
-            glVertex3f(-1,1,-1);
-            
-            glEnd();
-            
-            glPopMatrix();
-            glMatrixMode(GL_MODELVIEW);
-            glPopMatrix();
-            
-            // Swap buffers
-            glfwSwapBuffers();
-            
-        }
-        // Check if the ESC key was pressed or the window was closed
-        while( glfwGetKey( GLFW_KEY_ESC ) != GLFW_PRESS && glfwGetWindowParam( GLFW_OPENED ) );
-        
-        // Free the YUV frame
-          av_free(pFrame);
-        
-        // Close the codec
-          avcodec_close(pCodecCtx);
-        
-        // Close the video file
-        //avformat_close_input(&avFormat);
-        
-        // Close window and terminate GLFW
-        glfwTerminate();
-        return 0;
+        fprintf( stderr, "Failed to initialize GLFW\n" );
+        return -1;
     }
+
+    glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 4); // 4x antialiasing
+    glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 3); // OpenGL 3.2
+    glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 2);
+    glfwOpenWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //We don't want the old OpenGL
+
+    // Open a window and create its OpenGL context
+    if( !glfwOpenWindow( WIDTH, HEIGHT, 0,0,0,0, 32,0, GLFW_WINDOW ) )
+    {
+        fprintf( stderr, "Failed to open GLFW window\n" );
+        glfwTerminate();
+        return -1;
+    }
+
+    // Initialize GLEW
+    glewExperimental=true; // Needed in core profile
+    if (glewInit() != GLEW_OK) {
+        fprintf(stderr, "Failed to initialize GLEW\n");
+        return -1;
+    }
+
+    glfwSetWindowTitle( "Hello World!" );
+    
+    // Ensure we can capture the escape key being pressed below
+    glfwEnable( GLFW_STICKY_KEYS );
+    
+    glEnable(GL_DEPTH_TEST);
+    
+    // Initialize Mouse Position
+    glfwDisable( GLFW_MOUSE_CURSOR);
+    glfwSetMousePos(WIDTH/2, HEIGHT/2);
+    
+    try
+    {
+        MainLoop();
+    }
+    catch (int i_ex)
+    {
+        cout << "Fehlercode: " << i_ex << endl;
+        if (i_ex == 0x00)
+            cout << "Keine .dae-Datei" << endl;
+        else if (i_ex == 0x01)
+            cout << "Fehler beim Laden der Datei" << endl;
+    }
+    
+    // Close window and terminate GLFW
+    glfwTerminate();
+    
+    std::cout << "Hello, World!\n";
+    return 0;
+}
+

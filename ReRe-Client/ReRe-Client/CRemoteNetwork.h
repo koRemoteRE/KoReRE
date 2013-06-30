@@ -11,10 +11,20 @@
 
 #include <iostream>
 
+#include <boost/asio.hpp>
+#include <boost/array.hpp>
+#include <opencv2/core/core.hpp>
+
+
 class CRemoteNetwork
 {
+    
+public:
     CRemoteNetwork();
     ~CRemoteNetwork();
+    
+    void sendCameraMatrix();
+    void sendPerspMatrix();
 };
 
 #endif /* defined(__ReRe_Client__RemoteNetwork__) */

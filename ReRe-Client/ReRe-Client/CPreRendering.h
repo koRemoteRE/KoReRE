@@ -9,7 +9,6 @@
 #ifndef __ReRe_Client__PreRendering__
 #define __ReRe_Client__PreRendering__
 
-#include <GL/glew.h>
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -30,13 +29,42 @@ private:
     
     void createTextures();
     void createFBO();
-    void writeToFBO();
     
     void checkFrameBuffer();
+    
+    
+    CSceneManager* sceneMgr;
+    
+    // GLSL related variables
+    GLuint currentImgVertexShader;
+    GLuint currentImgFragmentShader;
+    GLuint currentImgShaderProgram;
+    
+    GLuint warpingVertexShader;
+    GLuint warpingFragmentShader;
+    GLuint warpingShaderProgram;
+
+    GLuint currentImgTexture;
+    
+    GLuint currentImgFBO;
     
 public:
     CPreRendering();
     ~CPreRendering();
+    
+    GLuint getCurrentDiffImg();
+    CSceneManager* getSceneGraph();
+    
+    glm::mat4 getProjectionMatrix();
+    glm::mat4 getViewMatrix();
+    glm::mat4 getCameraMatrix();
+    
+    void writeToFBO();
+    
+    // --- Just Testing --- TODO: Delete! ----------------
+    
+    void testWarpDraw(glm::mat4 &oldView,glm::mat4 &oldProj);
+    // ---------------------------------------------------
 };
 
 #endif /* defined(__ReRe_Client__PreRendering__) */
