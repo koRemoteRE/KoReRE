@@ -80,7 +80,12 @@ else()
     ${EXT_LIBS}/libglew32.dll.a
     ${EXT_LIBS}/libIL.dll.a
     )
+	
+	file(GLOB_RECURSE OpenCV_LIBS ${EXT_LIBS}/opencv/*.a)
+	
     target_link_libraries(ReReClient ${MINGW_LIBS})
+	target_link_libraries( ReReClient ${OpenCV_LIBS})
+	
   endif()
 endif()
 
