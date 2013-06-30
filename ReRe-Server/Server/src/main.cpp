@@ -16,6 +16,9 @@
   You should have received a copy of the GNU General Public License
   along with KoReRE.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifdef _WIN32 
+# define _WIN32_WINNT 0x0501 
+#endif 
 
 #include <GL/glew.h>
 #include <GL/glfw.h>
@@ -39,6 +42,8 @@
 #include "Scene.h"
 #include "ImageQueue.h"
 #include "MatrixQueue.h"
+#include "SerializableMatrix.hpp"
+#include "SerializableImage.hpp"
 #include "KoRE/Components/Camera.h"
 #include "KoRE/SceneManager.h"
 #include "KoRE/GLerror.h"
@@ -52,6 +57,8 @@ const int _screenHeight = 600;
 
 ImageQueue *imageQueue;
 MatrixQueue *matrixQueue;
+
+unsigned int currID = 0;
 
 void init(){
    // Initialize GLFW
@@ -116,7 +123,7 @@ void init(){
   matrixQueue = MatrixQueue::getInstance();
 }
 
-void renderOnDemand(Scene* scene, glm::mat4 transformation){
+void renderOnDemand(Scene* scene, glm::mat4 transformation, unsigned int id){
   scene->getCam()->getSceneNode()->setTransform(transformation);
 
   kore::GLerror::gl_ErrorCheckStart();
@@ -124,15 +131,19 @@ void renderOnDemand(Scene* scene, glm::mat4 transformation){
   kore::RenderManager::getInstance()->renderFrame();
   kore::GLerror::gl_ErrorCheckFinish("Main Loop");
   glfwSwapBuffers();
-  ImageQueuePacket imPkt = {0};
+	
+  SerializableImage imPkt = { 0 };
 
   double encodeTime = glfwGetTime();
 
-  imPkt.buffer = *encoder->encodeFrame();
+  imPkt.id = id;
+  imPkt.image = *encoder->encodeFrame();
 
   std::cout << "encode time: " << glfwGetTime()-encodeTime << std::endl;
 
   imageQueue->push(imPkt);
+
+  std::cout << "pushed Image size: " << imPkt.image.size() << std::endl;
 
   //std::cout << "queue: " << imageQueue->getLenght() << std::endl;
 }
@@ -206,12 +217,29 @@ int main(void) {
     if (glfwGetKey('R')) {
       if (!_oldR) {
         _oldR = true;
-       glm::mat4 tranformMat =  scene.getCam()->getSceneNode()->getTransform()->getLocal();
-       renderOnDemand(&scene, tranformMat);
+		
+		//for testing
+		//for(int i = 0; i < 10; i++){
+		//	SerializableMatrix mat = {0};
+		//	mat.id = currID++;
+		//	mat.mat = scene.getCam()->getSceneNode()->getTransform()->getLocal();
+
+		//	std::cout << "pushed Matrix Id: " << mat.id << std::endl;
+
+		//	matrixQueue->push(mat);
+		//}
       }
     } else {
       _oldR = false;
     }
+
+	SerializableMatrix transformMat = {0};
+
+	if(matrixQueue->tryPop(transformMat)){
+
+		//std::cout << "popped Matrix Id: " << transformMat.id << std::endl;
+		renderOnDemand(&scene, transformMat.mat, transformMat.id);
+	}
 
     // Check if ESC key was pressed or window was closed
     running = !glfwGetKey(GLFW_KEY_ESC) && glfwGetWindowParam(GLFW_OPENED);
