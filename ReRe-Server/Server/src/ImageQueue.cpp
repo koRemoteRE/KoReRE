@@ -4,7 +4,7 @@ ImageQueue::ImageQueue(){}
 
 ImageQueue::~ImageQueue(){}
 
-void ImageQueue::push(ImageQueuePacket const &data){
+void ImageQueue::push(SerializableImage const &data){
 	boost::mutex::scoped_lock lock(theMutex);
 	theQueue.push(data);
 	lock.unlock();
@@ -16,7 +16,7 @@ bool ImageQueue::empty() const{
 	return theQueue.empty();
 }
 
-bool ImageQueue::tryPop(ImageQueuePacket &poppedValue){
+bool ImageQueue::tryPop(SerializableImage &poppedValue){
 	boost::mutex::scoped_lock lock(theMutex);
 	if(theQueue.empty()){
 		return false;
@@ -28,7 +28,7 @@ bool ImageQueue::tryPop(ImageQueuePacket &poppedValue){
 	return true;
 }
 
-void ImageQueue::waitAndPop(ImageQueuePacket &poppedValue){
+void ImageQueue::waitAndPop(SerializableImage &poppedValue){
 	boost::mutex::scoped_lock lock(theMutex);
 	while(theQueue.empty()){
 		theConditionVariable.wait(lock);

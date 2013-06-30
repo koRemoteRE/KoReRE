@@ -4,7 +4,7 @@ MatrixQueue::MatrixQueue(){}
 
 MatrixQueue::~MatrixQueue(){}
 
-void MatrixQueue::push(MatrixQueuePacket const &data){
+void MatrixQueue::push(SerializableMatrix const &data){
 	boost::mutex::scoped_lock lock(theMutex);
 	theQueue.push(data);
 	lock.unlock();
@@ -16,7 +16,7 @@ bool MatrixQueue::empty() const{
 	return theQueue.empty();
 }
 
-bool MatrixQueue::tryPop(MatrixQueuePacket &poppedValue){
+bool MatrixQueue::tryPop(SerializableMatrix &poppedValue){
 	boost::mutex::scoped_lock lock(theMutex);
 	if(theQueue.empty()){
 		return false;
@@ -28,7 +28,7 @@ bool MatrixQueue::tryPop(MatrixQueuePacket &poppedValue){
 	return true;
 }
 
-void MatrixQueue::waitAndPop(MatrixQueuePacket &poppedValue){
+void MatrixQueue::waitAndPop(SerializableMatrix &poppedValue){
 	boost::mutex::scoped_lock lock(theMutex);
 	while(theQueue.empty()){
 		theConditionVariable.wait(lock);

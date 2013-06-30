@@ -2,19 +2,14 @@
 #define SERVER_IMAGE_QUEUE
 
 #include <queue>
-#include <opencv2/opencv.hpp>
 #include <boost/thread.hpp>
-
-struct ImageQueuePacket{
-	int id;
-	std::vector<uchar> buffer;
-};
+#include "SerializableImage.hpp"
 
 class ImageQueue
 {
 private:
 	ImageQueue(void);
-	std::queue<ImageQueuePacket> theQueue;
+	std::queue<SerializableImage> theQueue;
 	mutable boost::mutex theMutex;
 	boost::condition_variable theConditionVariable;
 public:
@@ -23,10 +18,10 @@ public:
 		return &queue;
 	};
 	~ImageQueue();
-	void push(ImageQueuePacket const &data);
+	void push(SerializableImage const &data);
 	bool empty() const;
-	bool tryPop(ImageQueuePacket &poppedValue);
-	void waitAndPop(ImageQueuePacket &poppedValue);
+	bool tryPop(SerializableImage &poppedValue);
+	void waitAndPop(SerializableImage &poppedValue);
 	int getLenght();
 };
 #endif

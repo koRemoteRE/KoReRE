@@ -4,17 +4,14 @@
 #include <queue>
 #include <opencv2/opencv.hpp>
 #include <boost/thread.hpp>
-
-struct MatrixQueuePacket{
-	int id;
-	std::vector<uchar> buffer;
-};
+#include <glm/glm.hpp>
+#include "SerializableMatrix.hpp"
 
 class MatrixQueue
 {
 private:
 	MatrixQueue(void);
-	std::queue<MatrixQueuePacket> theQueue;
+	std::queue<SerializableMatrix> theQueue;
 	mutable boost::mutex theMutex;
 	boost::condition_variable theConditionVariable;
 public:
@@ -23,10 +20,10 @@ public:
 		return &queue;
 	};
 	~MatrixQueue();
-	void push(MatrixQueuePacket const &data);
+	void push(SerializableMatrix const &data);
 	bool empty() const;
-	bool tryPop(MatrixQueuePacket &poppedValue);
-	void waitAndPop(MatrixQueuePacket &poppedValue);
+	bool tryPop(SerializableMatrix &poppedValue);
+	void waitAndPop(SerializableMatrix &poppedValue);
 	int getLenght();
 };
 #endif
