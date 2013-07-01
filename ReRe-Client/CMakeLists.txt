@@ -13,61 +13,47 @@ add_executable(${PROJECT_NAME} ${SOURCES} ${HEADER} ${VERTEXSHADER} ${FRAGMENTSH
 
 IF(APPLE)
 
-#INCLUDE_DIRECTORIES (${CMAKE_SOURCE_DIR}/ext)
-#include_directories(${GLFW_INCLUDE_DIR} /usr/local/include/ )
-
    find_library(COCOA_LIBRARY Cocoa)
    find_library(GLUT_LIBRARY GLUT )
    find_library(OpenGL_LIBRARY OpenGL )
    find_library(IOKIT NAMES IOKit)
-   MARK_AS_ADVANCED (COCOA_LIBRARY
-                     GLUT_LIBRARY
-                     OpenGL_LIBRARY)
-   SET(EXTRA_LIBS ${COCOA_LIBRARY} ${GLUT_LIBRARY} ${OpenGL_LIBRARY} ${IOKIT})
+   MARK_AS_ADVANCED (COCOA_LIBRARY GLUT_LIBRARY OpenGL_LIBRARY)
 
-#test boost
-   add_library( boost STATIC IMPORTED )
-   set_target_properties( boost PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/MacLibs/libboost_system-mt.a )
+   SET(EXTRA_LIBS 
+	${COCOA_LIBRARY} 
+	${GLUT_LIBRARY} 
+	${OpenGL_LIBRARY} 
+	${IOKIT}
+	${CMAKE_SOURCE_DIR}/MacLibs/libglfw.a
+	${CMAKE_SOURCE_DIR}/MacLibs/libGLEW.a
+	${CMAKE_SOURCE_DIR}/MacLibs/libboost_system-mt.a
+	${CMAKE_SOURCE_DIR}/MacLibs/libboost_thread-mt.a
+	${CMAKE_SOURCE_DIR}/MacLibs/libboost_serialization-mt.a
+	${CMAKE_SOURCE_DIR}/MacLibs/libopencv_core.2.4.dylib
+	${CMAKE_SOURCE_DIR}/MacLibs/libopencv_imgproc.2.4.dylib)
 
    add_library( assimp STATIC IMPORTED )
    set_target_properties( assimp PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/MacLibs/libassimp.a )
 
-   add_library( glew STATIC IMPORTED )
-   set_target_properties( glew PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/MacLibs/libGLEW.a )
-
-   add_library( glfw STATIC IMPORTED )
-   set_target_properties( glfw PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/MacLibs/libglfw.a )
-
    add_library( devil STATIC IMPORTED )
    set_target_properties( devil PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/MacLibs/libIL.a )
-
-   add_library( dyboost SHARED IMPORTED )
-   set_target_properties( boost PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/MacLibs/libboost_system-mt.dylib )
 
    add_library( dyassimp SHARED IMPORTED )
    set_target_properties( assimp PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/MacLibs/libassimp.3.0.0.dylib )
 
-   add_library( dyglew SHARED IMPORTED )
-   set_target_properties( glew PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/MacLibs/libGLEW.1.9.0.dylib )
-
-   add_library( dyglfw SHARED IMPORTED )
-   set_target_properties( glfw PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/MacLibs/libglfw.dylib )
-
    add_library( dydevil SHARED IMPORTED )
    set_target_properties( devil PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/MacLibs/libIL.1.dylib )
-   	
-   target_link_libraries(ReReClient boost)	
+
+   		
    target_link_libraries(ReReClient assimp)
-   target_link_libraries(ReReClient glfw)
-   target_link_libraries(ReReClient glew)
    target_link_libraries(ReReClient devil)
    
     set(EXT_LIBS ${CMAKE_SOURCE_DIR}/MacLibs)
-#  link_directories(${EXT_LIBS})
-   	file(GLOB_RECURSE OpenCV_LIBS /opt/local/lib/*libopencv_*.dylib)
-	file(GLOB_RECURSE Boost_LIBS /opt/local/lib/*libboost_*.a)
-    MESSAGE(STATUS ${OpenCV_LIBS} ${Boost_LIBS})
-	target_link_libraries( ReReClient ${OpenCV_LIBS} ${Boost_LIBS})
+#    link_directories(${EXT_LIBS})
+#   	file(GLOB_RECURSE OpenCV_LIBS /opt/local/lib/*libopencv_*.dylib)
+#	file(GLOB_RECURSE Boost_LIBS /opt/local/lib/*libboost_*.a)
+#    MESSAGE(STATUS ${OpenCV_LIBS} ${Boost_LIBS})
+#	target_link_libraries( ReReClient ${OpenCV_LIBS} ${Boost_LIBS})
     target_link_libraries(ReReClient ${EXTRA_LIBS})
     
 else()

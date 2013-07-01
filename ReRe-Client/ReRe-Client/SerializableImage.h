@@ -1,7 +1,7 @@
 #ifndef SERIALIZABLE_IMAGE
 #define SERIALIZABLE_IMAGE
 
-#include <opencv2/core/core.hpp>
+#include "opencv2/core/core.hpp"
 //#include <boost/serialization/vector.hpp>
 
 struct SerializableImage{
