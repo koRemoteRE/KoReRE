@@ -36,15 +36,30 @@ CRemoteNetwork::CRemoteNetwork() {
         socket.send(buffer(matrixBuf));
         cout << "... finish" << endl;
         
-        //recieve data
-        //ip::tcp::acceptor acceptor(io_service,ip::tcp::endpoint(ip::tcp::v4(),13));
-        //for(;;){
-        //    acceptor.accept(socket);
-            //boost::system::error_code errors;
-            //read(socket,)
-        //}
-        
-        //io_service.run();
+        //http://stackoverflow.com/questions/5126923/boost-asio-send-opencv-iplimage-from-ubuntu-server-to-win7-client
+
+        string header;
+        stringstream ss;
+
+        cout << "Reading data..." << endl;
+
+        for(;;){
+        	boost::array<char, 1024> picBuffer;
+        	boost::system::error_code error;
+        	//will block until read some data
+        	size_t len = socket.read_some(buffer(picBuffer),error);
+        	if(error == error::eof){
+        		break; //finished reading
+        	}
+        	else if(error){
+        		throw boost::system::system_error(error);
+        	}
+
+        	ss.write(picBuffer.data(),len);
+
+        }
+        header = ss.str();
+        cout << "...finish! Size: " << header.size() << endl;
             
     }catch (exception e){
         cerr<<"Server Exception thrown: "<< e.what() <<endl;}
