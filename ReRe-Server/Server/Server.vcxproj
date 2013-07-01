@@ -149,6 +149,7 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Client.cpp" />
     <ClCompile Include="src\ImageQueue.cpp" />
     <ClCompile Include="src\Encoder.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -157,6 +158,7 @@
     <ClCompile Include="src\Server.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Client.h" />
     <ClInclude Include="src\Connection.hpp" />
     <ClInclude Include="src\ImageQueue.h" />
     <ClInclude Include="src\Encoder.h" />

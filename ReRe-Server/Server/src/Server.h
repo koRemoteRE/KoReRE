@@ -29,8 +29,7 @@ public:
 	void writeHandler(const boost::system::error_code &ec, 
 		std::size_t bytes_transferred, 
 		connection_ptr conn);
-	void Server::readHandler(const boost::system::error_code &e, std::size_t bytes_transferred,
-						 connection_ptr conn);
+	void Server::readHandler(const boost::system::error_code &e);
 
 	std::vector<SerializableMatrix> mats;
 	std::vector<SerializableImage> images;

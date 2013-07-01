@@ -7,6 +7,7 @@
 struct SerializableImage{
 	unsigned int id;
 	std::vector<uchar> image;
+	unsigned int len;
 
 	template <typename Archive>
 	void serialize(Archive &ar, const unsigned int version){

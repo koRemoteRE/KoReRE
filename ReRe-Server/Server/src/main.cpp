@@ -37,6 +37,7 @@
 
 
 #include "Server.h"
+#include "Client.h"
 #include "Encoder.h"
 #include "KoRE/Timer.h"
 #include "Scene.h"
@@ -118,7 +119,7 @@ void init(){
             reinterpret_cast<const char*>(
             glewGetString(GLEW_VERSION)));
 
-  encoder = new Encoder();
+  //encoder = new Encoder();
   imageQueue = ImageQueue::getInstance();
   matrixQueue = MatrixQueue::getInstance();
 }
@@ -139,7 +140,6 @@ void renderOnDemand(Scene* scene, glm::mat4 transformation, unsigned int id){
   imPkt.id = id;
   imPkt.image = *encoder->encodeFrame();
 
-  std::cout << "encode id: " << id << std::endl;
   std::cout << "encode time: " << glfwGetTime()-encodeTime << std::endl;
 
   imageQueue->push(imPkt);
@@ -149,22 +149,32 @@ void renderOnDemand(Scene* scene, glm::mat4 transformation, unsigned int id){
   //std::cout << "queue: " << imageQueue->getLenght() << std::endl;
 }
 
+
 void serverThread(){
 	try{
-		unsigned short port = 9999;
+		const std::string host = "192.168.2.113";
+		const std::string service = "9999";
 
 		boost::asio::io_service io_service;
 
-		boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::tcp::v4(), port);
+		Client client(io_service, host, service);
+		io_service.run_one();
 
-		Server server(io_service, endpoint, port);
+		while(true){
 
-		io_service.run();
+			//std::cout << (matrixQueue->getLenght()) << std::endl;
+
+			if(matrixQueue->getLenght() > 0){
+				io_service.reset();
+				io_service.run_one();
+			}		
+		}
 
 	}catch (std::exception &e){
 
 		std::cerr << e.what() << std::endl;
 	}
+
 }
 
 int main(void) {
@@ -238,7 +248,7 @@ int main(void) {
         _oldR = true;
 		
 		//for testing
-		for(int i = 0; i < 10; i++){
+		for(int i = 0; i < 1; i++){
 			SerializableMatrix mat = {0};
 			mat.id = currID++;
 			mat.mat = scene.getCam()->getSceneNode()->getTransform()->getLocal();
@@ -251,14 +261,6 @@ int main(void) {
     } else {
       _oldR = false;
     }
-
-	SerializableMatrix transformMat = {0};
-
-	if(matrixQueue->tryPop(transformMat)){
-
-		//std::cout << "popped Matrix Id: " << transformMat.id << std::endl;
-		renderOnDemand(&scene, transformMat.mat, transformMat.id);
-	}
 
     // Check if ESC key was pressed or window was closed
     running = !glfwGetKey(GLFW_KEY_ESC) && glfwGetWindowParam(GLFW_OPENED);
