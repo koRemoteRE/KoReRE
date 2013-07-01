@@ -346,9 +346,8 @@ void CPreRendering::testWarpDraw(glm::mat4 &oldView,glm::mat4 &oldProj)
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, currentImgTexture);
     glUniform1i(texLoc, 6);
-    glActiveTexture(GL_TEXTURE3);
     sceneMgr->drawScene(warpingShaderProgram);
- glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
     glUseProgram(0);
 }
 

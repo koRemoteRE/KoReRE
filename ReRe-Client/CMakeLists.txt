@@ -13,8 +13,7 @@ add_executable(${PROJECT_NAME} ${SOURCES} ${HEADER} ${VERTEXSHADER} ${FRAGMENTSH
 
 IF(APPLE)
 
- #INCLUDE_DIRECTORIES (${CMAKE_SOURCE_DIR}/ext)
-  
+#INCLUDE_DIRECTORIES (${CMAKE_SOURCE_DIR}/ext)
 #include_directories(${GLFW_INCLUDE_DIR} /usr/local/include/ )
 
    find_library(COCOA_LIBRARY Cocoa)
@@ -62,8 +61,14 @@ IF(APPLE)
    target_link_libraries(ReReClient glfw)
    target_link_libraries(ReReClient glew)
    target_link_libraries(ReReClient devil)
-
-   target_link_libraries(ReReClient ${EXTRA_LIBS})
+   
+    set(EXT_LIBS ${CMAKE_SOURCE_DIR}/MacLibs)
+#  link_directories(${EXT_LIBS})
+   	file(GLOB_RECURSE OpenCV_LIBS /opt/local/lib/*libopencv_*.dylib)
+    MESSAGE(STATUS ${OpenCV_LIBS})
+	target_link_libraries( ReReClient ${OpenCV_LIBS})
+    target_link_libraries(ReReClient ${EXTRA_LIBS})
+    
 else()
   if(MSVC)
 	set(EXT_LIBS ${CMAKE_SOURCE_DIR}/VSLibs)
@@ -90,6 +95,7 @@ else()
     target_link_libraries(ReReClient ${MINGW_LIBS})
   endif()
 endif()
+
 
 #aux_source_directory(./ReRe-Client SRC_LIST)
 #aux_header_directory(./ReRe-Client HEADER_LIST)

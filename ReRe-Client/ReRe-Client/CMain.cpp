@@ -16,16 +16,27 @@
 #include <GL/glfw.h>
 #include <glm/glm.hpp>
 
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+
 glm::mat4 lastView;
 glm::mat4 lastProj;
 
 void MainLoop(void)
 {
     CPreRendering* renderer = new CPreRendering();
-    CRemoteNetwork* network = new CRemoteNetwork();
+   // CRemoteNetwork* network = new CRemoteNetwork();
     
     int frameCounter = 0;
     int frameThreshold = 5;
+    
+    unsigned short * d = new unsigned short[9];
+    for(int i = 0; i < 9; i++){
+        d[i] = i;
+    }
+    cv::Mat bla(3,3,CV_16U,d);
+    
+    std::cout << bla << std::endl;
     
     
     do{
