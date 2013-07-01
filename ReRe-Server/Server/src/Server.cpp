@@ -1,13 +1,20 @@
 #include "Server.h"
 
-Server::Server(boost::asio::io_service &io_service, unsigned short port)
-	: socketAcceptor(io_service, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)){
-	
+Server::Server(boost::asio::io_service &io_service, boost::asio::ip::tcp::endpoint &endpoint, unsigned short port)
+	//: socketAcceptor(io_service, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)){
+	: socketAcceptor(io_service, endpoint){
+
+		//socketAcceptor = boost::asio::ip::tcp::acceptor(io_service, endpoint);
+
+		socketAcceptor.set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
+
 		connection_ptr new_conn(new Connection(socketAcceptor.get_io_service()));
 
 		socketAcceptor.async_accept(new_conn->getSocket(),
 			boost::bind(&Server::acceptHandler, this, 
 			boost::asio::placeholders::error, new_conn));
+
+		init();
 }
 
 Server::~Server(){}
@@ -17,23 +24,60 @@ void Server::init(){
 	matrixQueue = MatrixQueue::getInstance();
 }
 
-void Server::start(){
-
-}
-
 void Server::acceptHandler(const boost::system::error_code &e, connection_ptr conn){
 	if(!e){
-		/*conn->writeAsync(,
-			boost::bind(&Server::writeHandler, this,
-			boost::asio::placeholders::error, conn));*/
-	}
+		conn->readAsync(mats, 
+			boost::bind(&Server::readHandler, this,
+			boost::asio::placeholders::error,
+			std::size_t(1024), conn));
 
-	connection_ptr newConn(new Connection(socketAcceptor.get_io_service()));
-	socketAcceptor.async_accept(newConn->getSocket(),
-		boost::bind(&Server::acceptHandler, this,
-		boost::asio::placeholders::error, newConn));
+	}
 }
 
-void Server::writeHandler(const boost::system::error_code &ec, std::size_t bytes_transferred){
+void Server::writeHandler(const boost::system::error_code &e, 
+						  std::size_t bytes_transferred, 
+						  connection_ptr conn){
+	if(!e){
+		images.clear();
+	}else{
+		std::cout << e.message() << std::endl;
+	}
 
+	connection_ptr new_conn(new Connection(socketAcceptor.get_io_service()));
+
+		socketAcceptor.async_accept(new_conn->getSocket(),
+			boost::bind(&Server::acceptHandler, this, 
+			boost::asio::placeholders::error, new_conn));
+}
+
+void Server::readHandler(const boost::system::error_code &e, 
+						 std::size_t bytes_transferred,
+						 connection_ptr conn){
+	if(!e){
+		for (std::size_t i = 0; i < mats.size(); ++i){
+			matrixQueue->push(mats[i]);
+
+			std::cout << "Got Matrix: " << mats[i].id << std::endl;
+		}
+
+		mats.clear();
+
+		SerializableImage img = {0};
+		imageQueue->waitAndPop(img);
+		images.push_back(img);
+
+		conn->writeAsync(images, 
+			boost::bind(&Server::writeHandler, this,
+			boost::asio::placeholders::error,
+			std::size_t(1024), conn));
+
+	}else{
+
+      std::cerr << e.message() << std::endl;
+	  connection_ptr new_conn(new Connection(socketAcceptor.get_io_service()));
+
+		socketAcceptor.async_accept(new_conn->getSocket(),
+			boost::bind(&Server::acceptHandler, this, 
+			boost::asio::placeholders::error, new_conn));
+	}
 }

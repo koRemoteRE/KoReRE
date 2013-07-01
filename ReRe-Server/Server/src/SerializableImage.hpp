@@ -2,6 +2,7 @@
 #define SERIALIZABLE_IMAGE
 
 #include <opencv2/core/core.hpp> 
+//#include <boost/serialization/vector.hpp>
 
 struct SerializableImage{
 	unsigned int id;
@@ -11,7 +12,8 @@ struct SerializableImage{
 	void serialize(Archive &ar, const unsigned int version){
 		ar & id;
 		ar & image;
-	} 
+	}
+
 };
 
 #endif

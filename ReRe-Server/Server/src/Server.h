@@ -7,9 +7,10 @@
 
 #include "ImageQueue.h"
 #include "MatrixQueue.h"
-#include "Connection.h"
-#include <boost\asio.hpp>
-#include <boost\bind.hpp>
+#include "Connection.hpp"
+#include <boost/asio.hpp>
+#include <boost/bind.hpp>
+#include <boost/serialization/vector.hpp>
 
 
 class Server{
@@ -19,13 +20,19 @@ private:
 
 	boost::asio::ip::tcp::acceptor socketAcceptor;
 public:
-	Server(boost::asio::io_service &io_service, unsigned short port);
+	Server(boost::asio::io_service &io_service, boost::asio::ip::tcp::endpoint &endpoint, unsigned short port);
 	~Server(void);
 
 	void init();
-	void start();
 
 	void acceptHandler(const boost::system::error_code &e, connection_ptr conn);
-	void writeHandler(const boost::system::error_code &ec, std::size_t bytes_transferred);
+	void writeHandler(const boost::system::error_code &ec, 
+		std::size_t bytes_transferred, 
+		connection_ptr conn);
+	void Server::readHandler(const boost::system::error_code &e, std::size_t bytes_transferred,
+						 connection_ptr conn);
+
+	std::vector<SerializableMatrix> mats;
+	std::vector<SerializableImage> images;
 };
 #endif
