@@ -36,7 +36,7 @@
 
 
 
-
+#include "Server.h"
 #include "Encoder.h"
 #include "KoRE/Timer.h"
 #include "Scene.h"
@@ -139,6 +139,7 @@ void renderOnDemand(Scene* scene, glm::mat4 transformation, unsigned int id){
   imPkt.id = id;
   imPkt.image = *encoder->encodeFrame();
 
+  std::cout << "encode id: " << id << std::endl;
   std::cout << "encode time: " << glfwGetTime()-encodeTime << std::endl;
 
   imageQueue->push(imPkt);
@@ -148,7 +149,23 @@ void renderOnDemand(Scene* scene, glm::mat4 transformation, unsigned int id){
   //std::cout << "queue: " << imageQueue->getLenght() << std::endl;
 }
 
- 
+void serverThread(){
+	try{
+		unsigned short port = 9999;
+
+		boost::asio::io_service io_service;
+
+		boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::tcp::v4(), port);
+
+		Server server(io_service, endpoint, port);
+
+		io_service.run();
+
+	}catch (std::exception &e){
+
+		std::cerr << e.what() << std::endl;
+	}
+}
 
 int main(void) {
 
@@ -171,6 +188,8 @@ int main(void) {
 
   bool _oldR = false;
   
+  boost::thread servThread = boost::thread(serverThread);
+
   // Main loop
   while (running) {
     time = the_timer.timeSinceLastCall();
@@ -219,15 +238,15 @@ int main(void) {
         _oldR = true;
 		
 		//for testing
-		//for(int i = 0; i < 10; i++){
-		//	SerializableMatrix mat = {0};
-		//	mat.id = currID++;
-		//	mat.mat = scene.getCam()->getSceneNode()->getTransform()->getLocal();
+		for(int i = 0; i < 10; i++){
+			SerializableMatrix mat = {0};
+			mat.id = currID++;
+			mat.mat = scene.getCam()->getSceneNode()->getTransform()->getLocal();
 
-		//	std::cout << "pushed Matrix Id: " << mat.id << std::endl;
+			std::cout << "pushed Matrix Id: " << mat.id << std::endl;
 
-		//	matrixQueue->push(mat);
-		//}
+			matrixQueue->push(mat);
+		}
       }
     } else {
       _oldR = false;
