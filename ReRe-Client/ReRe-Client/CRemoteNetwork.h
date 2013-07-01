@@ -10,10 +10,11 @@
 #define __ReRe_Client__RemoteNetwork__
 
 #include <iostream>
+#include <sstream>
 
 #include <boost/asio.hpp>
 #include <boost/array.hpp>
-#include <opencv2/core/core.hpp>
+//#include <opencv2/core/core.hpp>
 
 
 class CRemoteNetwork
