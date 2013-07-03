@@ -46,6 +46,8 @@ private:
     GLuint currentImgTexture;
     
     GLuint currentImgFBO;
+    GLuint serverImgTexture;
+    int serverImgWidth,serverImgHeight;
     
 public:
     CPreRendering();
@@ -64,6 +66,8 @@ public:
     
     void testWarpDraw(glm::mat4 &oldView,glm::mat4 &oldProj);
     // ---------------------------------------------------
+
+    void setServerTexture(std::vector<unsigned char>& data);
 };
 
 #endif /* defined(__ReRe_Client__PreRendering__) */

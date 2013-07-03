@@ -16,12 +16,21 @@
 #include <GL/glfw.h>
 #include <glm/glm.hpp>
 
+#include <opencv2/opencv.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 glm::mat4 lastView;
 glm::mat4 lastProj;
 
 void MainLoop(void)
 {
     CPreRendering* renderer = new CPreRendering();
+    cv::Mat im = cv::imread("cat.jpg");
+    if(im.empty()){
+    	im = cv::Mat::ones(cv::Size(WIDTH,HEIGHT),CV_8U);
+    }
+    std::vector<uchar> data;
+    cv::imencode(".jpg",im,data);
+    renderer->setServerTexture(data);
 
     int frameCounter = 0;
     int frameThreshold = 5;
