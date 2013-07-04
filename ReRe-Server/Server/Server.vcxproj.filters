@@ -9,39 +9,24 @@
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Encoder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Scene.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\ImageQueue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\MatrixQueue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Server.cpp">
+    <ClCompile Include="src\logger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Client.cpp">
+    <ClCompile Include="src\NoSerialClient.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Encoder.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Scene.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\ImageQueue.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="src\MatrixQueue.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Server.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="src\SerializableMatrix.hpp">
@@ -53,7 +38,10 @@
     <ClInclude Include="src\Connection.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Client.h">
+    <ClInclude Include="src\logger.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\NoSerialClient.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

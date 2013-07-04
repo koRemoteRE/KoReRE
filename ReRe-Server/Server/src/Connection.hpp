@@ -16,6 +16,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include "logger.h"
 
 
 
@@ -64,6 +65,7 @@ public:
 		void (Connection::*f)(const boost::system::error_code&, T&, boost::tuple<Handler>)
 			= &Connection::handleReadHeader<T, Handler>;
 
+
 		boost::asio::async_read(socket, boost::asio::buffer(inbound_header),
 			boost::bind(f, this, boost::asio::placeholders::error, boost::ref(t),
 			boost::make_tuple(handler)));
@@ -72,7 +74,7 @@ public:
 	template <typename T, typename Handler>
 	void handleReadHeader(const boost::system::error_code &e,
 		T &t, boost::tuple<Handler> handler){
-
+			logger::printTime("Read header.");
 		if(e){
 			boost::get<0>(handler)(e);
 		}else{
@@ -96,6 +98,7 @@ public:
 	template <typename T, typename Handler>
 	void handleReadData(const boost::system::error_code &e,
 		T &t, boost::tuple<Handler> handler){
+			logger::printTime("Read Data.");
 			if (e)
 		{
 		  boost::get<0>(handler)(e);

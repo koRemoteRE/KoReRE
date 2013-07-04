@@ -27,7 +27,7 @@ public:
 	void handleRead(const boost::system::error_code &e);
 
 private:
-	Connection connection;
+	Connection conn;
 	MatrixQueue *matrixQueue;
 	ImageQueue *imageQueue;
 	std::vector<SerializableMatrix> mats;

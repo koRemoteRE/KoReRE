@@ -34,17 +34,12 @@
 #include <ctime>
 #include <vector>
 
-
-
-#include "Server.h"
-#include "Client.h"
-#include "Encoder.h"
+#include "NoSerialClient.h"
 #include "KoRE/Timer.h"
-#include "Scene.h"
 #include "ImageQueue.h"
 #include "MatrixQueue.h"
-#include "SerializableMatrix.hpp"
-#include "SerializableImage.hpp"
+//#include "SerializableMatrix.hpp"
+//#include "SerializableImage.hpp"
 #include "KoRE/Components/Camera.h"
 #include "KoRE/SceneManager.h"
 #include "KoRE/GLerror.h"
@@ -52,7 +47,6 @@
 
 
 
-Encoder* encoder;
 const int _screenWidth = 800;
 const int _screenHeight = 600;
 
@@ -123,52 +117,24 @@ void init(){
   imageQueue = ImageQueue::getInstance();
   matrixQueue = MatrixQueue::getInstance();
 }
-
-void renderOnDemand(Scene* scene, glm::mat4 transformation, unsigned int id){
-  scene->getCam()->getSceneNode()->setTransform(transformation);
-
-  kore::GLerror::gl_ErrorCheckStart();
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT |GL_STENCIL_BUFFER_BIT);
-  kore::RenderManager::getInstance()->renderFrame();
-  kore::GLerror::gl_ErrorCheckFinish("Main Loop");
-  glfwSwapBuffers();
-	
-  SerializableImage imPkt = { 0 };
-
-  double encodeTime = glfwGetTime();
-
-  imPkt.id = id;
-  imPkt.image = *encoder->encodeFrame();
-
-  std::cout << "encode time: " << glfwGetTime()-encodeTime << std::endl;
-
-  imageQueue->push(imPkt);
-
-  std::cout << "pushed Image size: " << imPkt.image.size() << std::endl;
-
-  //std::cout << "queue: " << imageQueue->getLenght() << std::endl;
-}
-
-
+//typedef boost::shared_ptr<Client> client_ptr;
+//typedef boost::shared_ptr<boost::asio::io_service> service_ptr;
 void serverThread(){
 	try{
 		const std::string host = "192.168.2.113";
-		const std::string service = "9999";
+		const std::string port = "9999";
 
-		boost::asio::io_service io_service;
+		//boost::asio::io_service io_service;
 
-		Client client(io_service, host, service);
-		io_service.run_one();
+		NoSerialClient client(host, port);
+		//io_service.run_one();
 
-		while(true){
-
-			//std::cout << (matrixQueue->getLenght()) << std::endl;
-
+		/*while(true){
 			if(matrixQueue->getLenght() > 0){
 				io_service.reset();
-				io_service.run_one();
+				io_service.run();
 			}		
-		}
+		}*/
 
 	}catch (std::exception &e){
 
@@ -182,15 +148,9 @@ int main(void) {
   int running = GL_TRUE;
   init();
 
-  Scene scene;
-  scene.init();
-
   kore::Timer the_timer;
   the_timer.start();
   double time = 0;
-
-  kore::Camera* pCamera = scene.getCam();
-  float cameraMoveSpeed = 4.0f;
 
   int oldMouseX = 0;
   int oldMouseY = 0;
@@ -203,26 +163,6 @@ int main(void) {
   // Main loop
   while (running) {
     time = the_timer.timeSinceLastCall();
-    scene.update(time);
-
-    if (glfwGetKey(GLFW_KEY_UP) || glfwGetKey('W')) {
-      pCamera->moveForward(cameraMoveSpeed * static_cast<float>(time));
-    }
-
-    if (glfwGetKey(GLFW_KEY_DOWN) || glfwGetKey('S')) {
-      pCamera->moveForward(-cameraMoveSpeed * static_cast<float>(time));
-    }
-
-    if (glfwGetKey(GLFW_KEY_LEFT) || glfwGetKey('A')) {
-      pCamera->moveSideways(-cameraMoveSpeed * static_cast<float>(time));
-    }
-
-    if (glfwGetKey(GLFW_KEY_RIGHT) || glfwGetKey('D')) {
-      pCamera->moveSideways(cameraMoveSpeed * static_cast<float>(time));
-    }
-    if (glfwGetKey('U')) {
-      pCamera->getSceneNode()->setTranslation(glm::vec3(0,0,0));
-    }
 
     int mouseX = 0;
     int mouseY = 0;
@@ -230,13 +170,6 @@ int main(void) {
 
     int mouseMoveX = mouseX - oldMouseX;
     int mouseMoveY = mouseY - oldMouseY;
-
-    if (glfwGetMouseButton(GLFW_MOUSE_BUTTON_1) == GLFW_PRESS ) {
-      if (glm::abs(mouseMoveX) > 0 || glm::abs(mouseMoveY) > 0) {
-        pCamera->rotateFromMouseMove((float)-mouseMoveX / 5.0f,
-          (float)-mouseMoveY / 5.0f);
-      }
-    }
 
     oldMouseX = mouseX;
     oldMouseY = mouseY;
@@ -248,15 +181,33 @@ int main(void) {
         _oldR = true;
 		
 		//for testing
-		for(int i = 0; i < 1; i++){
-			SerializableMatrix mat = {0};
-			mat.id = currID++;
-			mat.mat = scene.getCam()->getSceneNode()->getTransform()->getLocal();
+			SerializableMatrix mat;
+			//mat.id = currID++;
+			mat.mat = glm::mat4();
 
-			std::cout << "pushed Matrix Id: " << mat.id << std::endl;
+			mat.mat[0][0] = 0.68588f;
+			mat.mat[0][1] = 0.727634f;
+			mat.mat[0][2] = -0.0108167f;
+			mat.mat[0][3] = 0;
+
+			mat.mat[1][0] = -0.31737f;
+			mat.mat[1][1] = 0.312468f;
+			mat.mat[1][2] = 0.895343f;
+			mat.mat[1][3] = 0;
+
+			mat.mat[2][0] = 0.654862f;
+			mat.mat[2][1] = -0.610665f;
+			mat.mat[2][2] = 0.445245f;
+			mat.mat[2][3] = 0;
+
+			mat.mat[3][0] = 6.84897f;
+			mat.mat[3][1] = -5.91815f;
+			mat.mat[3][2] = 4.91385f;
+			mat.mat[3][3] = 1;
+
+			//std::cout << "pushed Matrix Id: " << mat.id << std::endl;
 
 			matrixQueue->push(mat);
-		}
       }
     } else {
       _oldR = false;
