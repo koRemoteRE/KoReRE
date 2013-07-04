@@ -1,12 +1,6 @@
 #include "NoSerialServer.h"
 #include "logger.h"
 
-boost::array<char, 1024> buffer;
-//std::vector<float> buffer;
-std::string outBuffer;
-
-//typedef boost::shared_ptr<std::string> outBufPointer;
-
 NoSerialServer::NoSerialServer(unsigned short port_)
 	:	port(port_),
 		endpoint(boost::asio::ip::tcp::v4(), port_),
@@ -41,7 +35,9 @@ NoSerialServer::~NoSerialServer(){}
 
 void NoSerialServer::acceptHandler(const boost::system::error_code &ec){
 	if(!ec){
-		sock.async_read_some(boost::asio::buffer(buffer),
+		boost::array<char, 1024> temp;
+		buffer.push(temp);
+		sock.async_read_some(boost::asio::buffer(buffer.back()),
 			boost::bind(&NoSerialServer::readHandler, this,
 			boost::asio::placeholders::error,
 			boost::asio::placeholders::bytes_transferred));
@@ -55,6 +51,14 @@ void NoSerialServer::writeHandler(const boost::system::error_code &e,
 		//images.clear();
 	}else{
 		std::cout << e.message() << std::endl;
+		//sock.shutdown(sock.shutdown_both);
+		////sock.close();
+	 //   //sock = boost::asio::ip::tcp::socket(io_service);
+		//io_service.reset();
+		//io_service.run();
+		//socketAcceptor.async_accept(sock, 
+		//	boost::bind(&NoSerialServer::acceptHandler, this,
+		//	boost::asio::placeholders::error));
 	}
 
 	/*connection_ptr new_conn(new Connection(socketAcceptor.get_io_service()));
@@ -67,7 +71,9 @@ void NoSerialServer::writeHandler(const boost::system::error_code &e,
 void NoSerialServer::readHandler(const boost::system::error_code &e, std::size_t bytes_transferred){
 	if(!e){
 		SerializableMatrix m;
-		std::stringstream data(buffer.data(), bytes_transferred);
+		std::stringstream data;//(buffer.front().data(), bytes_transferred);
+		data.write(buffer.front().data(), bytes_transferred);
+		buffer.pop();
 		if(data){
 			m.deserialize(data.str());
 
@@ -79,8 +85,9 @@ void NoSerialServer::readHandler(const boost::system::error_code &e, std::size_t
 		if(bytes_transferred > 0){
 			std::cout << bytes_transferred << std::endl;
 		}
-
-		sock.async_read_some(boost::asio::buffer(buffer),
+		boost::array<char, 1024> temp;
+		buffer.push(temp);
+		sock.async_read_some(boost::asio::buffer(buffer.back()),
 			boost::bind(&NoSerialServer::readHandler, this,
 			boost::asio::placeholders::error,
 			boost::asio::placeholders::bytes_transferred));
@@ -88,17 +95,26 @@ void NoSerialServer::readHandler(const boost::system::error_code &e, std::size_t
 		SerializableImage img;
 		imageQueue->waitAndPop(img);
 
-		outBuffer = *img.serialize();
+		//outBuffer = *img.serialize();
+		outQueue.push(*img.serialize());
 		
-		//outBufPointer outBuffer(new std::string(*img->serialize()));
-		
-		sock.async_write_some(boost::asio::buffer(outBuffer),
+		sock.async_write_some(boost::asio::buffer(outQueue.back()),
 			boost::bind(&NoSerialServer::writeHandler, this,
 			boost::asio::placeholders::error,
 			boost::asio::placeholders::bytes_transferred));
-
+		if(outQueue.size() > 10){
+			outQueue.pop();
+		}
+		
 	}else{
-
       std::cerr << e.message() << std::endl;
+	  //sock.shutdown(sock.shutdown_both);
+	  ////sock.close();
+	  ////sock = boost::asio::ip::tcp::socket(io_service);
+	  //io_service.reset();
+	  //io_service.run();
+	  //socketAcceptor.async_accept(sock, 
+			//boost::bind(&NoSerialServer::acceptHandler, this,
+			//boost::asio::placeholders::error));
 	}
 }

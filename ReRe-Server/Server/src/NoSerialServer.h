@@ -33,6 +33,9 @@ public:
 		std::size_t bytes_transferred);
 	void readHandler(const boost::system::error_code &e, 
 		std::size_t bytes_transferred);
+
+	std::queue<boost::array<char, 1024>> buffer;
+	std::queue<std::string> outQueue;
 };
 #endif
 

@@ -124,6 +124,7 @@ void init(){
 }
 
 void renderOnDemand(Scene* scene, SerializableMatrix transformation){
+
   scene->getCam()->getSceneNode()->setTransform(transformation.mat);
 
   kore::GLerror::gl_ErrorCheckStart();
@@ -183,12 +184,11 @@ int main(void) {
   bool _oldR = false;
   
   boost::thread servThread = boost::thread(serverThread);
-
   // Main loop
   while (running) {
     time = the_timer.timeSinceLastCall();
     scene.update(time);
-
+	
     if (glfwGetKey(GLFW_KEY_UP) || glfwGetKey('W')) {
       pCamera->moveForward(cameraMoveSpeed * static_cast<float>(time));
     }
@@ -226,26 +226,10 @@ int main(void) {
     oldMouseY = mouseY;
    
     //lightNode->rotate(-40.0f * static_cast<float>(time), glm::vec3(0.0f, 0.0f, 1.0f), kore::SPACE_WORLD);
-    glfwSwapBuffers();
+
     if (glfwGetKey('R')) {
       if (!_oldR) {
         _oldR = true;
-		
-		//for testing
-		for(int i = 0; i < 10; i++){
-			SerializableMatrix mat;
-			//mat.id = currID++;
-			mat.mat = scene.getCam()->getSceneNode()->getTransform()->getLocal();
-/*
-			std::cout << mat.mat[0][0] << " " << mat.mat[0][1] << " " << mat.mat[0][2] << " " << mat.mat[0][3] << std::endl;
-			std::cout << mat.mat[1][0] << " " << mat.mat[1][1] << " " << mat.mat[1][2] << " " << mat.mat[1][3] << std::endl;
-			std::cout << mat.mat[2][0] << " " << mat.mat[2][1] << " " << mat.mat[2][2] << " " << mat.mat[2][3] << std::endl;
-			std::cout << mat.mat[3][0] << " " << mat.mat[3][1] << " " << mat.mat[3][2] << " " << mat.mat[3][3] << std::endl;*/
-
-			//std::cout << "pushed Matrix Id: " << mat.id << std::endl;
-
-			matrixQueue->push(mat);
-		}
       }
     } else {
       _oldR = false;
@@ -261,7 +245,7 @@ int main(void) {
 
     // Check if ESC key was pressed or window was closed
     running = !glfwGetKey(GLFW_KEY_ESC) && glfwGetWindowParam(GLFW_OPENED);
-
+	glfwPollEvents();
   }
   
   // Close window and terminate GLFW

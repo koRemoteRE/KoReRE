@@ -288,7 +288,7 @@ void Scene::init()
 void Scene::update(double time)
 {
    kore::SceneManager::getInstance()->update();
-   if (rotationNode) {
-     rotationNode->rotate(90.0f * static_cast<float>(time), glm::vec3(0.0f, 0.0f, 1.0f));
-   }
+   //if (rotationNode) {
+  //   rotationNode->rotate(90.0f * static_cast<float>(time), glm::vec3(0.0f, 0.0f, 1.0f));
+   //}
 }

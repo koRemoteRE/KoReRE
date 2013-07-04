@@ -1,0 +1,21 @@
+KoRE Log - Thu May 23 11:25:42 2013
+
+[DEBUG] added Framebuffer 'BACKBUFFER'
+Render Device: GeForce 8800 GTX/PCIe/SSE2
+Vendor: NVIDIA Corporation
+OpenGL version: 3.3.0
+GLSL version: 3.30 NVIDIA via Cg compiler
+GLFW version 2.7.7
+GLEW version: 1.9.0
+[ERROR] Could not open shader './assets/shader/normalColor.vp'
+[ERROR] Could not open shader './assets/shader/normalColor.fp'
+[DEBUG] '' program Log Link info
+---------
+No shader objects attached.
+[ERROR] Could not open shader './assets/shader/normalmapping.vert'
+[ERROR] Could not open shader './assets/shader/normalmapping.frag'
+[DEBUG] '' program Log Link info
+---------
+No shader objects attached.
+[ERROR] Scene './assets/meshes/TestEnv.dae' could not be read
+[ERROR] Scene './assets/meshes/TestEnv.dae' could not be read

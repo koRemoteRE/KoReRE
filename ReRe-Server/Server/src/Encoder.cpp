@@ -28,15 +28,15 @@ std::vector<uchar>* Encoder::encodeFrame()
   glReadBuffer(GL_FRONT);
   glReadPixels(0, 0, _frame.cols, _frame.rows, GL_BGR_EXT, GL_UNSIGNED_BYTE, _frame.data);
   glReadBuffer(_lastBuffer); 
-  cv::flip(_frame, _frame, 0);
+  //cv::flip(_frame, _frame, 0);
 
   
   std::vector<int> param = std::vector<int>(2);
 
   //(2) png compression
-  param[0]=CV_IMWRITE_PNG_COMPRESSION;
-  param[1]=3;//default(3)  0-9.
-  cv::imencode(".png",_frame,buff,param);
+  param[0]=CV_IMWRITE_JPEG_QUALITY;
+  param[1]=90;//default(3)  0-9.
+  cv::imencode(".jpg",_frame,buff,param);
   //std::cout<<"coded file size(png)"<<buff.size()<<std::endl;
   //cv::Mat pngimage = cv::imdecode(buff,CV_LOAD_IMAGE_COLOR);
 
