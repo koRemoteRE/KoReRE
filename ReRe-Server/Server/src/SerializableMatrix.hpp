@@ -14,7 +14,11 @@ struct SerializableMatrix{
 		std::string output = "";
 		for (unsigned int i = 0; i < 4; i++){
 			for (unsigned int j = 0; j < 4; j++){
-				output += boost::lexical_cast<std::string>(mat[i][j]);
+				try{
+					output += boost::lexical_cast<std::string>(mat[i][j]);
+				}catch(boost::bad_lexical_cast const&){
+					std::cerr << "SerializableMatrix::serialize: Bad Lexical Cast" << std::endl;
+				}
 				output += "&";
 			}
 		}
@@ -27,7 +31,11 @@ struct SerializableMatrix{
 		std::string item;
 		char delim = '&';
 		while(std::getline(ss, item, delim)){
-			elems.push_back(boost::lexical_cast<float>(item));
+			try{
+				elems.push_back(boost::lexical_cast<float>(item));
+			}catch(boost::bad_lexical_cast const&){
+				std::cerr << "SerializableMatrix::deserialize: Bad Lexical Cast" << std::endl;
+			}
 		}
 		mat = glm::mat4(
 			elems.at(0), elems.at(1), elems.at(2), elems.at(3),

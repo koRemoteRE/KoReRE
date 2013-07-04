@@ -121,7 +121,7 @@ void init(){
 //typedef boost::shared_ptr<boost::asio::io_service> service_ptr;
 void serverThread(){
 	try{
-		const std::string host = "192.168.2.113";
+		const std::string host = "141.26.66.52";
 		const std::string port = "9999";
 
 		//boost::asio::io_service io_service;

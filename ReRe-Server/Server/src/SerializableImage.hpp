@@ -32,6 +32,7 @@ struct SerializableImage{
 	}
 
 	void deserialize(std::string &input){
+		
 		image = new std::vector<uchar>;
 
 		int index = input.find("IMAGE");

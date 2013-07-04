@@ -2,9 +2,9 @@
 
 //std::vector<float> outBuffer;
 
-std::stringstream inString;
+//std::stringstream inString;
 boost::array<char, 2097152> inBuffer;
-std::string outBuffer;
+std::queue<std::string> outBuffer;
 
 NoSerialClient::NoSerialClient(const std::string host, const std::string port)
 	:
@@ -48,12 +48,14 @@ void NoSerialClient::connectHandler(const boost::system::error_code &ec){
 		SerializableMatrix m;
 		matrixQueue->waitAndPop(m);
 
-		outBuffer = m.serialize();
+		outBuffer.push(m.serialize());
 
-		sock.async_write_some(boost::asio::buffer(outBuffer),
+		sock.async_write_some(boost::asio::buffer(outBuffer.back()),
 			boost::bind(&NoSerialClient::writeHandler, this,
 			boost::asio::placeholders::error,
 			boost::asio::placeholders::bytes_transferred));
+
+		
 
 		sock.async_read_some(boost::asio::buffer(inBuffer), 
 			boost::bind(&NoSerialClient::readHandler, this,
@@ -72,12 +74,17 @@ void NoSerialClient::writeHandler(const boost::system::error_code &ec,
 		SerializableMatrix m;
 		matrixQueue->waitAndPop(m);
 
-		outBuffer = m.serialize();
+		outBuffer.push(m.serialize());
 
-		sock.async_write_some(boost::asio::buffer(outBuffer),
+		sock.async_write_some(boost::asio::buffer(outBuffer.back()),
 			boost::bind(&NoSerialClient::writeHandler, this,
 			boost::asio::placeholders::error,
 			boost::asio::placeholders::bytes_transferred));
+
+
+		if(outBuffer.size() > 10){
+			outBuffer.pop();
+		}
 
 		std::cout << bytesTransferred << std::endl;
 	}else{
@@ -88,18 +95,20 @@ void NoSerialClient::writeHandler(const boost::system::error_code &ec,
 void NoSerialClient::readHandler(const boost::system::error_code &ec, 
 								 std::size_t bytesTransferred){
 	if(!ec){
-		
+		SerializableImage img;
+
+		//std::stringstream in(inBuffer.data(), bytesTransferred);
+		std::stringstream inString;
 
 		inString.write(inBuffer.data(), bytesTransferred);
-
-		SerializableImage img;
 
 		if(inString.str().size() > 0){
 			img.deserialize(inString.str());
 
 			imageQueue->push(img);
 
-			//std::cout << "InStr Size:" << inString.str().size() << std::endl;
+			/*std::cout << "bytes:" << bytesTransferred << std::endl;
+			std::cout << "InStr Size:" << inString.str().size() << std::endl;*/
 			std::cout << "Image Size:" << img.image->size() << std::endl;
 		}
 
@@ -108,7 +117,7 @@ void NoSerialClient::readHandler(const boost::system::error_code &ec,
 				boost::asio::placeholders::error,
 				boost::asio::placeholders::bytes_transferred));
 
-		inString.str("");
+		//inString.str("");
 
 	}else{
 		if(ec == boost::asio::error::eof){
