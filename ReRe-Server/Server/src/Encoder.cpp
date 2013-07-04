@@ -28,7 +28,7 @@ std::vector<uchar>* Encoder::encodeFrame()
   glReadBuffer(GL_FRONT);
   glReadPixels(0, 0, _frame.cols, _frame.rows, GL_BGR_EXT, GL_UNSIGNED_BYTE, _frame.data);
   glReadBuffer(_lastBuffer); 
-  cv::flip(_frame, _frame, 0);
+  //cv::flip(_frame, _frame, 0);
 
   
   std::vector<int> param = std::vector<int>(2);

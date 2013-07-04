@@ -51,6 +51,14 @@ void NoSerialServer::writeHandler(const boost::system::error_code &e,
 		//images.clear();
 	}else{
 		std::cout << e.message() << std::endl;
+		//sock.shutdown(sock.shutdown_both);
+		////sock.close();
+	 //   //sock = boost::asio::ip::tcp::socket(io_service);
+		//io_service.reset();
+		//io_service.run();
+		//socketAcceptor.async_accept(sock, 
+		//	boost::bind(&NoSerialServer::acceptHandler, this,
+		//	boost::asio::placeholders::error));
 	}
 
 	/*connection_ptr new_conn(new Connection(socketAcceptor.get_io_service()));
@@ -100,5 +108,13 @@ void NoSerialServer::readHandler(const boost::system::error_code &e, std::size_t
 		
 	}else{
       std::cerr << e.message() << std::endl;
+	  //sock.shutdown(sock.shutdown_both);
+	  ////sock.close();
+	  ////sock = boost::asio::ip::tcp::socket(io_service);
+	  //io_service.reset();
+	  //io_service.run();
+	  //socketAcceptor.async_accept(sock, 
+			//boost::bind(&NoSerialServer::acceptHandler, this,
+			//boost::asio::placeholders::error));
 	}
 }

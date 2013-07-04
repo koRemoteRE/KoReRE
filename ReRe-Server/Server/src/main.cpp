@@ -124,6 +124,7 @@ void init(){
 }
 
 void renderOnDemand(Scene* scene, SerializableMatrix transformation){
+
   scene->getCam()->getSceneNode()->setTransform(transformation.mat);
 
   kore::GLerror::gl_ErrorCheckStart();
@@ -183,12 +184,11 @@ int main(void) {
   bool _oldR = false;
   
   boost::thread servThread = boost::thread(serverThread);
-
   // Main loop
   while (running) {
     time = the_timer.timeSinceLastCall();
     scene.update(time);
-
+	
     if (glfwGetKey(GLFW_KEY_UP) || glfwGetKey('W')) {
       pCamera->moveForward(cameraMoveSpeed * static_cast<float>(time));
     }
@@ -226,7 +226,7 @@ int main(void) {
     oldMouseY = mouseY;
    
     //lightNode->rotate(-40.0f * static_cast<float>(time), glm::vec3(0.0f, 0.0f, 1.0f), kore::SPACE_WORLD);
-    //glfwSwapBuffers();
+
     if (glfwGetKey('R')) {
       if (!_oldR) {
         _oldR = true;
@@ -245,7 +245,7 @@ int main(void) {
 
     // Check if ESC key was pressed or window was closed
     running = !glfwGetKey(GLFW_KEY_ESC) && glfwGetWindowParam(GLFW_OPENED);
-
+	glfwPollEvents();
   }
   
   // Close window and terminate GLFW
