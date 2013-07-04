@@ -35,7 +35,7 @@ std::vector<uchar>* Encoder::encodeFrame()
 
   //(2) png compression
   param[0]=CV_IMWRITE_PNG_COMPRESSION;
-  param[1]=0;//default(3)  0-9.
+  param[1]=3;//default(3)  0-9.
   cv::imencode(".png",_frame,buff,param);
   //std::cout<<"coded file size(png)"<<buff.size()<<std::endl;
   //cv::Mat pngimage = cv::imdecode(buff,CV_LOAD_IMAGE_COLOR);

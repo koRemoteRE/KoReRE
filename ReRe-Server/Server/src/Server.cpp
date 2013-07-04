@@ -1,10 +1,8 @@
 #include "Server.h"
+#include "logger.h"
 
 Server::Server(boost::asio::io_service &io_service, boost::asio::ip::tcp::endpoint &endpoint, unsigned short port)
-	//: socketAcceptor(io_service, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)){
 	: socketAcceptor(io_service, endpoint){
-
-		//socketAcceptor = boost::asio::ip::tcp::acceptor(io_service, endpoint);
 
 		socketAcceptor.set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
 
@@ -38,6 +36,7 @@ void Server::writeHandler(const boost::system::error_code &e,
 						  std::size_t bytes_transferred, 
 						  connection_ptr conn){
 	if(!e){
+		logger::printTime("Write Data end.");
 		images.clear();
 	}else{
 		std::cout << e.message() << std::endl;
@@ -62,10 +61,16 @@ void Server::readHandler(const boost::system::error_code &e,
 
 		mats.clear();
 
-		SerializableImage img = {0};
+		conn->readAsync(mats, 
+			boost::bind(&Server::readHandler, this,
+			boost::asio::placeholders::error,
+			std::size_t(1024), conn));
+
+		SerializableImage img;
 		imageQueue->waitAndPop(img);
 		images.push_back(img);
 
+		logger::printTime("Sending...");
 		conn->writeAsync(images, 
 			boost::bind(&Server::writeHandler, this,
 			boost::asio::placeholders::error,

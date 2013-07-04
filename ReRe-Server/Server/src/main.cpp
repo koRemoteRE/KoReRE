@@ -36,7 +36,7 @@
 
 
 
-#include "Server.h"
+#include "NoSerialServer.h"
 #include "Encoder.h"
 #include "KoRE/Timer.h"
 #include "Scene.h"
@@ -123,8 +123,8 @@ void init(){
   matrixQueue = MatrixQueue::getInstance();
 }
 
-void renderOnDemand(Scene* scene, glm::mat4 transformation, unsigned int id){
-  scene->getCam()->getSceneNode()->setTransform(transformation);
+void renderOnDemand(Scene* scene, SerializableMatrix transformation){
+  scene->getCam()->getSceneNode()->setTransform(transformation.mat);
 
   kore::GLerror::gl_ErrorCheckStart();
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT |GL_STENCIL_BUFFER_BIT);
@@ -132,19 +132,20 @@ void renderOnDemand(Scene* scene, glm::mat4 transformation, unsigned int id){
   kore::GLerror::gl_ErrorCheckFinish("Main Loop");
   glfwSwapBuffers();
 	
-  SerializableImage imPkt = { 0 };
+  SerializableImage imPkt;
 
   double encodeTime = glfwGetTime();
 
-  imPkt.id = id;
-  imPkt.image = *encoder->encodeFrame();
+  //imPkt.id = id;
+  imPkt.matrix = &transformation;
+  imPkt.image = encoder->encodeFrame();
 
-  std::cout << "encode id: " << id << std::endl;
+  //std::cout << "encode id: " << id << std::endl;
   std::cout << "encode time: " << glfwGetTime()-encodeTime << std::endl;
 
   imageQueue->push(imPkt);
 
-  std::cout << "pushed Image size: " << imPkt.image.size() << std::endl;
+  std::cout << "pushed Image size: " << imPkt.image->size() << std::endl;
 
   //std::cout << "queue: " << imageQueue->getLenght() << std::endl;
 }
@@ -152,14 +153,7 @@ void renderOnDemand(Scene* scene, glm::mat4 transformation, unsigned int id){
 void serverThread(){
 	try{
 		unsigned short port = 9999;
-
-		boost::asio::io_service io_service;
-
-		boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::tcp::v4(), port);
-
-		Server server(io_service, endpoint, port);
-
-		io_service.run();
+		NoSerialServer server(port);
 
 	}catch (std::exception &e){
 
@@ -239,11 +233,16 @@ int main(void) {
 		
 		//for testing
 		for(int i = 0; i < 10; i++){
-			SerializableMatrix mat = {0};
-			mat.id = currID++;
+			SerializableMatrix mat;
+			//mat.id = currID++;
 			mat.mat = scene.getCam()->getSceneNode()->getTransform()->getLocal();
+/*
+			std::cout << mat.mat[0][0] << " " << mat.mat[0][1] << " " << mat.mat[0][2] << " " << mat.mat[0][3] << std::endl;
+			std::cout << mat.mat[1][0] << " " << mat.mat[1][1] << " " << mat.mat[1][2] << " " << mat.mat[1][3] << std::endl;
+			std::cout << mat.mat[2][0] << " " << mat.mat[2][1] << " " << mat.mat[2][2] << " " << mat.mat[2][3] << std::endl;
+			std::cout << mat.mat[3][0] << " " << mat.mat[3][1] << " " << mat.mat[3][2] << " " << mat.mat[3][3] << std::endl;*/
 
-			std::cout << "pushed Matrix Id: " << mat.id << std::endl;
+			//std::cout << "pushed Matrix Id: " << mat.id << std::endl;
 
 			matrixQueue->push(mat);
 		}
@@ -252,12 +251,12 @@ int main(void) {
       _oldR = false;
     }
 
-	SerializableMatrix transformMat = {0};
+	SerializableMatrix transformMat;
 
 	if(matrixQueue->tryPop(transformMat)){
 
 		//std::cout << "popped Matrix Id: " << transformMat.id << std::endl;
-		renderOnDemand(&scene, transformMat.mat, transformMat.id);
+		renderOnDemand(&scene, transformMat);
 	}
 
     // Check if ESC key was pressed or window was closed

@@ -21,7 +21,10 @@
     <ClCompile Include="src\MatrixQueue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Server.cpp">
+    <ClCompile Include="src\logger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NoSerialServer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -38,9 +41,6 @@
     <ClInclude Include="src\MatrixQueue.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Server.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\SerializableMatrix.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -48,6 +48,12 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Connection.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logger.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\NoSerialServer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -151,19 +151,21 @@
   <ItemGroup>
     <ClCompile Include="src\ImageQueue.cpp" />
     <ClCompile Include="src\Encoder.cpp" />
+    <ClCompile Include="src\logger.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MatrixQueue.cpp" />
+    <ClCompile Include="src\NoSerialServer.cpp" />
     <ClCompile Include="src\Scene.cpp" />
-    <ClCompile Include="src\Server.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Connection.hpp" />
     <ClInclude Include="src\ImageQueue.h" />
     <ClInclude Include="src\Encoder.h" />
+    <ClInclude Include="src\logger.h" />
     <ClInclude Include="src\MatrixQueue.h" />
+    <ClInclude Include="src\NoSerialServer.h" />
     <ClInclude Include="src\Scene.h" />
     <ClInclude Include="src\SerializableImage.hpp" />
-    <ClInclude Include="src\Server.h" />
     <ClInclude Include="src\SerializableMatrix.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

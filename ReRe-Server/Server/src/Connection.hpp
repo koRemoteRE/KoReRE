@@ -16,6 +16,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include "logger.h"
 
 class Connection
 {
@@ -31,12 +32,14 @@ public:
 	void writeAsync(const T &t, Handler handler){
 	
 		//Serialize
+		logger::printTime("serializing");
 		std::ostringstream archiveStream;
 		boost::archive::text_oarchive archive(archiveStream);
 		archive << t;
 		outbound_data = archiveStream.str();
 
 		//Header format
+		logger::printTime("adding header");
 		std::ostringstream headerStream;
 		headerStream << std::setw(header_length) << std::hex << outbound_data.size();
 		if(!headerStream || headerStream.str().size() != header_length){
@@ -48,6 +51,7 @@ public:
 		outbound_header = headerStream.str();
 
 		//Write Data to Socket
+		logger::printTime("Write Data start.");
 		std::vector<boost::asio::const_buffer> buffers;
 		buffers.push_back(boost::asio::buffer(outbound_header));
 		buffers.push_back(boost::asio::buffer(outbound_data));
