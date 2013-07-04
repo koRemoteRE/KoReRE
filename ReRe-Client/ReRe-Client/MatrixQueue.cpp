@@ -21,7 +21,7 @@ bool MatrixQueue::tryPop(SerializableMatrix &poppedValue){
 	if(theQueue.empty()){
 		return false;
 	}
-    
+
 	poppedValue = theQueue.front();
 	theQueue.pop();
 	lock.unlock();
@@ -33,7 +33,7 @@ void MatrixQueue::waitAndPop(SerializableMatrix &poppedValue){
 	while(theQueue.empty()){
 		theConditionVariable.wait(lock);
 	}
-    
+
 	poppedValue = theQueue.front();
 	theQueue.pop();
 	lock.unlock();

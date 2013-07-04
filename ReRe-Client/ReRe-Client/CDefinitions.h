@@ -10,8 +10,8 @@
 #define ReReClient_CDefinitions_h
 
 // Define Window
-#define WIDTH 1024
-#define HEIGHT 576
+#define WIDTH 800
+#define HEIGHT 600
 
 #define CAM_POS_X 0.0
 #define CAM_POS_Y 15.0
