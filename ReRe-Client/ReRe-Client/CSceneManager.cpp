@@ -94,13 +94,10 @@ void CSceneManager::drawScene(CSceneNode* sn_p_drawNode, GLuint& glui_shaderProg
     
     // Texture Uniform Location
     GLint gli_texture = glGetUniformLocation(glui_shaderProgram,"texture2D");
-    GLint* gli_meshIndex = new GLint;
     
     for (GLuint glui_numMesh = 0; glui_numMesh <  *(sn_p_drawNode->returnNumberOfMesh()); glui_numMesh++)
     {
-        *gli_meshIndex = sn_p_drawNode->returnMeshIndex()[glui_numMesh];
-        
-        bindUniformTextureMaterial(v_stm_meshList[*gli_meshIndex].glui_materialIndex, glui_shaderProgram);
+        bindUniformTextureMaterial(v_stm_meshList[ sn_p_drawNode->returnMeshIndex()[glui_numMesh] ].glui_materialIndex, glui_shaderProgram);
         // Texture anbinden (GL_TEXTURE_0) und an Shader übergeben
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, v_stm_meshList[sn_p_drawNode->returnMeshIndex()[glui_numMesh]].glui_textureIndex);

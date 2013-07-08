@@ -16,7 +16,7 @@ CPreRendering::CPreRendering() {
 
 	glEnable(GL_CULL_FACE);
 
-	sceneMgr = new CSceneManager(PATH "TestEnv.dae");
+	sceneMgr = new CSceneManager(PATH "city_all.dae");
 }
 
 CPreRendering::~CPreRendering() {
