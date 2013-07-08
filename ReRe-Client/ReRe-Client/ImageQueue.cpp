@@ -21,7 +21,7 @@ bool ImageQueue::tryPop(SerializableImage &poppedValue){
 	if(theQueue.empty()){
 		return false;
 	}
-    
+
 	poppedValue = theQueue.front();
 	theQueue.pop();
 	lock.unlock();
@@ -33,7 +33,7 @@ void ImageQueue::waitAndPop(SerializableImage &poppedValue){
 	while(theQueue.empty()){
 		theConditionVariable.wait(lock);
 	}
-    
+
 	poppedValue = theQueue.front();
 	theQueue.pop();
 	lock.unlock();

@@ -30,6 +30,9 @@ IF(APPLE)
 	${CMAKE_SOURCE_DIR}/MacLibs/libboost_thread-mt.a
 	${CMAKE_SOURCE_DIR}/MacLibs/libboost_serialization-mt.a
 	${CMAKE_SOURCE_DIR}/MacLibs/libopencv_core.2.4.dylib
+	${CMAKE_SOURCE_DIR}/MacLibs/libopencv_features2d.dylib
+	${CMAKE_SOURCE_DIR}/MacLibs/libopencv_flann.dylib
+	${CMAKE_SOURCE_DIR}/MacLibs/libopencv_highgui.dylib
 	${CMAKE_SOURCE_DIR}/MacLibs/libopencv_imgproc.2.4.dylib)
 
    add_library( assimp STATIC IMPORTED )

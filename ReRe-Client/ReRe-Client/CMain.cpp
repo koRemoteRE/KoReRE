@@ -11,50 +11,67 @@
 #include <stdlib.h>
 
 #include "CPreRendering.h"
+#include "NoSerialClient.h"
+#include "MatrixQueue.h"
+#include "ImageQueue.h"
 
 #include <GL/glew.h>
 #include <GL/glfw.h>
 #include <glm/glm.hpp>
 
-#include <opencv2/core/core.hpp>
+#include <opencv2/opencv.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+
+#include <boost/asio.hpp>
+#include <boost/thread.hpp>
 
 glm::mat4 lastView;
 glm::mat4 lastProj;
 
+MatrixQueue *matrixQueue;
+ImageQueue *imageQueue;
+
+glm::mat4 xx;
+
 void MainLoop(void)
 {
+    int frameTime = 0;
+    
     CPreRendering* renderer = new CPreRendering();
-   // CRemoteNetwork* network = new CRemoteNetwork();
     
-    int frameCounter = 0;
-    int frameThreshold = 5;
-    
-    unsigned short * d = new unsigned short[9];
-    for(int i = 0; i < 9; i++){
-        d[i] = i;
-    }
-    cv::Mat bla(3,3,CV_16U,d);
-    
-    std::cout << bla << std::endl;
-    
+    lastView = renderer->getViewMatrix();
+    lastProj = renderer->getProjectionMatrix();
+    SerializableImage image;
     
     do{
         // Update Camera Matrix
         renderer->getSceneGraph()->returnCameraNode()->updateCameraView();
         
-        if(frameCounter == 0){
-            renderer->writeToFBO();
-            frameCounter =frameThreshold;
-
-            lastView = renderer->getViewMatrix();
-            lastProj = renderer->getProjectionMatrix();
-        }else{
-            renderer->testWarpDraw(lastView,lastProj);
-
-            frameCounter--;
+        //renderer->writeToFBO();
+        
+        if (imageQueue->tryPop(image))
+        {
+            cout << "GO!" << endl;
+            renderer->setServerTexture(*image.image);
+            xx = glm::inverse(image.matrix.mat);
         }
-
+        
+        lastView = renderer->getViewMatrix();
+        
+        if (frameTime == 20)
+        {
+            SerializableMatrix mat;
+            mat.mat = glm::inverse(lastView);
+                
+            matrixQueue->push(mat);
+            cout << "Send" << endl;
+            frameTime = 0;
+        }
+        
+        renderer->testWarpDraw(xx,lastProj);
+        
+        frameTime++;
+        
         // Swap buffers
         glfwSwapBuffers();
         
@@ -65,6 +82,19 @@ void MainLoop(void)
     delete renderer;
 }
 
+void serverThread(){
+	try{
+		const std::string host = "141.26.66.52";
+		const std::string port = "9999";
+        
+		NoSerialClient client(host, port);
+        
+	}catch (std::exception &e){
+        
+		std::cerr << e.what() << std::endl;
+	}
+    
+}
 
 int main(int argc, const char * argv[])
 {
@@ -105,6 +135,11 @@ int main(int argc, const char * argv[])
     // Initialize Mouse Position
     glfwDisable( GLFW_MOUSE_CURSOR);
     glfwSetMousePos(WIDTH/2, HEIGHT/2);
+    
+    matrixQueue = MatrixQueue::getInstance();
+    imageQueue = ImageQueue::getInstance();
+    
+	boost::thread servThread = boost::thread(serverThread);
     
     try
     {

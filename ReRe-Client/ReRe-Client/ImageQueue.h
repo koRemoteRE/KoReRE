@@ -3,7 +3,7 @@
 
 #include <queue>
 #include <boost/thread.hpp>
-#include "SerializableImage.h"
+#include "SerializableImage.hpp"
 
 class ImageQueue
 {
@@ -25,3 +25,4 @@ public:
 	int getLenght();
 };
 #endif
+

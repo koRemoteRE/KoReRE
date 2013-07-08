@@ -149,10 +149,10 @@ CCamera::CCamera()
     m_projectionMatrix = new glm::mat4(1);
     
     // Intrinsische Kameraparameter definieren
-    stcpi_intrinsic.f_fieldOfView   = 27;
-    stcpi_intrinsic.f_aspect        = 1.7;
+    stcpi_intrinsic.f_fieldOfView   = 27.6380615;
+    stcpi_intrinsic.f_aspect        = 1.7777;
     stcpi_intrinsic.f_near          = 0.1;
-    stcpi_intrinsic.f_far           = 1000;
+    stcpi_intrinsic.f_far           = 100;
     
     setProjectionPerspMatrix();
     
