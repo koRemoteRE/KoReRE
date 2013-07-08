@@ -31,17 +31,22 @@ glm::mat4 lastProj;
 MatrixQueue *matrixQueue;
 ImageQueue *imageQueue;
 
-glm::mat4 xx;
-
 void MainLoop(void)
 {
-    int frameTime = 0;
+    bool frameTime = true;
     
     CPreRendering* renderer = new CPreRendering();
     
     lastView = renderer->getViewMatrix();
     lastProj = renderer->getProjectionMatrix();
     SerializableImage image;
+    SerializableMatrix mat;
+    
+    //Änderungen:
+    // - mat-Variable verschoben
+    // - xx durch lastView ersetzt
+    // - alte lastView entfernt
+    // - zusätzlichen Puffer (imgBuffer) eingefügt
     
     do{
         // Update Camera Matrix
@@ -51,26 +56,26 @@ void MainLoop(void)
         
         if (imageQueue->tryPop(image))
         {
-            cout << "GO!" << endl;
             renderer->setServerTexture(*image.image);
-            xx = glm::inverse(image.matrix.mat);
+            lastView = glm::inverse(image.matrix.mat);
+            cout << "Server Image" << endl;
         }
         
-        lastView = renderer->getViewMatrix();
-        
-        if (frameTime == 20)
+        if (glfwGetKey('R'))
         {
-            SerializableMatrix mat;
-            mat.mat = glm::inverse(lastView);
+            if (frameTime == true)
+            {
+            mat.mat = glm::inverse( renderer->getViewMatrix() );
                 
             matrixQueue->push(mat);
-            cout << "Send" << endl;
-            frameTime = 0;
+            cout << "Send Matrix" << endl;
+            frameTime = false;
+            }
         }
+        else
+            frameTime = true;
         
-        renderer->testWarpDraw(xx,lastProj);
-        
-        frameTime++;
+        renderer->testWarpDraw(lastView,lastProj);
         
         // Swap buffers
         glfwSwapBuffers();
