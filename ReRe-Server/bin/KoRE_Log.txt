@@ -1,4 +1,4 @@
-KoRE Log - Thu Jul 04 17:04:27 2013
+KoRE Log - Fri Jul 05 17:44:17 2013
 
 [DEBUG] added Framebuffer 'BACKBUFFER'
 Render Device: GeForce 8800 GTX/PCIe/SSE2
@@ -40,3 +40,5 @@ GLEW version: 1.9.0
 [DEBUG] Texture './assets/textures/Crate.png' successfully loaded.
 [DEBUG] Texture './assets/textures/stonewall.png' successfully loaded.
 [DEBUG] Texture './assets/textures/stonewall_NM_height.png' successfully loaded.
+
+End of Log
