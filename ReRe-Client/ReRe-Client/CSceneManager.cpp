@@ -51,7 +51,7 @@ CSceneManager::CSceneManager(std::string st_filename)
         bindVAO();
         
         // Assimp-Szene löschen
-        delete ais_p_asImportScene;
+       //delete ais_p_asImportScene;
     }
     else
     {
@@ -283,7 +283,7 @@ void CSceneManager::loadTexture()
     ilInit();
     
     // Szenen Material nach Texturen durchsuchen
-    for (int i_material = 0, i_texIndex; i_material < gli_numMaterial; i_material++, i_texIndex = 0)
+    for (int i_material = 0, i_texIndex = 0; i_material < gli_numMaterial; i_material++, i_texIndex = 0)
     {
         aiString aistr_path;
         while (aim_p_asMaterial[i_material]->GetTexture(aiTextureType_DIFFUSE, i_texIndex, &aistr_path) == AI_SUCCESS)

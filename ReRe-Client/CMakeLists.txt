@@ -5,6 +5,8 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 #find_package(GLFW REQUIRED)
 #include_directories(${GLFW_INCLUDE_DIR})
 INCLUDE_DIRECTORIES (${CMAKE_SOURCE_DIR}/ext)
+INCLUDE_DIRECTORIES ($ENV{OPENCV_DIR}/include)
+INCLUDE_DIRECTORIES ($ENV{BOOST_ROOT})
 file(GLOB_RECURSE SOURCES ./ReRe-Client/*.cpp)
 file(GLOB_RECURSE HEADER ./ReRe-Client/*.h*)
 file(GLOB_RECURSE VERTEXSHADER ./Shader/*.vert)
@@ -68,6 +70,17 @@ else()
 	    ${EXT_LIBS}/GLFW.lib
 	    ${EXT_LIBS}/glew32.lib
 	    ${EXT_LIBS}/assimp.lib
+            ${EXT_LIBS}/DevIL.lib
+            ${EXT_LIBS}/ILU.lib
+            ${EXT_LIBS}/ILUT.lib
+	    $ENV{BOOST_ROOT}/stage/lib/libboost_thread-vc110-mt-gd-1_53.lib
+	    $ENV{BOOST_ROOT}/stage/lib/libboost_system-vc110-mt-gd-1_53.lib	
+            $ENV{BOOST_ROOT}/stage/lib/libboost_chrono-vc110-mt-gd-1_53.lib	
+            $ENV{BOOST_ROOT}/stage/lib/libboost_date_time-vc110-mt-gd-1_53.lib
+            $ENV{BOOST_ROOT}/stage/lib/libboost_regex-vc110-mt-gd-1_53.lib
+	    $ENV{OPENCV_DIR}/x86/vc11/lib/opencv_core245d.lib
+ 	    $ENV{OPENCV_DIR}/x86/vc11/lib/opencv_imgproc245d.lib
+ 	    $ENV{OPENCV_DIR}/x86/vc11/lib/opencv_highgui245d.lib
 	  )
 	 target_link_libraries(ReReClient ${VS_LIBS})
   else()
