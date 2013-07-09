@@ -11,6 +11,7 @@
 
 CSceneNode::CSceneNode(aiNode* ain_asNode)
 {
+    i_nodeMeshNum = 0;
     // Für Root
     // Überprüfen, ob Mesh vorhanden
     if (ain_asNode->mNumMeshes != 0)
