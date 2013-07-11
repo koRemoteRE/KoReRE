@@ -8,6 +8,7 @@
 #include <string>
 #include <sstream>
 #include <glm/glm.hpp>
+#include <glm/ext.hpp>
 #include <boost/lexical_cast.hpp>
 //#include <boost/serialization/vector.hpp>
 
@@ -50,8 +51,7 @@ struct SerializableImage{
 
 		int index = input.find("IMAGE");
 		
-		matrix.deserialize(input.substr(0, index-1));
-
+		matrix.deserialize(input.substr(0, index-1));		
 		std::string ss(input.substr(index + 5));
 		for (
 			auto i = std::begin(ss);

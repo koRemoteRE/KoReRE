@@ -58,6 +58,8 @@ void MainLoop(void)
         {
             renderer->setServerTexture(*image.image);
             lastView = glm::inverse(image.matrix.mat);
+			cv::Mat m = cv::Mat(4,4,CV_32F, glm::value_ptr(lastView));
+			std::cout << m << std::endl;
             cout << "Server Image" << endl;
         }
         
