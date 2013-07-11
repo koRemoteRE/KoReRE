@@ -124,7 +124,7 @@ void init(){
 void renderOnDemand(Scene* scene, SerializableMatrix transformation){
 
   scene->getCam()->getSceneNode()->setTransform(transformation.mat);
-
+  SceneManager::getInstance()->update();
   kore::GLerror::gl_ErrorCheckStart();
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT |GL_STENCIL_BUFFER_BIT);
   kore::RenderManager::getInstance()->renderFrame();

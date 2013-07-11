@@ -1,5 +1,7 @@
 #include "NoSerialServer.h"
 #include "logger.h"
+#include <glm/glm.hpp>
+#include <glm/ext.hpp>
 
 NoSerialServer::NoSerialServer(unsigned short port_)
 	:	port(port_),
@@ -73,8 +75,7 @@ void NoSerialServer::readHandler(const boost::system::error_code &e,
 		delete inBuff;
 
 		if(data){
-			m.deserialize(data.str());
-
+			m.deserialize(data.str());	
 			matrixQueue->push(m);
 
 			//std::cout << m.mat[0][0] << std::endl;
