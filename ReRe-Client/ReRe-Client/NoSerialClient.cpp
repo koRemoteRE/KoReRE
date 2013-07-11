@@ -51,13 +51,8 @@ void NoSerialClient::connectHandler(const boost::system::error_code &ec){
 			boost::asio::placeholders::error,
 			boost::asio::placeholders::bytes_transferred));
 
-		std::vector<char> *inBuff = new std::vector<char>(2097152);
+		std::cout << "send mat" << std::endl;
 
-		sock.async_read_some(boost::asio::buffer(*inBuff), 
-			boost::bind(&NoSerialClient::readHandler, this,
-			boost::asio::placeholders::error,
-			boost::asio::placeholders::bytes_transferred,
-			inBuff));
 	}else{
 		std::cerr << "connectHandler error: " << ec << std::endl;
 	}
@@ -66,18 +61,8 @@ void NoSerialClient::connectHandler(const boost::system::error_code &ec){
 void NoSerialClient::writeHandler(const boost::system::error_code &ec, 
 								  std::size_t bytesTransferred){
 	if(!ec){
-		SerializableMatrix m;
-		matrixQueue->waitAndPop(m);
 
-		std::string *outBuff = new std::string();
-		m.serializeInto(*outBuff);
-
-		sock.async_write_some(boost::asio::buffer(*outBuff),
-			boost::bind(&NoSerialClient::writeHandler, this,
-			boost::asio::placeholders::error,
-			boost::asio::placeholders::bytes_transferred));
-
-		std::cout << bytesTransferred << std::flush;
+		std::cout << "read" << std::endl;
 
 		std::vector<char> *inBuff = new std::vector<char>(2097152);
 
@@ -85,7 +70,7 @@ void NoSerialClient::writeHandler(const boost::system::error_code &ec,
 			boost::bind(&NoSerialClient::readHandler, this,
 			boost::asio::placeholders::error,
 			boost::asio::placeholders::bytes_transferred,
-			inBuff));
+			inBuff));		
 
 	}else{
 		std::cerr << "writeHandler error: " << ec << std::endl;
@@ -112,6 +97,23 @@ void NoSerialClient::readHandler(const boost::system::error_code &ec,
 			//std::cout << "InStr Size:" << inString.str().size() << std::endl;
 			std::cout << "Image Size:" << img.image->size() << std::flush;
 		}
+
+		SerializableMatrix m;
+		std::cout << "try pop" << std::endl;
+
+		matrixQueue->waitAndPop(m);
+
+		std::cout << "popped" << std::endl;
+
+		std::string *outBuff = new std::string();
+		m.serializeInto(*outBuff);
+
+		sock.async_write_some(boost::asio::buffer(*outBuff),
+			boost::bind(&NoSerialClient::writeHandler, this,
+			boost::asio::placeholders::error,
+			boost::asio::placeholders::bytes_transferred));
+
+		std::cout << bytesTransferred << std::endl;
 	}else{
 		if(ec == boost::asio::error::eof){
 			
