@@ -36,6 +36,8 @@ NoSerialServer::~NoSerialServer(){}
 void NoSerialServer::acceptHandler(const boost::system::error_code &ec){
 	if(!ec){
 
+		std::cout << "read" << std::endl;
+
 		std::vector<char> *inBuff = new std::vector<char>(1024);
 
 		sock.async_read_some(boost::asio::buffer(*inBuff),
@@ -43,7 +45,6 @@ void NoSerialServer::acceptHandler(const boost::system::error_code &ec){
 			boost::asio::placeholders::error,
 			boost::asio::placeholders::bytes_transferred,
 			inBuff));
-
 	}
 }
 
@@ -83,6 +84,8 @@ void NoSerialServer::readHandler(const boost::system::error_code &e,
 			std::cout << bytes_transferred << std::endl;
 		}
 
+		std::cout << "read" << std::endl;
+
 		std::vector<char> *inBuff = new std::vector<char>(1024);
 
 		sock.async_read_some(boost::asio::buffer(*inBuff),
@@ -91,8 +94,12 @@ void NoSerialServer::readHandler(const boost::system::error_code &e,
 			boost::asio::placeholders::bytes_transferred,
 			inBuff));
 
+		std::cout << "wait and pop" << std::endl;
+
 		SerializableImage img;
 		imageQueue->waitAndPop(img);
+
+		std::cout << "popped" << std::endl;
 
 		std::string *outBuff = new std::string();
 		img.serializeInto(*outBuff);
@@ -101,6 +108,7 @@ void NoSerialServer::readHandler(const boost::system::error_code &e,
 			boost::bind(&NoSerialServer::writeHandler, this,
 			boost::asio::placeholders::error,
 			boost::asio::placeholders::bytes_transferred));
+		
 		
 	}else{
       std::cerr << e.message() << std::endl;
