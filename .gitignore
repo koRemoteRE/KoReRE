@@ -15,7 +15,6 @@ CMakeCache.txt
 *.opensdf
 *.obj
 *.kore
-*.dll
 Debug/*
 Win32/*
 */obj/*
