@@ -32,10 +32,12 @@ public:
 	void writeHandler(const boost::system::error_code &ec, 
 		std::size_t bytes_transferred);
 	void readHandler(const boost::system::error_code &e, 
-		std::size_t bytes_transferred);
+		std::size_t bytes_transferred,
+		std::vector<char> *inBuff);
 
-	std::queue<boost::array<char, 1024>> buffer;
-	std::queue<std::string> outQueue;
+	//std::queue<boost::array<char, 1024>> buffer;
+	//std::queue<std::vector<char> > buffer;
+	//std::queue<std::string> outQueue;
 };
 #endif
 

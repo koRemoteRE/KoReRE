@@ -27,7 +27,8 @@ public:
 	void connectHandler(const boost::system::error_code &ec);
 	void writeHandler(const boost::system::error_code &ec, std::size_t bytesTransferred);
 	void readHandler(const boost::system::error_code &ec, 
-								 std::size_t bytesTransferred);
+								 std::size_t bytesTransferred,
+								 std::vector<char> *inBuff);
 
 private:
 	boost::asio::io_service io_service;

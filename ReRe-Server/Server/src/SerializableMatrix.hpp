@@ -26,8 +26,9 @@ struct SerializableMatrix{
 	}
 
 	void deserialize(std::string &input){
+		std::string inString = input;
 		std::vector<float> elems;
-		std::stringstream ss(input);
+		std::stringstream ss(inString);
 		std::string item;
 		char delim = '&';
 		while(std::getline(ss, item, delim)){

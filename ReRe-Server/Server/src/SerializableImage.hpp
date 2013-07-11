@@ -31,6 +31,19 @@ struct SerializableImage{
 		return &outBuf;
 	}
 
+	void serializeInto(std::string &outBuf){
+		outBuf += matrix->serialize() + "IMAGE";
+		for (auto const &i: *image){
+			try{
+				outBuf += boost::lexical_cast<char>(i);
+			}catch(boost::bad_lexical_cast const&){
+				std::cerr << "SerializableImage::serialize: Bad Lexical Cast" << std::endl;
+			}
+		}
+
+		//return outBuf;
+	}
+
 	void deserialize(std::string &input){
 		image->clear();
 

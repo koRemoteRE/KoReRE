@@ -49,8 +49,6 @@
 #include "KoRE/GLerror.h"
 #include "KoRE/RenderManager.h"
 
-
-
 Encoder* encoder;
 const int _screenWidth = 800;
 const int _screenHeight = 600;
