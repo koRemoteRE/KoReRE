@@ -14,6 +14,8 @@ private:
 	std::queue<SerializableMatrix> theQueue;
 	mutable boost::mutex theMutex;
 	boost::condition_variable theConditionVariable;
+
+	void clear();
 public:
 	static MatrixQueue* getInstance(){
 		static MatrixQueue queue;

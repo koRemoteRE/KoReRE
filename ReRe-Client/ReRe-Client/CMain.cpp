@@ -100,9 +100,9 @@ void MainLoop(void)
 
 void serverThread(){
 	try{
-
 		boost::asio::io_service io_service;
-		const std::string host = "192.168.2.102";
+		
+		const std::string host = "192.168.2.113";
 		const std::string port = "9999";
         
 		clients c(new NoSerialClient(io_service, host, port));

@@ -13,17 +13,17 @@
 #define WIDTH 800
 #define HEIGHT 600
 
-#define CAM_POS_X 0.0
-#define CAM_POS_Y 15.0
-#define CAM_POS_Z 25.0
+#define CAM_POS_X 6.848972
+#define CAM_POS_Y -5.918146
+#define CAM_POS_Z 4.913852
 
-#define CAM_LOOK_AT_X -2.0
-#define CAM_LOOK_AT_Y 15.0
-#define CAM_LOOK_AT_Z 25.0
+#define CAM_LOOK_AT_X 0.0
+#define CAM_LOOK_AT_Y 0.0
+#define CAM_LOOK_AT_Z 0.5
 
-#define CAM_UP_X 0.0
-#define CAM_UP_Y 1.0
-#define CAM_UP_Z 0.0
+#define CAM_UP_X 63.5593
+#define CAM_UP_Y 0.6197659
+#define CAM_UP_Z 46.69196
 
 #define CAM_ROTATION_SPEED 0.05
 #define CAM_MOVE_SPEED 15
