@@ -31,6 +31,8 @@ glm::mat4 lastProj;
 MatrixQueue *matrixQueue;
 ImageQueue *imageQueue;
 
+int c = 0;
+
 void MainLoop(void)
 {
     bool frameTime = true;
@@ -58,19 +60,23 @@ void MainLoop(void)
         {
             renderer->setServerTexture(*image.image);
             lastView = glm::inverse(image.matrix.mat);
-			cv::Mat m = cv::Mat(4,4,CV_32F, glm::value_ptr(lastView));
-			std::cout << m << std::endl;
-            cout << "Server Image" << endl;
+			/*cv::Mat m = cv::Mat(4,4,CV_32F, glm::value_ptr(lastView));
+			std::cout << m << std::endl;*/
+            //cout << "Server Image" << endl;
         }
         
-        if (glfwGetKey('R'))
-        {
+        /*if (glfwGetKey('R'))
+        {*/
+		if(c % 1000 == 0){
+
+			c = 0;
+
             if (frameTime == true)
             {
             mat.mat = glm::inverse( renderer->getViewMatrix() );
                 
             matrixQueue->push(mat);
-            cout << "Send Matrix" << endl;
+            //cout << "Send Matrix" << endl;
             frameTime = false;
             }
         }
@@ -81,7 +87,9 @@ void MainLoop(void)
         
         // Swap buffers
         glfwSwapBuffers();
-        
+
+		c++;
+
     } // Check if the ESC key was pressed or the window was closed
     while( glfwGetKey( GLFW_KEY_ESC ) != GLFW_PRESS &&
            glfwGetWindowParam( GLFW_OPENED ) );
@@ -89,12 +97,18 @@ void MainLoop(void)
     delete renderer;
 }
 
+
 void serverThread(){
 	try{
-		const std::string host = "141.26.66.52";
+
+		boost::asio::io_service io_service;
+		const std::string host = "192.168.2.102";
 		const std::string port = "9999";
         
-		NoSerialClient client(host, port);
+		clients c(new NoSerialClient(io_service, host, port));
+		//NoSerialClient client(host, port);
+
+		//io_service.run_one();
         
 	}catch (std::exception &e){
         

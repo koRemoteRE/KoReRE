@@ -1,6 +1,6 @@
 #include "NoSerialClient.h"
 
-NoSerialClient::NoSerialClient(const std::string host, const std::string port)
+NoSerialClient::NoSerialClient(boost::asio::io_service &io_service, const std::string host, const std::string port)
 	:
 	resolver(io_service),
 	sock(io_service),
@@ -15,8 +15,8 @@ NoSerialClient::NoSerialClient(const std::string host, const std::string port)
 	imageQueue = ImageQueue::getInstance();
 	matrixQueue = MatrixQueue::getInstance();
 
-
 	io_service.run();
+
 }
 
 
@@ -98,7 +98,9 @@ void NoSerialClient::readHandler(const boost::system::error_code &ec,
 			std::cout << "Image Size:" << img.image->size() << std::flush;
 		}
 
-		SerializableMatrix m;
+		clients c(new NoSerialClient(resolver.get_io_service(), query.host_name(), query.service_name()));
+
+		/*SerializableMatrix m;
 		std::cout << "try pop" << std::endl;
 
 		matrixQueue->waitAndPop(m);
@@ -113,7 +115,7 @@ void NoSerialClient::readHandler(const boost::system::error_code &ec,
 			boost::asio::placeholders::error,
 			boost::asio::placeholders::bytes_transferred));
 
-		std::cout << bytesTransferred << std::endl;
+		std::cout << bytesTransferred << std::endl;*/
 	}else{
 		if(ec == boost::asio::error::eof){
 			

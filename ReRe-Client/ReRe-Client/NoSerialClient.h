@@ -18,7 +18,7 @@
 class NoSerialClient
 {
 public:
-	NoSerialClient(const std::string host, const std::string port);
+	NoSerialClient(boost::asio::io_service &io_service, const std::string host, const std::string port);
 	~NoSerialClient(void);
 
 	void resolveHandler(const boost::system::error_code &ec, 
@@ -31,7 +31,6 @@ public:
 								 std::vector<char> *inBuff);
 
 private:
-	boost::asio::io_service io_service;
 	boost::asio::ip::tcp::resolver resolver;
 	boost::asio::ip::tcp::socket sock;
 	boost::asio::ip::tcp::resolver::iterator endpointIterator;
@@ -40,5 +39,7 @@ private:
 	ImageQueue *imageQueue;
 	MatrixQueue *matrixQueue;
 };
+
+typedef boost::shared_ptr<NoSerialClient> clients;
 
 #endif
