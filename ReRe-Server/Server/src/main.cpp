@@ -48,6 +48,9 @@
 #include "KoRE/SceneManager.h"
 #include "KoRE/GLerror.h"
 #include "KoRE/RenderManager.h"
+#include <opencv2/opencv.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+
 
 Encoder* encoder;
 const int _screenWidth = 800;
@@ -123,7 +126,7 @@ void init(){
 
 void renderOnDemand(Scene* scene, SerializableMatrix transformation){
 
-  scene->getCam()->getSceneNode()->setTransform(transformation.mat);
+	scene->getCam()->getSceneNode()->setTransform(transformation.mat);
   SceneManager::getInstance()->update();
   kore::GLerror::gl_ErrorCheckStart();
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT |GL_STENCIL_BUFFER_BIT);
@@ -134,7 +137,7 @@ void renderOnDemand(Scene* scene, SerializableMatrix transformation){
   SerializableImage imPkt;
 
   //imPkt.id = id;
-  imPkt.matrix = &transformation;
+  imPkt.matrix = transformation;
   imPkt.image = encoder->encodeFrame();
 
   imageQueue->push(imPkt);

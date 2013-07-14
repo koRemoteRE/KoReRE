@@ -8,18 +8,19 @@
 #include <string>
 #include <sstream>
 #include <glm/glm.hpp>
+#include <glm/ext.hpp>
 #include <boost/lexical_cast.hpp>
 //#include <boost/serialization/vector.hpp>
 
 struct SerializableImage{
 	//unsigned int id;
-	SerializableMatrix *matrix;
+	SerializableMatrix matrix;
 	std::vector<uchar> *image;
 
 	std::string outBuf;
 	
 	std::string *serialize(){
-		outBuf = matrix->serialize() + "IMAGE";
+		outBuf = matrix.serialize() + "IMAGE";
 		for (auto const &i: *image){
 			try{
 				outBuf += boost::lexical_cast<char>(i);
@@ -32,7 +33,7 @@ struct SerializableImage{
 	}
 
 	void serializeInto(std::string &outBuf){
-		outBuf += matrix->serialize() + "IMAGE";
+		outBuf += matrix.serialize() + "IMAGE";
 		for (auto const &i: *image){
 			try{
 				outBuf += boost::lexical_cast<char>(i);
@@ -45,12 +46,12 @@ struct SerializableImage{
 	}
 
 	void deserialize(std::string &input){
-		image->clear();
+		//image->clear();
+		image = new std::vector<uchar>();
 
 		int index = input.find("IMAGE");
 		
-		matrix->deserialize(input.substr(0, index-1));
-
+		matrix.deserialize(input.substr(0, index-1));		
 		std::string ss(input.substr(index + 5));
 		for (
 			auto i = std::begin(ss);

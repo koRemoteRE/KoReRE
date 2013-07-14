@@ -9,6 +9,9 @@ NoSerialServer::NoSerialServer(unsigned short port_)
 		socketAcceptor(io_service, endpoint), 
 		sock(io_service){
 
+		/*cv::Mat m2 = cv::Mat(4,4,CV_32F, glm::value_ptr(imPkt.matrix->mat));
+		std::cout << "Bevor: " << m2 << std::endl;*/
+
 		boost::asio::ip::tcp::resolver::query query(boost::asio::ip::host_name(), "9999"); 
 		boost::asio::ip::tcp::resolver resolver(io_service); 
 		boost::asio::ip::tcp::resolver::iterator it = resolver.resolve(query); 
