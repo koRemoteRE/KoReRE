@@ -16,6 +16,8 @@ private:
   GLenum  _lastBuffer;
   std::vector<uchar> buff;
   cv::Mat _frame;
+  GLuint pboIds[2];
+  int index;
 };
 #endif //SERVER_ENCODER_H
 

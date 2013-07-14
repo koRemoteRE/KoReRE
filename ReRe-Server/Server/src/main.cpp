@@ -130,17 +130,12 @@ void renderOnDemand(Scene* scene, SerializableMatrix transformation){
   kore::RenderManager::getInstance()->renderFrame();
   kore::GLerror::gl_ErrorCheckFinish("Main Loop");
   glfwSwapBuffers();
-	
+  
   SerializableImage imPkt;
-
-  double encodeTime = glfwGetTime();
 
   //imPkt.id = id;
   imPkt.matrix = &transformation;
   imPkt.image = encoder->encodeFrame();
-
-  //std::cout << "encode id: " << id << std::endl;
-  std::cout << "encode time: " << glfwGetTime()-encodeTime << std::endl;
 
   imageQueue->push(imPkt);
 
@@ -150,14 +145,14 @@ void renderOnDemand(Scene* scene, SerializableMatrix transformation){
 }
 
 void serverThread(){
-	try{
-		unsigned short port = 9999;
-		NoSerialServer server(port);
+  try{
+    unsigned short port = 9999;
+    NoSerialServer server(port);
 
-	}catch (std::exception &e){
+  }catch (std::exception &e){
 
-		std::cerr << e.what() << std::endl;
-	}
+    std::cerr << e.what() << std::endl;
+  }
 }
 
 int main(void) {
@@ -186,7 +181,7 @@ int main(void) {
   while (running) {
     time = the_timer.timeSinceLastCall();
     scene.update(time);
-	
+  
     if (glfwGetKey(GLFW_KEY_UP) || glfwGetKey('W')) {
       pCamera->moveForward(cameraMoveSpeed * static_cast<float>(time));
     }
@@ -228,22 +223,31 @@ int main(void) {
     if (glfwGetKey('R')) {
       if (!_oldR) {
         _oldR = true;
+        //ENCODER TEST 
+        //pCamera->moveForward(-cameraMoveSpeed * static_cast<float>(time));
+        SceneManager::getInstance()->update();
+        kore::GLerror::gl_ErrorCheckStart();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT |GL_STENCIL_BUFFER_BIT);
+        kore::RenderManager::getInstance()->renderFrame();
+        kore::GLerror::gl_ErrorCheckFinish("Main Loop");
+        glfwSwapBuffers();
+        encoder->encodeFrame();
       }
     } else {
       _oldR = false;
     }
 
-	SerializableMatrix transformMat;
+  SerializableMatrix transformMat;
 
-	if(matrixQueue->tryPop(transformMat)){
+  if(matrixQueue->tryPop(transformMat)){
 
-		//std::cout << "popped Matrix Id: " << transformMat.id << std::endl;
-		renderOnDemand(&scene, transformMat);
-	}
+    //std::cout << "popped Matrix Id: " << transformMat.id << std::endl;
+    renderOnDemand(&scene, transformMat);
+  }
 
     // Check if ESC key was pressed or window was closed
     running = !glfwGetKey(GLFW_KEY_ESC) && glfwGetWindowParam(GLFW_OPENED);
-	glfwPollEvents();
+  glfwPollEvents();
   }
   
   // Close window and terminate GLFW
