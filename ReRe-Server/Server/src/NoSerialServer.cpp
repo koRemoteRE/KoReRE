@@ -58,6 +58,11 @@ void NoSerialServer::writeHandler(const boost::system::error_code &e,
 	if(!e){
 		logger::printTime("Write Data end.");
 
+		sock.close();
+		socketAcceptor.async_accept(sock, 
+			boost::bind(&NoSerialServer::acceptHandler, this,
+			boost::asio::placeholders::error));
+
 	}else{
 		std::cout << e.message() << std::endl;
 
@@ -88,7 +93,7 @@ void NoSerialServer::readHandler(const boost::system::error_code &e,
 			std::cout << bytes_transferred << std::endl;
 		}
 
-		std::cout << "read" << std::endl;
+		/*std::cout << "read" << std::endl;
 
 		std::vector<char> *inBuff = new std::vector<char>(1024);
 
@@ -96,7 +101,7 @@ void NoSerialServer::readHandler(const boost::system::error_code &e,
 			boost::bind(&NoSerialServer::readHandler, this,
 			boost::asio::placeholders::error,
 			boost::asio::placeholders::bytes_transferred,
-			inBuff));
+			inBuff));*/
 
 		std::cout << "wait and pop" << std::endl;
 
