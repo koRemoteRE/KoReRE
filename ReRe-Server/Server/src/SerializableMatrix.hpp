@@ -17,8 +17,8 @@ struct SerializableMatrix{
 	std::string serialize(){
 		std::string output = "";
 
-		cv::Mat m2 = cv::Mat(4,4,CV_32F, glm::value_ptr(mat));
-		std::cout << "Bevor: " << m2 << std::endl;
+		/*cv::Mat m2 = cv::Mat(4,4,CV_32F, glm::value_ptr(mat));
+		std::cout << "Bevor: " << m2 << std::endl;*/
 
 		for (unsigned int i = 0; i < 4; i++){
 			for (unsigned int j = 0; j < 4; j++){
@@ -30,7 +30,7 @@ struct SerializableMatrix{
 				output += "&";
 			}
 		}
-		std::cout << "Output: " << output << std::endl;
+		//std::cout << "Output: " << output << std::endl;
 		return output;
 	}
 
@@ -51,7 +51,7 @@ struct SerializableMatrix{
 	void deserialize(std::string &input){
 		std::string inString = input;
 
-		std::cout << "Input: " << inString << std::endl;
+		//std::cout << "Input: " << inString << std::endl;
 
 		std::vector<float> elems;
 		std::stringstream ss(inString);

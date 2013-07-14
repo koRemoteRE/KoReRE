@@ -50,6 +50,11 @@ void NoSerialServer::acceptHandler(const boost::system::error_code &ec){
 			boost::asio::placeholders::error,
 			boost::asio::placeholders::bytes_transferred,
 			inBuff));
+	}else{
+		sock.close();
+		socketAcceptor.async_accept(sock, 
+			boost::bind(&NoSerialServer::acceptHandler, this,
+			boost::asio::placeholders::error));
 	}
 }
 
@@ -65,6 +70,11 @@ void NoSerialServer::writeHandler(const boost::system::error_code &e,
 
 	}else{
 		std::cout << e.message() << std::endl;
+
+		sock.close();
+		socketAcceptor.async_accept(sock, 
+			boost::bind(&NoSerialServer::acceptHandler, this,
+			boost::asio::placeholders::error));
 
 	}
 
@@ -121,5 +131,10 @@ void NoSerialServer::readHandler(const boost::system::error_code &e,
 		
 	}else{
       std::cerr << e.message() << std::endl;
+
+	  sock.close();
+		socketAcceptor.async_accept(sock, 
+			boost::bind(&NoSerialServer::acceptHandler, this,
+			boost::asio::placeholders::error));
 	}
 }

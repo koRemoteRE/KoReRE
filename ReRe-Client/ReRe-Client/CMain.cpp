@@ -91,7 +91,7 @@ void MainLoop(void)
 
 void serverThread(){
 	try{
-		const std::string host = "141.26.66.52";
+		const std::string host = "192.168.2.113";
 		const std::string port = "9999";
         
 		NoSerialClient client(host, port);
