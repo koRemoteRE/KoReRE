@@ -24,6 +24,9 @@ bool MatrixQueue::tryPop(SerializableMatrix &poppedValue){
 
 	poppedValue = theQueue.front();
 	theQueue.pop();
+	if(theQueue.size() >= 10){
+		clear();
+	}
 	lock.unlock();
 	return true;
 }
@@ -36,9 +39,18 @@ void MatrixQueue::waitAndPop(SerializableMatrix &poppedValue){
 
 	poppedValue = theQueue.front();
 	theQueue.pop();
+	if(theQueue.size() >= 10){
+		clear();
+	}
 	lock.unlock();
 }
 
 int MatrixQueue::getLenght(){
 	return theQueue.size();
+}
+
+void MatrixQueue::clear(){
+	for (unsigned int i = 0; i < theQueue.size(); i++){
+		theQueue.pop();
+	} 
 }
