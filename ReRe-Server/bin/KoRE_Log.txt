@@ -1,10 +1,10 @@
-KoRE Log - Sun Jul 14 20:56:59 2013
+KoRE Log - Mon Jul 15 12:41:49 2013
 
 [DEBUG] added Framebuffer 'BACKBUFFER'
-Render Device: AMD Radeon HD 6800 Series (Microsoft Corporation - WDDM v1.2)
-Vendor: ATI Technologies Inc.
-OpenGL version: 4.2.12406 Compatibility Profile Context 13.150.0.0
-GLSL version: 4.30
+Render Device: GeForce 8800 GTX/PCIe/SSE2
+Vendor: NVIDIA Corporation
+OpenGL version: 3.3.0
+GLSL version: 3.30 NVIDIA via Cg compiler
 GLFW version 2.7.7
 GLEW version: 1.9.0
 [DEBUG] Shader './assets/shader/normalColor.vp' compiled
@@ -16,8 +16,8 @@ GLEW version: 1.9.0
 	Uniform 'model' at location 0
 	Uniform 'pointlightPos' at location 1
 	Uniform 'projection' at location 2
-	Uniform 'view' at location 3
-	Uniform 'tex' at location 4
+	Uniform 'tex' at location 3
+	Uniform 'view' at location 4
 [DEBUG] Shader './assets/shader/normalmapping.vert' compiled
 [DEBUG] Shader './assets/shader/normalmapping.frag' compiled
 [DEBUG] Program '' compiled
@@ -27,12 +27,12 @@ GLEW version: 1.9.0
 	Attribute 'v_uv0' at location 2
 	Uniform 'model' at location 0
 	Uniform 'normal' at location 1
-	Uniform 'pointlightPos' at location 2
-	Uniform 'projection' at location 3
-	Uniform 'view' at location 4
-	Uniform 'viewI' at location 5
-	Uniform 'normalmap' at location 6
-	Uniform 'tex' at location 7
+	Uniform 'normalmap' at location 2
+	Uniform 'pointlightPos' at location 3
+	Uniform 'projection' at location 4
+	Uniform 'tex' at location 5
+	Uniform 'view' at location 6
+	Uniform 'viewI' at location 7
 [DEBUG] Scene './assets/meshes/TestEnv.dae' successfully loaded:
 	 2 meshes
 	 1 cameras
@@ -40,3 +40,5 @@ GLEW version: 1.9.0
 [DEBUG] Texture './assets/textures/Crate.png' successfully loaded.
 [DEBUG] Texture './assets/textures/stonewall.png' successfully loaded.
 [DEBUG] Texture './assets/textures/stonewall_NM_height.png' successfully loaded.
+
+End of Log

@@ -34,9 +34,12 @@ std::vector<uchar>* Encoder::encodeFrame()
   glBindBuffer(GL_PIXEL_PACK_BUFFER, pboIds[index]);
   glPixelStorei(GL_PACK_ALIGNMENT, (_frame.step & 3) ? 1 : 4);
   glPixelStorei(GL_PACK_ROW_LENGTH, _frame.step/_frame.elemSize());
+  glGetIntegerv(GL_READ_BUFFER, (GLint*)&_lastBuffer);
+  glReadBuffer(GL_FRONT);
   glReadPixels(0, 0, _frame.cols, _frame.rows, GL_BGR, GL_UNSIGNED_BYTE, 0);
   
   _frame.data = (uchar*)glMapBuffer(GL_PIXEL_PACK_BUFFER, GL_READ_ONLY);
+  glReadBuffer(_lastBuffer); 
   std::cout << "pixel download time: " << glfwGetTime()-encodeTime << std::endl;
   //glBindBuffer(GL_PIXEL_PACK_BUFFER, pboIds[nextIndex]);
 

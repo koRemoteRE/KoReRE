@@ -281,7 +281,7 @@ void Scene::init()
     ->getSceneNodesByName("Cube", vBigCubeNodes);
   rotationNode = vBigCubeNodes[0]; 
 
-  glClearColor(1.0f,1.0f,1.0f,1.0f);
+  glClearColor(0.0f,0.0f,0.0f,1.0f);
 
 }
 

@@ -65,9 +65,10 @@ void MainLoop(void)
             //cout << "Server Image" << endl;
         }
         
-        /*if (glfwGetKey('R'))
-        {*/
-		if(c % 1000 == 0){
+        //if (glfwGetKey('R'))
+        //{
+			
+		if(c % 50 == 0){
 
 			c = 0;
 
@@ -102,7 +103,7 @@ void serverThread(){
 	try{
 		boost::asio::io_service io_service;
 		
-		const std::string host = "192.168.2.113";
+		const std::string host = "141.26.66.52";
 		const std::string port = "9999";
         
 		clients c(new NoSerialClient(io_service, host, port));
