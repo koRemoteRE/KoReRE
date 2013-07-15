@@ -29,9 +29,10 @@ GLuint progTxt, vertTxt, fragTxt;
 float aspect = (float) (WINDOW_WIDTH) / WINDOW_HEIGHT;
 float textureAspect = (float) (TEXTURE_WIDTH) / TEXTURE_HEIGHT;
 GLuint progTexture, vertTexture, fragTexture;
-GLuint boxBuffer[4], recBuffer[3], txtQuadBuffer[2];
+GLuint boxBuffer[5], recBuffer[3], txtQuadBuffer[2];
 GLuint firstFrameTexture, firstFrameFBO;
 GLuint textureHandle;
+GLuint textureHandle2;
 
 GLuint vao[4];
 glm::vec3 pos(0.0f, 0.0f, -15.0f);
@@ -184,14 +185,20 @@ void display() {
 			false, glm::value_ptr(firstProjMatrix));
 	glUniformMatrix4fv(glGetUniformLocation(progNorm, "oldViewMatrix"), 1,
 			false, glm::value_ptr(firstModelMatrix));
+
 	glActiveTextureARB(GL_TEXTURE0_ARB);
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, firstFrameTexture);
 	glUniform1i(glGetUniformLocation(progNorm, "frameTex"), 0);
 	glm::ivec2 dim(TEXTURE_WIDTH, TEXTURE_HEIGHT);
-
 	glUniform2iv(glGetUniformLocation(progNorm, "texDim"), 1,
 			glm::value_ptr(dim));
+
+	glActiveTextureARB(GL_TEXTURE1_ARB);
+	glBindTexture(GL_TEXTURE_2D, textureHandle2);
+	glUniform1i(glGetUniformLocation(progNorm, "objectTex"), 1);
+
+	glActiveTextureARB(GL_TEXTURE0_ARB);
 	glBindVertexArray(vao[3]);
 	glDrawElements(GL_TRIANGLES, sizeof(boxIndices), GL_UNSIGNED_SHORT, 0);
 	glDisable(GL_TEXTURE_2D);
@@ -223,7 +230,7 @@ void setupBuffers() {
 
 	//Textur laden
 	textureHandle = loadTexture("resources\\test.png");
-
+	textureHandle2 = loadTexture("resources\\test.png");
 	glGenVertexArrays(4, vao);
 
 	// Boden
@@ -298,6 +305,7 @@ void setupBuffers() {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(rectangleIndices),
 			rectangleIndices, GL_STATIC_DRAW);
 
+
 	glEnableVertexAttribArray(glGetAttribLocation(progTxt, "position"));
 	glVertexAttribPointer(glGetAttribLocation(progTxt, "position"), 2, GL_FLOAT,
 			0, 0, 0);
@@ -310,6 +318,10 @@ void setupBuffers() {
 	glEnableVertexAttribArray(glGetAttribLocation(progNorm, "position"));
 	glVertexAttribPointer(glGetAttribLocation(progNorm, "position"), 4,
 			GL_FLOAT, 0, 0, 0);
+
+	glEnableVertexAttribArray(glGetAttribLocation(progNorm, "uvAttr"));
+		glVertexAttribPointer(glGetAttribLocation(progNorm, "uvAttr"), 2, GL_FLOAT, 0,
+				0, 0);
 
 	glBindVertexArray(0);
 
