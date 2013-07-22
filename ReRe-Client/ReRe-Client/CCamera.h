@@ -80,7 +80,7 @@ public:
     
     void automaticMovement(int i);
     
-    void updateCameraView();
+    bool updateCameraView();
     
     bool viewVisible(CSceneNode* sc_rootSceneNode);     // View Frustum Culling
     

@@ -36,6 +36,8 @@
 
 #define TEXTURE_ACTIVITY 0
 
+#define FRAME_COUNT 5
+
 #ifdef __APPLE_CC__
 #define PATH "../Assets/"
 #else

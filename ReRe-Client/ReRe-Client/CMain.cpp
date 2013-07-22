@@ -31,11 +31,14 @@ glm::mat4 lastProj;
 MatrixQueue *matrixQueue;
 ImageQueue *imageQueue;
 
-int c = 0;
+bool camMatrixUpdated;
+
+// int c = 0;
+int numOfUpdates = 0;
 
 void MainLoop(void)
 {
-    bool frameTime = true;
+    // bool frameTime = true;
     
     CPreRendering* renderer = new CPreRendering();
     
@@ -52,7 +55,7 @@ void MainLoop(void)
     
     do{
         // Update Camera Matrix
-        renderer->getSceneGraph()->returnCameraNode()->updateCameraView();
+        camMatrixUpdated = renderer->getSceneGraph()->returnCameraNode()->updateCameraView();
         
         //renderer->writeToFBO();
         
@@ -60,36 +63,52 @@ void MainLoop(void)
         {
             renderer->setServerTexture(*image.image);
             lastView = glm::inverse(image.matrix.mat);
-			/*cv::Mat m = cv::Mat(4,4,CV_32F, glm::value_ptr(lastView));
-			std::cout << m << std::endl;*/
             //cout << "Server Image" << endl;
         }
         
-        //if (glfwGetKey('R'))
-        //{
-			
-		if(c % 50 == 0){
-
-			c = 0;
-
-            if (frameTime == true)
-            {
-            mat.mat = glm::inverse( renderer->getViewMatrix() );
+        if (numOfUpdates == 0 && camMatrixUpdated == true){
+            // send Matrix to Server
+            mat.mat = glm::inverse(render->getViewMatrix());
                 
             matrixQueue->push(mat);
-            //cout << "Send Matrix" << endl;
-            frameTime = false;
-            }
+            //cout << "SendMatrix" << endl;
         }
-        else
-            frameTime = true;
+        
+        if (camMatrixUpdated == true){
+            numOfUpdates++;
+        
+            if (numOfUpdates == FRAME_COUNT)
+                numOfUpdates = 0;
+        }
+        
+        // --- old source code --------------------------------------
+        
+        // //if (glfwGetKey('R'))
+        // //{
+			
+		// if(c % 50 == 0){
+
+		// 	c = 0;
+
+        //     if (frameTime == true)
+        //     {
+        //     mat.mat = glm::inverse( renderer->getViewMatrix() );
+                
+        //     matrixQueue->push(mat);
+        //     //cout << "Send Matrix" << endl;
+        //     frameTime = false;
+        //     }
+        // }
+        // else
+        //     frameTime = true;
+        // ---------------------------------------------------------
         
         renderer->testWarpDraw(lastView,lastProj);
         
         // Swap buffers
         glfwSwapBuffers();
 
-		c++;
+		// c++;
 
     } // Check if the ESC key was pressed or the window was closed
     while( glfwGetKey( GLFW_KEY_ESC ) != GLFW_PRESS &&

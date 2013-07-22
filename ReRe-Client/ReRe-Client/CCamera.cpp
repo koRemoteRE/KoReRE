@@ -184,19 +184,10 @@ void CCamera::automaticMovement(int i)
     *m_viewMatrix = glm::translate(*m_viewMatrix, f_newPositionX, 0.0f, 0.0f);
 }
 
-/*void CCamera::updateCameraView()
+bool CCamera::updateCameraView()
 {
-    // Get mouse Position
-    glfwGetMousePos(&i_MouseX, &i_MouseY);
+    bool cameraUpdated = false;
     
-    
-    
-    // Reset mouse Position for next frame
-    glfwSetMousePos(WIDTH/2, HEIGHT/2);
-}*/
-
-void CCamera::updateCameraView()
-{
     // Get mouse position
     glfwGetMousePos(&stcmp_update.i_mouseX, &stcmp_update.i_mouseY);
     
@@ -229,25 +220,37 @@ void CCamera::updateCameraView()
         stcmp_update.f_moveSpeed = CAM_MOVE_SPEED;
     
     // Move forward
-    if (glfwGetKey( GLFW_KEY_UP ) == GLFW_PRESS || glfwGetKey( 'W' ) == GLFW_PRESS)
+    if (glfwGetKey( GLFW_KEY_UP ) == GLFW_PRESS || glfwGetKey( 'W' ) == GLFW_PRESS){
         stcv_update.v_eyePosition += direction * deltaTime * stcmp_update.f_moveSpeed;
+        cameraUpdated = true;
+    }
     // Move backward
-    if (glfwGetKey( GLFW_KEY_DOWN ) == GLFW_PRESS || glfwGetKey( 'S' ) == GLFW_PRESS)
+    if (glfwGetKey( GLFW_KEY_DOWN ) == GLFW_PRESS || glfwGetKey( 'S' ) == GLFW_PRESS){
         stcv_update.v_eyePosition -= direction * deltaTime * stcmp_update.f_moveSpeed;
+        cameraUpdated = true;
+    }
     
     // Strafe right
-    if (glfwGetKey( GLFW_KEY_RIGHT ) == GLFW_PRESS || glfwGetKey( 'D' ) == GLFW_PRESS)
+    if (glfwGetKey( GLFW_KEY_RIGHT ) == GLFW_PRESS || glfwGetKey( 'D' ) == GLFW_PRESS){
         stcv_update.v_eyePosition += right * deltaTime * stcmp_update.f_moveSpeed;
+        cameraUpdated = true;
+    }
     // Strafe left
-    if (glfwGetKey( GLFW_KEY_LEFT ) == GLFW_PRESS || glfwGetKey( 'A' ) == GLFW_PRESS)
+    if (glfwGetKey( GLFW_KEY_LEFT ) == GLFW_PRESS || glfwGetKey( 'A' ) == GLFW_PRESS){
         stcv_update.v_eyePosition -= right * deltaTime * stcmp_update.f_moveSpeed;
+        cameraUpdated = true;
+    }
     
     // Move up
-    if (glfwGetKey( 'Q' ) == GLFW_PRESS)
+    if (glfwGetKey( 'Q' ) == GLFW_PRESS){
         stcv_update.v_eyePosition += stcv_update.v_eyeUp * deltaTime * stcmp_update.f_moveSpeed;
+        cameraUpdated = true;
+    }
     // Move down
-    if (glfwGetKey( 'E' ) == GLFW_PRESS)
+    if (glfwGetKey( 'E' ) == GLFW_PRESS){
         stcv_update.v_eyePosition -= stcv_update.v_eyeUp * deltaTime * stcmp_update.f_moveSpeed;
+        cameraUpdated = true;
+    }
     
     stcv_update.v_eyeLookAt = stcv_update.v_eyePosition + direction;
     
@@ -265,6 +268,11 @@ void CCamera::updateCameraView()
         
     // Reset mouse position for next frame
     glfwSetMousePos(WIDTH/2, HEIGHT/2);
+    
+    if (cameraUpdated == true)
+        return true;
+    else
+        return false;
 }
 
 bool CCamera::viewVisible(CSceneNode* sc_rootSceneNode)
