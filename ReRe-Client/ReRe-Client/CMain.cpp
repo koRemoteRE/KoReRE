@@ -33,12 +33,12 @@ ImageQueue *imageQueue;
 
 bool camMatrixUpdated;
 
-// int c = 0;
+int c = 0;
 int numOfUpdates = 0;
 
 void MainLoop(void)
 {
-    // bool frameTime = true;
+    bool frameTime = true;
     
     CPreRendering* renderer = new CPreRendering();
     
@@ -68,7 +68,7 @@ void MainLoop(void)
         
         if (numOfUpdates == 0 && camMatrixUpdated == true){
             // send Matrix to Server
-            mat.mat = glm::inverse(render->getViewMatrix());
+            mat.mat = glm::inverse(renderer->getViewMatrix());
                 
             matrixQueue->push(mat);
             //cout << "SendMatrix" << endl;
@@ -82,25 +82,26 @@ void MainLoop(void)
         }
         
         // --- old source code --------------------------------------
-        
-        // //if (glfwGetKey('R'))
-        // //{
+        /************** NICHT LÖSCHEN, EMIL BRAUCHTS ZUM TESTEN *******************/
+
+         /*if (glfwGetKey('R'))
+         { */
 			
-		// if(c % 50 == 0){
+		 //if(c % 500 == 0){
 
-		// 	c = 0;
+		 //	c = 0;
 
-        //     if (frameTime == true)
-        //     {
-        //     mat.mat = glm::inverse( renderer->getViewMatrix() );
-                
-        //     matrixQueue->push(mat);
-        //     //cout << "Send Matrix" << endl;
-        //     frameTime = false;
-        //     }
-        // }
-        // else
-        //     frameTime = true;
+         //    if (frameTime == true)
+         //    {
+         //    mat.mat = glm::inverse( renderer->getViewMatrix() );
+         //       
+         //    matrixQueue->push(mat);
+         //    //cout << "Send Matrix" << endl;
+         //    frameTime = false;
+         //    }
+         //}
+         //else
+         //    frameTime = true;
         // ---------------------------------------------------------
         
         renderer->testWarpDraw(lastView,lastProj);
@@ -108,7 +109,7 @@ void MainLoop(void)
         // Swap buffers
         glfwSwapBuffers();
 
-		// c++;
+		c++;
 
     } // Check if the ESC key was pressed or the window was closed
     while( glfwGetKey( GLFW_KEY_ESC ) != GLFW_PRESS &&
@@ -122,7 +123,7 @@ void serverThread(){
 	try{
 		boost::asio::io_service io_service;
 		
-		const std::string host = "141.26.66.52";
+		const std::string host = "192.168.1.77";
 		const std::string port = "9999";
         
 		clients c(new NoSerialClient(io_service, host, port));
