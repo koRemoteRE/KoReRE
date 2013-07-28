@@ -167,7 +167,8 @@ void NoSerialClient::readHandler(const boost::system::error_code &ec,
 			SerializableImage img;
 
 			if(data->str().size() > 0){
-				img.deserialize(data->str());
+                std::string strBuffer = data->str();
+				img.deserialize(strBuffer);
 
 				imageQueue->push(img);
 

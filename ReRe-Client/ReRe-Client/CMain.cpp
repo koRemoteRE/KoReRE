@@ -3,7 +3,6 @@
 //  ReRe-Client
 //
 //  Created by Thomas Kipshagen on 23.04.13.
-//  Copyright (c) 2013 Thomas Kipshagen. All rights reserved.
 //
 
 #include <iostream>
@@ -31,14 +30,10 @@ glm::mat4 lastProj;
 MatrixQueue *matrixQueue;
 ImageQueue *imageQueue;
 
-bool camMatrixUpdated;
-
-int c = 0;
-int numOfUpdates = 0;
-
 void MainLoop(void)
 {
-    bool frameTime = true;
+    bool camMatrixUpdated;
+    int numOfUpdates = 0;
     
     CPreRendering* renderer = new CPreRendering();
     
@@ -108,8 +103,6 @@ void MainLoop(void)
         
         // Swap buffers
         glfwSwapBuffers();
-
-		c++;
 
     } // Check if the ESC key was pressed or the window was closed
     while( glfwGetKey( GLFW_KEY_ESC ) != GLFW_PRESS &&

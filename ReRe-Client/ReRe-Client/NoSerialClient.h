@@ -29,7 +29,7 @@ public:
 		std::size_t bytesTransferred,
 		std::string *outHeader,
 		std::string *outBuff);
-	void NoSerialClient::readHeaderHandler(const boost::system::error_code &ec, 
+	void readHeaderHandler(const boost::system::error_code &ec, 
 		std::size_t bytesTransferred,
 		std::vector<char> *inHeader);
 	void readHandler(const boost::system::error_code &ec, 
