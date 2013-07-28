@@ -1,44 +1,55 @@
-KoRE Log - Mon Jul 15 12:41:49 2013
+KoRE Log - Sun Jul 28 18:03:56 2013
 
 [DEBUG] added Framebuffer 'BACKBUFFER'
-Render Device: GeForce 8800 GTX/PCIe/SSE2
+Render Device: GeForce GTX 670/PCIe/SSE2
 Vendor: NVIDIA Corporation
-OpenGL version: 3.3.0
-GLSL version: 3.30 NVIDIA via Cg compiler
+OpenGL version: 4.3.0
+GLSL version: 4.30 NVIDIA via Cg compiler
 GLFW version 2.7.7
 GLEW version: 1.9.0
-[DEBUG] Shader './assets/shader/normalColor.vp' compiled
-[DEBUG] Shader './assets/shader/normalColor.fp' compiled
-[DEBUG] Program '' compiled
-	Attribute 'v_normal' at location 1
-	Attribute 'v_position' at location 0
-	Attribute 'v_uv0' at location 2
-	Uniform 'model' at location 0
-	Uniform 'pointlightPos' at location 1
-	Uniform 'projection' at location 2
-	Uniform 'tex' at location 3
-	Uniform 'view' at location 4
-[DEBUG] Shader './assets/shader/normalmapping.vert' compiled
-[DEBUG] Shader './assets/shader/normalmapping.frag' compiled
-[DEBUG] Program '' compiled
-	Attribute 'v_normal' at location 1
-	Attribute 'v_position' at location 0
-	Attribute 'v_tangent' at location 3
-	Attribute 'v_uv0' at location 2
-	Uniform 'model' at location 0
-	Uniform 'normal' at location 1
-	Uniform 'normalmap' at location 2
-	Uniform 'pointlightPos' at location 3
-	Uniform 'projection' at location 4
-	Uniform 'tex' at location 5
-	Uniform 'view' at location 6
-	Uniform 'viewI' at location 7
-[DEBUG] Scene './assets/meshes/TestEnv.dae' successfully loaded:
-	 2 meshes
+[DEBUG] Texture 'sponza_thorn_diff.png' successfully loaded.
+[DEBUG] Texture 'sponza_thorn_ddn.png' successfully loaded.
+[DEBUG] Texture 'sponza_column_b_diff.png' successfully loaded.
+[DEBUG] Texture 'sponza_column_b_ddn.png' successfully loaded.
+[DEBUG] Texture 'sponza_arch_diff.png' successfully loaded.
+[DEBUG] Texture 'sponza_arch_ddn.png' successfully loaded.
+[DEBUG] Texture 'sponza_column_a_diff.png' successfully loaded.
+[DEBUG] Texture 'sponza_column_a_ddn.png' successfully loaded.
+[DEBUG] Texture 'sponza_ceiling_a_diff.png' successfully loaded.
+[DEBUG] Texture 'spnza_bricks_a_diff.png' successfully loaded.
+[DEBUG] Texture 'spnza_bricks_a_ddn.png' successfully loaded.
+[DEBUG] Texture 'sponza_column_c_diff.png' successfully loaded.
+[DEBUG] Texture 'sponza_column_c_ddn.png' successfully loaded.
+[DEBUG] Texture 'sponza_flagpole_diff.png' successfully loaded.
+[DEBUG] Texture 'vase_dif.png' successfully loaded.
+[DEBUG] Texture 'vase_ddn.png' successfully loaded.
+[DEBUG] Texture 'sponza_curtain_green_diff.png' successfully loaded.
+[DEBUG] Texture 'sponza_fabric_diff.png' successfully loaded.
+[DEBUG] Texture 'sponza_fabric_blue_diff.png' successfully loaded.
+[DEBUG] Texture 'sponza_fabric_green_diff.png' successfully loaded.
+[DEBUG] Texture 'vase_hanging.png' successfully loaded.
+[DEBUG] Texture 'chain_texture.png' successfully loaded.
+[DEBUG] Texture 'chain_texture_ddn.png' successfully loaded.
+[DEBUG] Texture 'sponza_roof_diff.png' successfully loaded.
+[DEBUG] Texture 'vase_round.png' successfully loaded.
+[DEBUG] Texture 'vase_round_ddn.png' successfully loaded.
+[DEBUG] Texture 'vase_plant.png' successfully loaded.
+[DEBUG] Texture 'sponza_curtain_diff.png' successfully loaded.
+[DEBUG] Texture 'sponza_curtain_blue_diff.png' successfully loaded.
+[DEBUG] Texture 'sponza_floor_a_diff.png' successfully loaded.
+[DEBUG] Texture 'lion.png' successfully loaded.
+[DEBUG] Texture 'lion2_ddn.png' successfully loaded.
+[DEBUG] Texture 'background.png' successfully loaded.
+[DEBUG] Texture 'background_ddn.png' successfully loaded.
+[DEBUG] Texture 'sponza_details_diff.png' successfully loaded.
+[DEBUG] Scene './assets/meshes/sponza_diff_big_combined_nm.dae' successfully loaded:
+	 25 meshes
 	 1 cameras
-	 5 nodes
-[DEBUG] Texture './assets/textures/Crate.png' successfully loaded.
-[DEBUG] Texture './assets/textures/stonewall.png' successfully loaded.
-[DEBUG] Texture './assets/textures/stonewall_NM_height.png' successfully loaded.
-
-End of Log
+	 4 nodes
+[ERROR] Uniform 'gBuffer_tangent' not found in shader 'final render shader'
+[ERROR] Uniform 'lightPos' not found in shader 'final render shader'
+[ERROR] Uniform 'fRatio' not found in shader 'final render shader'
+[ERROR] Uniform 'fYfovDeg' not found in shader 'final render shader'
+[ERROR] Uniform 'fFar' not found in shader 'final render shader'
+[ERROR] Uniform 'screenRes' not found in shader 'final render shader'
+[ERROR] Uniform 'viewI' not found in shader 'final render shader'

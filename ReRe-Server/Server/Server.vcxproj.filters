@@ -4,6 +4,15 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{5478D136-F5FD-4898-934B-61B4E35F0066}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Rendering">
+      <UniqueIdentifier>{165cccf7-15cb-40a6-80f7-0cf0f8610eb7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rendering\Shader">
+      <UniqueIdentifier>{f3f52253-8b12-462f-a630-e49470979a69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rendering\Stages">
+      <UniqueIdentifier>{c532899a-d921-41bc-8427-3b64d832af6d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -26,6 +35,24 @@
     </ClCompile>
     <ClCompile Include="src\NoSerialServer.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering\DeferredPass.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering\RenderPass.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering\FullscreenQuad.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering\ShadowMapPass.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering\Stages\GBufferStage.cpp">
+      <Filter>Rendering\Stages</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering\Stages\ShadowMapStage.cpp">
+      <Filter>Rendering\Stages</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -56,5 +83,46 @@
     <ClInclude Include="src\NoSerialServer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Rendering\DeferredPass.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\RenderPass.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\FullscreenQuad.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\ShadowMapPass.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\Stages\GBufferStage.h">
+      <Filter>Rendering\Stages</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\Stages\ShadowMapStage.h">
+      <Filter>Rendering\Stages</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\bin\assets\shader\deferredFrag.shader">
+      <Filter>Rendering\Shader</Filter>
+    </None>
+    <None Include="..\bin\assets\shader\deferredVert.shader">
+      <Filter>Rendering\Shader</Filter>
+    </None>
+    <None Include="..\bin\assets\shader\finalRenderFrag.shader">
+      <Filter>Rendering\Shader</Filter>
+    </None>
+    <None Include="..\bin\assets\shader\finalRenderVert.shader">
+      <Filter>Rendering\Shader</Filter>
+    </None>
+    <None Include="..\bin\assets\shader\FullscreenQuadVert.shader">
+      <Filter>Rendering\Shader</Filter>
+    </None>
+    <None Include="..\bin\assets\shader\ShadowMapFrag.shader">
+      <Filter>Rendering\Shader</Filter>
+    </None>
+    <None Include="..\bin\assets\shader\ShadowMapVert.shader">
+      <Filter>Rendering\Shader</Filter>
+    </None>
   </ItemGroup>
 </Project>

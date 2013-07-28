@@ -155,6 +155,12 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MatrixQueue.cpp" />
     <ClCompile Include="src\NoSerialServer.cpp" />
+    <ClCompile Include="src\Rendering\DeferredPass.cpp" />
+    <ClCompile Include="src\Rendering\FullscreenQuad.cpp" />
+    <ClCompile Include="src\Rendering\RenderPass.cpp" />
+    <ClCompile Include="src\Rendering\ShadowMapPass.cpp" />
+    <ClCompile Include="src\Rendering\Stages\GBufferStage.cpp" />
+    <ClCompile Include="src\Rendering\Stages\ShadowMapStage.cpp" />
     <ClCompile Include="src\Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -164,9 +170,24 @@
     <ClInclude Include="src\logger.h" />
     <ClInclude Include="src\MatrixQueue.h" />
     <ClInclude Include="src\NoSerialServer.h" />
+    <ClInclude Include="src\Rendering\DeferredPass.h" />
+    <ClInclude Include="src\Rendering\FullscreenQuad.h" />
+    <ClInclude Include="src\Rendering\RenderPass.h" />
+    <ClInclude Include="src\Rendering\ShadowMapPass.h" />
+    <ClInclude Include="src\Rendering\Stages\GBufferStage.h" />
+    <ClInclude Include="src\Rendering\Stages\ShadowMapStage.h" />
     <ClInclude Include="src\Scene.h" />
     <ClInclude Include="src\SerializableImage.hpp" />
     <ClInclude Include="src\SerializableMatrix.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\bin\assets\shader\deferredFrag.shader" />
+    <None Include="..\bin\assets\shader\deferredVert.shader" />
+    <None Include="..\bin\assets\shader\finalRenderFrag.shader" />
+    <None Include="..\bin\assets\shader\finalRenderVert.shader" />
+    <None Include="..\bin\assets\shader\FullscreenQuadVert.shader" />
+    <None Include="..\bin\assets\shader\ShadowMapFrag.shader" />
+    <None Include="..\bin\assets\shader\ShadowMapVert.shader" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

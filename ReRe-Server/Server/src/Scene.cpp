@@ -9,7 +9,9 @@
 #include "KoRE/ResourceManager.h"
 #include "KoRE/Passes/FrameBufferStage.h"
 #include "KoRE/RenderManager.h"
-
+#include "Rendering/RenderPass.h"
+#include "Rendering/Stages/GBufferStage.h"
+#include "Rendering/Stages/ShadowMapStage.h"
 
 Scene::Scene(void)
 {
@@ -189,7 +191,7 @@ void Scene::setUpNMRendering(kore::SceneNode* renderNode,
         programPass->addNodePass(nodePass);
 }
 
-
+/*
 void Scene::init()
 {
   // enable culling and depthtest
@@ -284,12 +286,79 @@ void Scene::init()
   glClearColor(0.0f,0.0f,0.0f,1.0f);
 
 }
+*/
 
+void Scene::init(){
+
+  using namespace kore;
+
+  glClearColor(0.0f, 0.0f,0.0f,1.0f);
+  glDisable(GL_CULL_FACE);
+
+  //Load the scene and get all mesh nodes
+  //ResourceManager::getInstance()->loadScene("./assets/meshes/sibenik.dae");
+  ResourceManager::getInstance()->loadScene("./assets/meshes/sponza_diff_big_combined_nm.dae");
+  //ResourceManager::getInstance()->loadScene("./assets/meshes/batcave.DAE");
+
+
+  std::vector<SceneNode*> renderNodes;
+  SceneManager::getInstance()
+    ->getSceneNodesByComponent(COMPONENT_MESH, renderNodes);
+
+  pCamera = static_cast<Camera*>(SceneManager::getInstance()
+    ->getSceneNodeByComponent(COMPONENT_CAMERA)->getComponent(COMPONENT_CAMERA));
+
+  // Make sure all lightnodes are initialized with camera components
+  std::vector<SceneNode*> lightNodes;
+  SceneManager::getInstance()->getSceneNodesByComponent(COMPONENT_LIGHT,lightNodes);
+  
+  //rotationNode = lightNodes[0];
+
+  for(int i=0; i<lightNodes.size(); ++i){
+    Camera* cam  = new Camera();
+    float projsize = 50;
+    cam->setProjectionOrtho(-projsize,projsize,-projsize,projsize,1,100);
+    cam->setAspectRatio(1.0);   
+    //_pCamera = cam;
+    lightNodes[i]->addComponent(cam);
+    lightNodes[i]->setDirty(true);
+  }
+  SceneManager::getInstance()->update();
+
+  // GBuffer Stage
+  FrameBufferStage* gBufferStage =
+    new GBufferStage(pCamera, renderNodes, 
+                     RenderManager::getInstance()->getScreenResolution().x,
+                     RenderManager::getInstance()->getScreenResolution().y);
+
+  RenderManager::getInstance()->addFramebufferStage(gBufferStage);
+  //////////////////////////////////////////////////////////////////////////
+
+  // Shadowmap Stage
+  FrameBufferStage* shadowMapStage =
+    new ShadowMapStage(lightNodes[0], renderNodes, 4096, 4096);
+
+  RenderManager::getInstance()->addFramebufferStage(shadowMapStage);
+  //////////////////////////////////////////////////////////////////////////
+  _backbufferStage = new FrameBufferStage;
+  _backbufferStage->setFrameBuffer(kore::FrameBuffer::BACKBUFFER);
+  std::vector<GLenum> drawBufs;
+  drawBufs.clear();
+  drawBufs.push_back(GL_BACK_LEFT);
+
+
+  _backbufferStage->addProgramPass(new RenderPass(
+  gBufferStage->getFrameBuffer(), shadowMapStage->getFrameBuffer(),
+  lightNodes,pCamera));
+  
+
+  RenderManager::getInstance()->addFramebufferStage(_backbufferStage);
+}
 void Scene::update(double time)
 {
    kore::SceneManager::getInstance()->update();
  
    //if (rotationNode) {
-  //   rotationNode->rotate(90.0f * static_cast<float>(time), glm::vec3(0.0f, 0.0f, 1.0f));
+   //  rotationNode->rotate(90.0f * static_cast<float>(time), glm::vec3(0.0f, 0.0f, 1.0f),SPACE_WORLD);
    //}
-}
+}  //

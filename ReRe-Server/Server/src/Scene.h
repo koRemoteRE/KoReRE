@@ -8,6 +8,7 @@
 #include "KoRE/GLerror.h"
 #include "KoRE/Components/TexturesComponent.h"
 #include "KoRE/ResourceManager.h"
+#include "KoRE/Passes/FrameBufferStage.h"
 
 
 class Scene
@@ -25,5 +26,7 @@ private:
   kore::SceneNode* rotationNode;
   kore::SceneNode* lightNode;
   kore::Camera* pCamera;
+  kore::FrameBufferStage* _backbufferStage;
+
 };
 #endif //SERVER_SCENE_H

@@ -53,8 +53,8 @@
 
 
 Encoder* encoder;
-const int _screenWidth = 800;
-const int _screenHeight = 600;
+const int _screenWidth = 1280;
+const int _screenHeight = 720;
 
 ImageQueue *imageQueue;
 MatrixQueue *matrixQueue;
