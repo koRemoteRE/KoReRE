@@ -25,10 +25,18 @@ public:
 		boost::asio::ip::tcp::resolver::iterator it);
 
 	void connectHandler(const boost::system::error_code &ec);
-	void writeHandler(const boost::system::error_code &ec, std::size_t bytesTransferred);
+	void writeHandler(const boost::system::error_code &ec, 
+		std::size_t bytesTransferred,
+		std::string *outHeader,
+		std::string *outBuff);
+	void NoSerialClient::readHeaderHandler(const boost::system::error_code &ec, 
+		std::size_t bytesTransferred,
+		std::vector<char> *inHeader);
 	void readHandler(const boost::system::error_code &ec, 
-								 std::size_t bytesTransferred,
-								 std::vector<char> *inBuff);
+		std::size_t bytesTransferred,
+		std::vector<char> *inBuff,
+		std::stringstream *data,
+		std::size_t inbound_data_size);
 
 private:
 	boost::asio::ip::tcp::resolver resolver;
@@ -38,6 +46,8 @@ private:
 
 	ImageQueue *imageQueue;
 	MatrixQueue *matrixQueue;
+
+	enum {header_length = 16};
 };
 
 typedef boost::shared_ptr<NoSerialClient> clients;

@@ -23,6 +23,8 @@ private:
 
 	ImageQueue *imageQueue;
 	MatrixQueue *matrixQueue;
+
+	enum {header_length = 16};
 	
 public:
 	NoSerialServer(unsigned short port_);
@@ -30,14 +32,20 @@ public:
 
 	void acceptHandler(const boost::system::error_code &ec);
 	void writeHandler(const boost::system::error_code &ec, 
-		std::size_t bytes_transferred);
+		std::size_t bytes_transferred,
+		std::string *outHeader,
+		std::string *outBuff);
+	
+	void readHeaderHandler(const boost::system::error_code &e,
+		std::size_t bytes_transferred,
+		std::vector<char> *inHeader);
+	
 	void readHandler(const boost::system::error_code &e, 
 		std::size_t bytes_transferred,
-		std::vector<char> *inBuff);
+		std::vector<char> *inBuff,
+		std::stringstream *data,
+		std::size_t inbound_data_size);
 
-	//std::queue<boost::array<char, 1024>> buffer;
-	//std::queue<std::vector<char> > buffer;
-	//std::queue<std::string> outQueue;
 };
 #endif
 
