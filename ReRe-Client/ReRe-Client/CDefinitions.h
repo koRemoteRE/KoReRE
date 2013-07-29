@@ -10,20 +10,20 @@
 #define ReReClient_CDefinitions_h
 
 // Define Window
-#define WIDTH 800
-#define HEIGHT 600
+#define WIDTH 1280
+#define HEIGHT 768
 
-#define CAM_POS_X 3
-#define CAM_POS_Y -2
-#define CAM_POS_Z 21
+#define CAM_POS_X -7.5
+#define CAM_POS_Y 1.6
+#define CAM_POS_Z 25
 
-#define CAM_LOOK_AT_X 3.0
-#define CAM_LOOK_AT_Y -2.0
-#define CAM_LOOK_AT_Z 20
+#define CAM_LOOK_AT_X -6.5
+#define CAM_LOOK_AT_Y 1.6
+#define CAM_LOOK_AT_Z 2.7
 
-#define CAM_UP_X 0
+#define CAM_UP_X 1
 #define CAM_UP_Y 0
-#define CAM_UP_Z 1
+#define CAM_UP_Z 0
 
 #define CAM_ROTATION_SPEED 0.05
 #define CAM_MOVE_SPEED 15

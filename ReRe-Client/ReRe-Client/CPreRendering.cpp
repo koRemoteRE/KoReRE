@@ -15,7 +15,7 @@ CPreRendering::CPreRendering() {
 
 	glEnable(GL_CULL_FACE);
 
-	sceneMgr = new CSceneManager(PATH "TestEnv.dae");
+	sceneMgr = new CSceneManager(PATH "sponza_diff_big_combined_nm.dae");
 }
 
 CPreRendering::~CPreRendering() {

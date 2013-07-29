@@ -50,6 +50,8 @@ void MainLoop(void)
     
 	double d_LastTime = glfwGetTime();;
 
+	double updateTime = 0;
+	double maxUpdateTime = 0.5;
 
     do{
 		
@@ -69,8 +71,10 @@ void MainLoop(void)
             //cout << "Server Image" << endl;
         }
         
-        if (numOfUpdates == 0 && camMatrixUpdated == true){
+		if (camMatrixUpdated == true){
+			updateTime += deltaTime;
 
+			if(updateTime > maxUpdateTime){
 			//std::cout << updateTime << std::endl;
 
 			
@@ -79,7 +83,16 @@ void MainLoop(void)
                 
 			matrixQueue->push(mat);
 			//cout << "SendMatrix" << endl;
-        }
+			updateTime = 0;
+			}
+		}else{
+			if(updateTime < maxUpdateTime){
+				mat.mat = glm::inverse(renderer->getViewMatrix());
+                
+				matrixQueue->push(mat);
+			}
+			updateTime = maxUpdateTime;
+		}
         
         if (camMatrixUpdated == true){
             numOfUpdates++;
@@ -128,7 +141,7 @@ void serverThread(){
 	try{
 		boost::asio::io_service io_service;
 		
-		const std::string host = "192.168.1.77";
+		const std::string host = "141.26.66.52";
 		const std::string port = "9999";
         
 		clients c(new NoSerialClient(io_service, host, port));
