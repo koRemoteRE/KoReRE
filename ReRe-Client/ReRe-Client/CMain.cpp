@@ -48,9 +48,17 @@ void MainLoop(void)
     // - alte lastView entfernt
     // - zusätzlichen Puffer (imgBuffer) eingefügt
     
+	double d_LastTime = glfwGetTime();;
+
+
     do{
+		
+		double currentTime = glfwGetTime();
+		float deltaTime = float(currentTime - d_LastTime);
+		d_LastTime = currentTime;
+
         // Update Camera Matrix
-        camMatrixUpdated = renderer->getSceneGraph()->returnCameraNode()->updateCameraView();
+		camMatrixUpdated = renderer->getSceneGraph()->returnCameraNode()->updateCameraView(deltaTime);
         
         //renderer->writeToFBO();
         
@@ -62,11 +70,15 @@ void MainLoop(void)
         }
         
         if (numOfUpdates == 0 && camMatrixUpdated == true){
-            // send Matrix to Server
-            mat.mat = glm::inverse(renderer->getViewMatrix());
+
+			//std::cout << updateTime << std::endl;
+
+			
+			// send Matrix to Server
+			mat.mat = glm::inverse(renderer->getViewMatrix());
                 
-            matrixQueue->push(mat);
-            //cout << "SendMatrix" << endl;
+			matrixQueue->push(mat);
+			//cout << "SendMatrix" << endl;
         }
         
         if (camMatrixUpdated == true){
