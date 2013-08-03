@@ -8,7 +8,7 @@
 #include "CCamera.h"
 
 
-CCamera::CCamera()
+CCamera::CCamera() : b_freeCamera(false)
 {
     d_LastTime = glfwGetTime();
     
@@ -71,10 +71,17 @@ bool CCamera::updateCameraView()
                         sin(stcmp_update.f_verticalAngle),
                         cos(stcmp_update.f_verticalAngle) * cos(stcmp_update.f_horizontalAngle));
     
+    glm::vec3 right;
     // Right vector
-    glm::vec3 right = glm::vec3(sin(stcmp_update.f_horizontalAngle - 3.14f/2.0f),
+    if (b_freeCamera == false)
+        right = glm::vec3(sin(stcmp_update.f_horizontalAngle - 3.14f/2.0f),
                                 0,
                                 cos(stcmp_update.f_horizontalAngle - 3.14f/2.0f));
+    else
+        right = glm::cross(direction,stcv_update.v_eyeUp);
+    
+    if (glfwGetKey( 'K' ) == GLFW_PRESS)
+        b_freeCamera = !b_freeCamera;
     
     // Up vector : perpendicular to both direction and right
     stcv_update.v_eyeUp = glm::cross( right, direction );

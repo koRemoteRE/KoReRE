@@ -60,6 +60,8 @@ private:
     glm::mat4* m_viewMatrix;
     glm::mat4* m_projectionMatrix;
     
+    bool b_freeCamera;
+    
 public:
     CCamera();
     

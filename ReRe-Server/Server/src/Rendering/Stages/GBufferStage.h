@@ -4,7 +4,7 @@
 #include "KoRE/Passes/FrameBufferStage.h"
 #include "Kore/Components/Camera.h"
 #include "Kore/SceneNode.h"
-#include "Rendering/DeferredPass.h"
+#include "../DeferredPass.h"
 
 class GBufferStage : public kore::FrameBufferStage {
 public:

@@ -1,7 +1,7 @@
 #ifndef RENDERPASS_H_
 #define RENDERPASS_H_
 
-#include "KoRE\Passes\ShaderProgramPass.h"
+#include "KoRE/Passes/ShaderProgramPass.h"
 #include "KoRE/SceneNode.h"
 #include "KoRE/Components/Camera.h"
 

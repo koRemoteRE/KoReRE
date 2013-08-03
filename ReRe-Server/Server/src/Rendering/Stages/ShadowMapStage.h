@@ -4,7 +4,7 @@
 #include "KoRE/Passes/FrameBufferStage.h"
 #include "Kore/Components/Camera.h"
 #include "Kore/SceneNode.h"
-#include "Rendering/DeferredPass.h"
+#include "../DeferredPass.h"
 
 class ShadowMapStage : public kore::FrameBufferStage {
 public:

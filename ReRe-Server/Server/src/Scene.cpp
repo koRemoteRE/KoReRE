@@ -346,8 +346,7 @@ void Scene::init(){
   drawBufs.clear();
   drawBufs.push_back(GL_BACK_LEFT);
 
-
-  _backbufferStage->addProgramPass(new RenderPass(
+    _backbufferStage->addProgramPass(new RenderPass(
   gBufferStage->getFrameBuffer(), shadowMapStage->getFrameBuffer(),
   lightNodes,pCamera));
   
