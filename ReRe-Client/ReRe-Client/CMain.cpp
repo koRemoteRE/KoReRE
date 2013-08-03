@@ -48,9 +48,19 @@ void MainLoop(void)
     // - alte lastView entfernt
     // - zusätzlichen Puffer (imgBuffer) eingefügt
     
+	double d_LastTime = glfwGetTime();;
+
+	double updateTime = 0;
+	double maxUpdateTime = 0.5;
+
     do{
+		
+		double currentTime = glfwGetTime();
+		float deltaTime = float(currentTime - d_LastTime);
+		d_LastTime = currentTime;
+
         // Update Camera Matrix
-        camMatrixUpdated = renderer->getSceneGraph()->returnCameraNode()->updateCameraView();
+		camMatrixUpdated = renderer->getSceneGraph()->returnCameraNode()->updateCameraView(deltaTime);
         
         //renderer->writeToFBO();
         
@@ -61,13 +71,28 @@ void MainLoop(void)
             //cout << "Server Image" << endl;
         }
         
-        if (numOfUpdates == 0 && camMatrixUpdated == true){
-            // send Matrix to Server
-            mat.mat = glm::inverse(renderer->getViewMatrix());
+		if (camMatrixUpdated == true){
+			updateTime += deltaTime;
+
+			if(updateTime > maxUpdateTime){
+			//std::cout << updateTime << std::endl;
+
+			
+			// send Matrix to Server
+			mat.mat = glm::inverse(renderer->getViewMatrix());
                 
-            matrixQueue->push(mat);
-            //cout << "SendMatrix" << endl;
-        }
+			matrixQueue->push(mat);
+			//cout << "SendMatrix" << endl;
+			updateTime = 0;
+			}
+		}else{
+			if(updateTime < maxUpdateTime){
+				mat.mat = glm::inverse(renderer->getViewMatrix());
+                
+				matrixQueue->push(mat);
+			}
+			updateTime = maxUpdateTime;
+		}
         
         if (camMatrixUpdated == true){
             numOfUpdates++;
@@ -116,7 +141,7 @@ void serverThread(){
 	try{
 		boost::asio::io_service io_service;
 		
-		const std::string host = "192.168.1.77";
+		const std::string host = "141.26.66.52";
 		const std::string port = "9999";
         
 		clients c(new NoSerialClient(io_service, host, port));

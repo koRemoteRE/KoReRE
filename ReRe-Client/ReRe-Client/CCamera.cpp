@@ -51,16 +51,16 @@ void CCamera::automaticMovement(int i)
     *m_viewMatrix = glm::translate(*m_viewMatrix, f_newPositionX, 0.0f, 0.0f);
 }
 
-bool CCamera::updateCameraView()
+bool CCamera::updateCameraView(float deltaTime)
 {
     bool cameraUpdated = false;
     
     // Get mouse position
     glfwGetMousePos(&stcmp_update.i_mouseX, &stcmp_update.i_mouseY);
     
-    double currentTime = glfwGetTime();
+    /*double currentTime = glfwGetTime();
     float deltaTime = float(currentTime - d_LastTime);
-    d_LastTime = currentTime;
+    d_LastTime = currentTime;*/
     
     // Compute new orientation
     stcmp_update.f_horizontalAngle  += stcmp_update.f_rotationSpeed * deltaTime * float( WIDTH/2 - stcmp_update.i_mouseX );

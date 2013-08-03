@@ -81,7 +81,7 @@ public:
     
     void automaticMovement(int i);
     
-    bool updateCameraView();
+    bool updateCameraView(float deltaTime);
     
     bool viewVisible(CSceneNode* sc_rootSceneNode);     // View Frustum Culling
     
