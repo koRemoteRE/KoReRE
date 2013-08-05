@@ -11,7 +11,7 @@
 
 // Define Window
 #define WIDTH 1280
-#define HEIGHT 768
+#define HEIGHT 720
 
 #define CAM_POS_X -7.5
 #define CAM_POS_Y 1.6
@@ -25,8 +25,8 @@
 #define CAM_UP_Y 0
 #define CAM_UP_Z 0
 
-#define CAM_ROTATION_SPEED 0.05
-#define CAM_MOVE_SPEED 15
+#define CAM_ROTATION_SPEED 0.025
+#define CAM_MOVE_SPEED 2
 
 // Define indices of the generic vertex attributes
 #define SHADER_LIGHT_POS_LOC 0
