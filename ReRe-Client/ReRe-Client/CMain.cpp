@@ -32,13 +32,13 @@ ImageQueue *imageQueue;
 
 void MainLoop(void)
 {
-    bool camMatrixUpdated;
+    bool camMatrixUpdated = false;
     int numOfUpdates = 0;
     
     CPreRendering* renderer = new CPreRendering();
     
     lastView = renderer->getViewMatrix();
-    lastProj = renderer->getProjectionMatrix();
+	lastProj = glm::perspectiveFov(60.0 ,1280.0 ,720.0 ,1.0 ,1000.0);
     SerializableImage image;
     SerializableMatrix mat;
     
@@ -53,15 +53,23 @@ void MainLoop(void)
 	double updateTime = 0;
 	double maxUpdateTime = 0.5;
 
+	double accumulator = 0;
+	double frameTime = 0.05;
+
     do{
 		
 		double currentTime = glfwGetTime();
 		float deltaTime = float(currentTime - d_LastTime);
 		d_LastTime = currentTime;
 
-        // Update Camera Matrix
-		camMatrixUpdated = renderer->getSceneGraph()->returnCameraNode()->updateCameraView(deltaTime);
-        
+		accumulator += deltaTime;
+		camMatrixUpdated = false;
+
+		while(accumulator >= frameTime){
+			// Update Camera Matrix
+			camMatrixUpdated = renderer->getSceneGraph()->returnCameraNode()->updateCameraView(frameTime);
+			accumulator -= frameTime;
+		}   
         //renderer->writeToFBO();
         
         if (imageQueue->tryPop(image))
@@ -77,7 +85,6 @@ void MainLoop(void)
 			if(updateTime > maxUpdateTime){
 			//std::cout << updateTime << std::endl;
 
-			
 			// send Matrix to Server
 			mat.mat = glm::inverse(renderer->getViewMatrix());
                 
