@@ -62,9 +62,14 @@ void MainLoop(void)
 		float deltaTime = float(currentTime - d_LastTime);
 		d_LastTime = currentTime;
 
-        // Update Camera Matrix
-		camMatrixUpdated = renderer->getSceneGraph()->returnCameraNode()->updateCameraView(deltaTime);
-        
+		accumulator += deltaTime;
+		camMatrixUpdated = false;
+
+		while(accumulator >= frameTime){
+			// Update Camera Matrix
+			camMatrixUpdated = renderer->getSceneGraph()->returnCameraNode()->updateCameraView(frameTime);
+			accumulator -= frameTime;
+		}   
         renderer->writeToFBO();
         
         if (imageQueue->tryPop(image))
