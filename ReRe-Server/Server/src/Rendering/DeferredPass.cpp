@@ -48,7 +48,7 @@ DeferredPass::DeferredPass(kore::Camera* cam, std::vector<kore::SceneNode*>& vRe
       continue;
     }
 
-    const Texture* diffusetex = texComp->getTexture(TEXSEMANTICS_DIFFUSE)[0];
+    const Texture* diffusetex = texComp->getTextures(TEXSEMANTICS_DIFFUSE)[0];
     
     //const Texture* tex = texComp->getTexture(0);
 
@@ -67,8 +67,8 @@ DeferredPass::DeferredPass(kore::Camera* cam, std::vector<kore::SceneNode*>& vRe
       static_cast<MeshComponent*>(vRenderNodes[i]->getComponent(COMPONENT_MESH));
 
     //Has Normalmap
-    if (!texComp->getTexture(TEXSEMANTICS_NORMAL).empty()){
-      const Texture* normaltex = texComp->getTexture(TEXSEMANTICS_NORMAL)[0];
+    if (!texComp->getTextures(TEXSEMANTICS_NORMAL).empty()){
+      const Texture* normaltex = texComp->getTextures(TEXSEMANTICS_NORMAL)[0];
       shader->setSamplerProperties(1, samplerProps);
       nodePass
         ->addOperation(new BindUniform(&hasNM,
