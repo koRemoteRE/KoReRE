@@ -15,7 +15,7 @@ CPreRendering::CPreRendering() {
 
 	glEnable(GL_CULL_FACE);
 
-	sceneMgr = new CSceneManager(PATH "sponza_diff_big_combined_nm.dae");
+	sceneMgr = new CSceneManager(MESH_PATH "sponza_diff_big_combined_nm.dae");
 }
 
 CPreRendering::~CPreRendering() {
@@ -329,20 +329,21 @@ void CPreRendering::testWarpDraw(glm::mat4 &oldView, glm::mat4 &oldProj) {
 
 	glUseProgram(warpingShaderProgram);
 	glm::ivec2 dim(serverImgWidth, serverImgHeight);
-	glUniformMatrix4fv(
-			glGetUniformLocation(warpingShaderProgram, "oldProjMatrix"), 1,
-			false, glm::value_ptr(oldProj));
-	glUniformMatrix4fv(
-			glGetUniformLocation(warpingShaderProgram, "oldViewMatrix"), 1,
-			false, glm::value_ptr(oldView));
-	glUniform2iv(glGetUniformLocation(warpingShaderProgram, "texDim"), 1,
-			glm::value_ptr(dim));
+	glUniformMatrix4fv(glGetUniformLocation(warpingShaderProgram, "oldProjMatrix"), 1, false, glm::value_ptr(oldProj));
+	glUniformMatrix4fv(glGetUniformLocation(warpingShaderProgram, "oldViewMatrix"), 1, false, glm::value_ptr(oldView));
+	glUniform2iv(glGetUniformLocation(warpingShaderProgram, "texDim"), 1, glm::value_ptr(dim));
 	GLuint texLoc = glGetUniformLocation(warpingShaderProgram, "frameTex");
-
-	glActiveTexture(GL_TEXTURE6);
+    GLuint diffTexLoc = glGetUniformLocation(warpingShaderProgram, "diffTex");
+    
+	glActiveTexture(GL_TEXTURE1);
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, serverImgTexture);
-	glUniform1i(texLoc, 6);
+	glUniform1i(texLoc, 1);
+    
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, serverImgTexture);
+	glUniform1i(diffTexLoc, 2);
+    
 	sceneMgr->drawScene(warpingShaderProgram);
 	//glBindTexture(GL_TEXTURE_2D, 0);
 	glUseProgram(0);

@@ -34,14 +34,16 @@
 #define SHADER_NORMAL_LOC 2
 #define SHADER_TEX_COORD_LOC 3
 
-#define TEXTURE_ACTIVITY 0
+#define TEXTURE_ACTIVITY 1
 
 #define FRAME_COUNT 5
 
 #ifdef __APPLE_CC__
-#define PATH "../Assets/"
+#define MESH_PATH "../Assets/"
+#define TEXTURE_PATH "../Assets/textures/"
 #else
-#define PATH "./Assets/"
+#define MESH_PATH "./Assets/"
+#define TEXTURE_PATH "./Assets/textures/"
 #endif
 
 #endif

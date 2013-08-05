@@ -314,7 +314,19 @@ void CSceneManager::loadTexture()
         ilEnable(IL_ORIGIN_SET);
         ilOriginFunc(IL_ORIGIN_LOWER_LEFT);
         
-        if (ilLoadImage((ILstring)str_filename.c_str()))
+        ILstring ilstr_texturePath = (ILstring)str_filename.c_str();
+        bool b_textureRead = false;
+        
+        if (ilLoadImage(ilstr_texturePath))
+            b_textureRead = true;
+        else
+        {
+            if (ilLoadImage((ILstring)(TEXTURE_PATH + str_filename).c_str()))
+                b_textureRead = true;
+            else
+                throw 0x02;
+        }
+        if (b_textureRead == true)
         {
             // Bild in RGBA umwandeln
             ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);

@@ -62,7 +62,7 @@ void MainLoop(void)
         // Update Camera Matrix
 		camMatrixUpdated = renderer->getSceneGraph()->returnCameraNode()->updateCameraView(deltaTime);
         
-        //renderer->writeToFBO();
+        renderer->writeToFBO();
         
         if (imageQueue->tryPop(image))
         {
@@ -212,6 +212,8 @@ int main(int argc, const char * argv[])
             cout << "Keine .dae-Datei" << endl;
         else if (i_ex == 0x01)
             cout << "Fehler beim Laden der Datei" << endl;
+        else if (i_ex == 0x02)
+            cout << "Fehler beim Laden der Texturen" << endl;
     }
     
     // Close window and terminate GLFW

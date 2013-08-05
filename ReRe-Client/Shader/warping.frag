@@ -1,6 +1,7 @@
 #version 150
  
 uniform sampler2D frameTex;
+uniform sampler2D diffTex;
 uniform ivec2 texDim;
 in vec4 FrameCoord;
 in vec3 Color;
