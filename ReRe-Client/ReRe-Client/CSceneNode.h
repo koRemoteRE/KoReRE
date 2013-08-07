@@ -2,8 +2,6 @@
 //  SceneNode.h
 //  ReRe-Client
 //
-//  Created by Thomas Kipshagen on 23.04.13.
-//
 
 #ifndef __ReRe_Client__SceneNode__
 #define __ReRe_Client__SceneNode__
@@ -46,10 +44,6 @@ public:
 private:
     void findNextMeshNode(aiNode* ain_asNode, glm::mat4 m_parnetTransform);
 };
-
-
-
-
 
 //-----------------------------------------------
 //-----------------------------------------------

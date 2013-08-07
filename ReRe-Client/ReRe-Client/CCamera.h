@@ -2,8 +2,6 @@
 //  Camera.h
 //  ReRe-Client
 //
-//  Created by Ina Schröder on 23.04.13.
-//
 
 #ifndef __ReRe_Client__Camera__
 #define __ReRe_Client__Camera__
@@ -78,8 +76,6 @@ public:
     
     glm::mat4 returnProjectionMatrix()
         { return *m_projectionMatrix; };
-    
-    void automaticMovement(int i);
     
     bool updateCameraView(float deltaTime);
     

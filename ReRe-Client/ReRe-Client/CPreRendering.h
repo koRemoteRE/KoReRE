@@ -2,8 +2,6 @@
 //  PreRendering.h
 //  ReRe-Client
 //
-//  Created by Thomas Kipshagen on 23.04.13.
-//
 
 #ifndef __ReRe_Client__PreRendering__
 #define __ReRe_Client__PreRendering__
@@ -60,10 +58,7 @@ public:
     
     void writeToFBO();
     
-    // --- Just Testing --- TODO: Delete! ----------------
-    
-    void testWarpDraw(glm::mat4 &oldView,glm::mat4 &oldProj);
-    // ---------------------------------------------------
+    void warp(glm::mat4 &oldView,glm::mat4 &oldProj);
 
     void setServerTexture(std::vector<unsigned char>& data);
 };

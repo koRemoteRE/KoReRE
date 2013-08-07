@@ -2,8 +2,6 @@
 //  main.cpp
 //  ReRe-Client
 //
-//  Created by Thomas Kipshagen on 23.04.13.
-//
 
 #include <iostream>
 #include <stdio.h>
@@ -42,12 +40,6 @@ void MainLoop(void)
     SerializableImage image;
     SerializableMatrix mat;
     
-    //Änderungen:
-    // - mat-Variable verschoben
-    // - xx durch lastView ersetzt
-    // - alte lastView entfernt
-    // - zusätzlichen Puffer (imgBuffer) eingefügt
-    
 	double d_LastTime = glfwGetTime();;
 
 	double updateTime = 0;
@@ -76,7 +68,6 @@ void MainLoop(void)
         {
             renderer->setServerTexture(*image.image);
             lastView = glm::inverse(image.matrix.mat);
-            //cout << "Server Image" << endl;
         }
         
 		if (camMatrixUpdated == true){
@@ -131,7 +122,7 @@ void MainLoop(void)
          //    frameTime = true;
         // ---------------------------------------------------------
         
-        renderer->testWarpDraw(lastView,lastProj);
+        renderer->warp(lastView,lastProj);
         
         // Swap buffers
         glfwSwapBuffers();

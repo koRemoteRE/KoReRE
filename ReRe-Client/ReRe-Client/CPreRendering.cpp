@@ -2,8 +2,6 @@
 //  PreRendering.cpp
 //  ReRe-Client
 //
-//  Created by Thomas Kipshagen on 23.04.13.
-//
 
 #include "CPreRendering.h"
 #include <opencv2/opencv.hpp>
@@ -323,7 +321,7 @@ void CPreRendering::initGLSL() {
 
 }
 
-void CPreRendering::testWarpDraw(glm::mat4 &oldView, glm::mat4 &oldProj) {
+void CPreRendering::warp(glm::mat4 &oldView, glm::mat4 &oldProj) {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -348,5 +346,3 @@ void CPreRendering::testWarpDraw(glm::mat4 &oldView, glm::mat4 &oldProj) {
 	//glBindTexture(GL_TEXTURE_2D, 0);
 	glUseProgram(0);
 }
-
-// -------------------------------------------------------------------

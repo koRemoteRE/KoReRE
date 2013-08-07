@@ -2,8 +2,6 @@
 //   Camera.cpp
 //  ReRe-Client
 //
-//  Created by Ina Schröder on 23.04.13.
-//
 
 #include "CCamera.h"
 
@@ -35,20 +33,11 @@ CCamera::CCamera() : b_freeCamera(false)
     setViewMatrix(stcv_update.v_eyePosition,
                   stcv_update.v_eyeLookAt,
                   stcv_update.v_eyeUp);
-    
-    //setViewMatrix(glm::vec3(6.8,-5.9,4.9), glm::vec3(0,0,0), glm::vec3(-0.3,0.3,0.9));
 }
 
 glm::vec3 returnPosition()
 {
     return glm::vec3(  );
-}
-
-void CCamera::automaticMovement(int i)
-{
-    i /= 30;
-    float f_newPositionX = sin(i) / 30;
-    *m_viewMatrix = glm::translate(*m_viewMatrix, f_newPositionX, 0.0f, 0.0f);
 }
 
 bool CCamera::updateCameraView(float deltaTime)
@@ -57,10 +46,6 @@ bool CCamera::updateCameraView(float deltaTime)
     
     // Get mouse position
     glfwGetMousePos(&stcmp_update.i_mouseX, &stcmp_update.i_mouseY);
-    
-    /*double currentTime = glfwGetTime();
-    float deltaTime = float(currentTime - d_LastTime);
-    d_LastTime = currentTime;*/
     
     // Compute new orientation
     stcmp_update.f_horizontalAngle  += stcmp_update.f_rotationSpeed * deltaTime * float( WIDTH/2 - stcmp_update.i_mouseX );

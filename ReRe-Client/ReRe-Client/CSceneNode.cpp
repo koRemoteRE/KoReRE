@@ -2,8 +2,6 @@
 //  SceneNode.cpp
 //  ReRe-Client
 //
-//  Created by Thomas Kipshagen on 23.04.13.
-//
 // Knotensortierung(Pseudocode): assimp.sourceforge.net
 
 #include "CSceneNode.h"
@@ -72,9 +70,6 @@ void CSceneNode::findNextMeshNode(aiNode* ain_asNode, glm::mat4 m_nextTransform)
         }
     }
 }
-
-
-
 
 //-----------------------------------------------
 //-----------------------------------------------

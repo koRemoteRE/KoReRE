@@ -2,9 +2,6 @@
 //  CDefinitions.h
 //  ReReClient
 //
-//  Created by Martina Sekulla on 14.05.13.
-//
-//
 
 #ifndef ReReClient_CDefinitions_h
 #define ReReClient_CDefinitions_h
@@ -13,6 +10,7 @@
 #define WIDTH 1280
 #define HEIGHT 720
 
+// Define Camera
 #define CAM_POS_X -7.5
 #define CAM_POS_Y 1.6
 #define CAM_POS_Z 25
