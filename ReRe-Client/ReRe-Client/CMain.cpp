@@ -91,7 +91,8 @@ void MainLoop(void)
 		}
 
 		if(sendMatrix == true){
-			mat.mat = glm::inverse(renderer->getViewMatrix());
+			mat.sendingTime = glfwGetTime();
+			mat.matrix = glm::inverse(renderer->getViewMatrix());
                 
 			matrixQueue->push(mat);
 		}
@@ -103,7 +104,11 @@ void MainLoop(void)
         if (imageQueue->tryPop(image))
         {
             renderer->setServerTexture(*image.image);
-            lastView = glm::inverse(image.matrix.mat);
+            lastView = glm::inverse(image.matrix.matrix);
+
+			//dynamically set maxUpdateTime to RTT + 10% for jitter
+			double newUpdateTime = glfwGetTime() - image.matrix.sendingTime;
+			maxUpdateTime = newUpdateTime + (newUpdateTime * 0.1); 
         }
 
         renderer->warp(lastView,lastProj);
