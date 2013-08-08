@@ -30,7 +30,7 @@ ImageQueue *imageQueue;
 
 void MainLoop(void)
 {
-    bool camMatrixUpdated = false;
+    bool mooving = false;
     int numOfUpdates = 0;
     
     CPreRendering* renderer = new CPreRendering();
@@ -40,10 +40,11 @@ void MainLoop(void)
     SerializableImage image;
     SerializableMatrix mat;
     
-	double d_LastTime = glfwGetTime();;
+	double d_LastTime = glfwGetTime();
 
 	double updateTime = 0;
 	double maxUpdateTime = 0.5;
+	bool lastUpdateNeeded = false;
 
 	double accumulator = 0;
 	double frameTime = 0.05;
@@ -55,73 +56,56 @@ void MainLoop(void)
 		d_LastTime = currentTime;
 
 		accumulator += deltaTime;
-		camMatrixUpdated = false;
+		mooving = false;
+		bool sendMatrix = false;
 
+		//Fixed timestep animation/mat-update method as seen here: http://gafferongames.com/game-physics/fix-your-timestep/
 		while(accumulator >= frameTime){
+
 			// Update Camera Matrix
-			camMatrixUpdated = renderer->getSceneGraph()->returnCameraNode()->updateCameraView(frameTime);
-			accumulator -= frameTime;
-		}   
-        renderer->writeToFBO();
+			mooving = renderer->getSceneGraph()->returnCameraNode()->updateCameraView(frameTime);     
+        
+			if (mooving == true){
+				if(updateTime > maxUpdateTime || updateTime == 0){
+				
+					sendMatrix = true;
+
+					updateTime = 0;
+				}
+
+				updateTime += frameTime;
+				lastUpdateNeeded = true;
+			}else{
+
+				if(lastUpdateNeeded == true){
+				
+					sendMatrix = true;
+
+					updateTime = 0;
+				}
+
+				lastUpdateNeeded = false;
+			}
+
+			accumulator -= frameTime;  
+		}
+
+		if(sendMatrix == true){
+			mat.mat = glm::inverse(renderer->getViewMatrix());
+                
+			matrixQueue->push(mat);
+		}
+        
+		//std::cout << mooving << std::endl;
+
+		renderer->writeToFBO();
         
         if (imageQueue->tryPop(image))
         {
             renderer->setServerTexture(*image.image);
             lastView = glm::inverse(image.matrix.mat);
         }
-        
-		if (camMatrixUpdated == true){
-			updateTime += deltaTime;
 
-			if(updateTime > maxUpdateTime){
-			//std::cout << updateTime << std::endl;
-
-			// send Matrix to Server
-			mat.mat = glm::inverse(renderer->getViewMatrix());
-                
-			matrixQueue->push(mat);
-			//cout << "SendMatrix" << endl;
-			updateTime = 0;
-			}
-		}else{
-			if(updateTime < maxUpdateTime){
-				mat.mat = glm::inverse(renderer->getViewMatrix());
-                
-				matrixQueue->push(mat);
-			}
-			updateTime = maxUpdateTime;
-		}
-        
-        if (camMatrixUpdated == true){
-            numOfUpdates++;
-        
-            if (numOfUpdates == FRAME_COUNT)
-                numOfUpdates = 0;
-        }
-        
-        // --- old source code --------------------------------------
-        /************** NICHT LÖSCHEN, EMIL BRAUCHTS ZUM TESTEN *******************/
-
-         /*if (glfwGetKey('R'))
-         { */
-			
-		 //if(c % 500 == 0){
-
-		 //	c = 0;
-
-         //    if (frameTime == true)
-         //    {
-         //    mat.mat = glm::inverse( renderer->getViewMatrix() );
-         //       
-         //    matrixQueue->push(mat);
-         //    //cout << "Send Matrix" << endl;
-         //    frameTime = false;
-         //    }
-         //}
-         //else
-         //    frameTime = true;
-        // ---------------------------------------------------------
-        
         renderer->warp(lastView,lastProj);
         
         // Swap buffers
@@ -139,7 +123,7 @@ void serverThread(){
 	try{
 		boost::asio::io_service io_service;
 		
-		const std::string host = "141.26.66.52";
+		const std::string host = "192.168.1.68";
 		const std::string port = "9999";
         
 		clients c(new NoSerialClient(io_service, host, port));
