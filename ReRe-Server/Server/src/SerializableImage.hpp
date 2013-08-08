@@ -55,8 +55,8 @@ struct SerializableImage{
 		matrix.deserialize(inputBuffer);
 		std::string ss(input.substr(index + 5));
 		for (
-			auto i = std::begin(ss);
-			i != std::end(ss);
+			auto i = boost::begin(ss);
+			i != boost::end(ss);
 			++i){
 		//for(size_t i = 0; i < ss.size(); i++){
 			try{

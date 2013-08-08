@@ -8,14 +8,21 @@
 #include <boost/lexical_cast.hpp>
 
 struct SerializableMatrix{
-	glm::mat4 mat;
+	double sendingTime;
+	glm::mat4 matrix;
 
 	std::string serialize(){
 		std::string output = "";
+		try{
+			output += boost::lexical_cast<std::string>(sendingTime);
+		}catch(boost::bad_lexical_cast const&){
+			std::cerr << "SerializableMatrix::serialize: Bad Lexical Cast" << std::endl;
+		}
+		output += "MAT";
 		for (unsigned int i = 0; i < 4; i++){
 			for (unsigned int j = 0; j < 4; j++){
 				try{
-					output += boost::lexical_cast<std::string>(mat[i][j]);
+					output += boost::lexical_cast<std::string>(matrix[i][j]);
 				}catch(boost::bad_lexical_cast const&){
 					std::cerr << "SerializableMatrix::serialize: Bad Lexical Cast" << std::endl;
 				}
@@ -27,10 +34,16 @@ struct SerializableMatrix{
 
 	void serializeInto(std::string &outBuff){
 		outBuff = "";
+		try{
+			outBuff += boost::lexical_cast<std::string>(sendingTime);
+		}catch(boost::bad_lexical_cast const&){
+			std::cerr << "SerializableMatrix::serialize: Bad Lexical Cast" << std::endl;
+		}
+		outBuff += "MAT";
 		for (unsigned int i = 0; i < 4; i++){
 			for (unsigned int j = 0; j < 4; j++){
 				try{
-					outBuff += boost::lexical_cast<std::string>(mat[i][j]);
+					outBuff += boost::lexical_cast<std::string>(matrix[i][j]);
 				}catch(boost::bad_lexical_cast const&){
 					std::cerr << "SerializableMatrix::serialize: Bad Lexical Cast" << std::endl;
 				}
@@ -41,8 +54,17 @@ struct SerializableMatrix{
 
 	void deserialize(std::string &input){
 		std::string inString = input;
+
+		int index = inString.find("MAT");
+		std::string timestampString = inString.substr(0, index-1);
+		try{
+			sendingTime = boost::lexical_cast<double>(timestampString);
+		}catch(boost::bad_lexical_cast const&){
+			std::cerr << "SerializableMatrix::deserialize: Bad Lexical Cast" << std::endl;
+		}
+
 		std::vector<float> elems;
-		std::stringstream ss(inString);
+		std::stringstream ss(inString.substr(index+3));
 		std::string item;
 		char delim = '&';
 		while(std::getline(ss, item, delim)){
@@ -52,7 +74,7 @@ struct SerializableMatrix{
 				std::cerr << "SerializableMatrix::deserialize: Bad Lexical Cast" << std::endl;
 			}
 		}
-		mat = glm::mat4(
+		matrix = glm::mat4(
 			elems.at(0), elems.at(1), elems.at(2), elems.at(3),
 			elems.at(4), elems.at(5), elems.at(6), elems.at(7),
 			elems.at(8), elems.at(9), elems.at(10), elems.at(11),
