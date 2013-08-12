@@ -1,4 +1,4 @@
-KoRE Log - Mon Aug 05 15:04:57 2013
+KoRE Log - Mon Aug 12 14:24:42 2013
 
 [DEBUG] added Framebuffer 'BACKBUFFER'
 Render Device: GeForce 8800 GTX/PCIe/SSE2

@@ -66,5 +66,5 @@ void main(void)
     visibility = 0.2;
   }
 
-  outColor = visibility * phong(In.uv, normalVS, normalize(vec3(viewMat * vec4(lightDir,0))), vec3(posVS)) + vec4(0,0.2,0,1);
+  outColor = visibility * phong(In.uv, normalVS, normalize(vec3(viewMat * vec4(lightDir,0))), vec3(posVS)) + vec4(0,0.1,0,1);
 }

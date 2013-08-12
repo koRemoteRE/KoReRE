@@ -336,7 +336,7 @@ void Scene::init(){
 
   // Shadowmap Stage
   FrameBufferStage* shadowMapStage =
-    new ShadowMapStage(lightNodes[0], renderNodes, 4096, 4096);
+    new ShadowMapStage(lightNodes[0], renderNodes, 2048, 2048);
 
   RenderManager::getInstance()->addFramebufferStage(shadowMapStage);
   //////////////////////////////////////////////////////////////////////////
