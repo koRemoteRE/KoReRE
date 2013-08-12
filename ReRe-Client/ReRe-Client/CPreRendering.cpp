@@ -322,7 +322,6 @@ void CPreRendering::initGLSL() {
 }
 
 void CPreRendering::warp(glm::mat4 &oldView, glm::mat4 &oldProj) {
-
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glUseProgram(warpingShaderProgram);
@@ -339,7 +338,7 @@ void CPreRendering::warp(glm::mat4 &oldView, glm::mat4 &oldProj) {
 	glUniform1i(texLoc, 1);
     
     glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D, serverImgTexture);
+    glBindTexture(GL_TEXTURE_2D, currentImgTexture);
 	glUniform1i(diffTexLoc, 2);
     
 	sceneMgr->drawScene(warpingShaderProgram);

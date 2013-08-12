@@ -63,7 +63,9 @@ bool CCamera::updateCameraView(float deltaTime)
                                 0,
                                 cos(stcmp_update.f_horizontalAngle - 3.14f/2.0f));
     else
-        right = glm::cross(direction,stcv_update.v_eyeUp);
+        right = glm::vec3(sin(stcmp_update.f_horizontalAngle - 3.14f/2.0f),
+                                cos(stcmp_update.f_horizontalAngle - 3.14f/2.0f),
+                                0);
     
     if (glfwGetKey( 'K' ) == GLFW_PRESS)
         b_freeCamera = !b_freeCamera;
