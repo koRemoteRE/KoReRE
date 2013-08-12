@@ -5,6 +5,8 @@ uniform sampler2D diffTex;
 uniform ivec2 texDim;
 in vec4 FrameCoord;
 in vec3 Color;
+in vec4 pos_proj;
+
 out vec4 outputF;
  
 void main()
@@ -17,28 +19,14 @@ void main()
 	vec2 texCoord = (frameCoord.xy + vec2(1,1))/2;
 	
 	vec4 c = texture(frameTex,texCoord);
-	if(c.w == 0){
-		vec3 color = vec3(0.0);
-		int num = 0;
-		for(int x = -3; x <= 3; x++){
-			for(int y = -3; y <= 3; y++){
-				vec2 tempPos;
-				tempPos.x = texCoord.x + x*texel.x;
-				tempPos.y = texCoord.y + y*texel.y;
-			
-				vec4 tempColor = vec4(texture(frameTex,tempPos));
-				if(tempColor.w != 0.0){
-					num++;
-					color += tempColor.xyz;
-				}
-			}
-		}
-		if(num != 0){
-			outputF = vec4(color/num,1.0);
-		}
+	if(texCoord.x < 0 || texCoord.x > 1 || texCoord.y < 0 || texCoord.y > 1 || c.w == 0.0){
+		outputF = vec4(1.0,0.0,0.0,1.0);
+
+		vec4 pos_screen = (pos_proj/pos_proj.w+1.0)/2.0;
+		outputF =  texture(diffTex,pos_screen.xy) + vec4(0.3,0.0,0.0,0.0);
+
 	}
 	else{
 		outputF = vec4(c);
-	}
-
+	}		
 }
