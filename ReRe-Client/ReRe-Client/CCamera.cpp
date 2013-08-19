@@ -51,10 +51,16 @@ bool CCamera::updateCameraView(float deltaTime)
     stcmp_update.f_horizontalAngle  += stcmp_update.f_rotationSpeed * deltaTime * float( WIDTH/2 - stcmp_update.i_mouseX );
     stcmp_update.f_verticalAngle    += stcmp_update.f_rotationSpeed * deltaTime * float( HEIGHT/2 - stcmp_update.i_mouseY );
     
+    glm::vec3 direction;
+    if (b_freeCamera == false)
     // Direction : Spherical coordinates to Cartesian coordinates conversion
-    glm::vec3 direction(cos(stcmp_update.f_verticalAngle) * sin(stcmp_update.f_horizontalAngle),
+        direction = glm::vec3(cos(stcmp_update.f_verticalAngle) * sin(stcmp_update.f_horizontalAngle),
                         sin(stcmp_update.f_verticalAngle),
                         cos(stcmp_update.f_verticalAngle) * cos(stcmp_update.f_horizontalAngle));
+    else
+        direction = glm::vec3(cos(stcmp_update.f_verticalAngle) * cos(stcmp_update.f_horizontalAngle),
+                            cos(stcmp_update.f_verticalAngle) * sin(stcmp_update.f_horizontalAngle),
+                            sin(stcmp_update.f_verticalAngle));
     
     glm::vec3 right;
     // Right vector
@@ -63,9 +69,9 @@ bool CCamera::updateCameraView(float deltaTime)
                                 0,
                                 cos(stcmp_update.f_horizontalAngle - 3.14f/2.0f));
     else
-        right = glm::vec3(sin(stcmp_update.f_horizontalAngle - 3.14f/2.0f),
-                                cos(stcmp_update.f_horizontalAngle - 3.14f/2.0f),
-                                0);
+        right = glm::vec3(cos(stcmp_update.f_horizontalAngle - 3.14f/2.0f),
+                          sin(stcmp_update.f_horizontalAngle - 3.14f/2.0f),
+                          0);
     
     if (glfwGetKey( 'K' ) == GLFW_PRESS)
         b_freeCamera = !b_freeCamera;
