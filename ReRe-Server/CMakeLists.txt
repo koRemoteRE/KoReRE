@@ -1,4 +1,4 @@
-project(ReReClient)
+project(ReReServer)
 cmake_minimum_required(VERSION 2.8)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
@@ -7,10 +7,8 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 INCLUDE_DIRECTORIES (${CMAKE_SOURCE_DIR}/ext)
 INCLUDE_DIRECTORIES ($ENV{OPENCV_DIR}/include)
 INCLUDE_DIRECTORIES ($ENV{BOOST_ROOT})
-file(GLOB_RECURSE SOURCES ./ReRe-Client/*.cpp)
-file(GLOB_RECURSE HEADER ./ReRe-Client/*.h*)
-file(GLOB_RECURSE VERTEXSHADER ./Shader/*.vert)
-file(GLOB_RECURSE FRAGMENTSHADER ./Shader/*.frag)
+file(GLOB_RECURSE SOURCES ./Server/*.cpp)
+file(GLOB_RECURSE HEADER ./Server/*.h*)
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADER} ${VERTEXSHADER} ${FRAGMENTSHADER})
 
 IF(APPLE)
@@ -26,40 +24,29 @@ IF(APPLE)
 	${GLUT_LIBRARY} 
 	${OpenGL_LIBRARY} 
 	${IOKIT}
-	${CMAKE_SOURCE_DIR}/MacLibs/libglfw.a
-	${CMAKE_SOURCE_DIR}/MacLibs/libGLEW.a
-	${CMAKE_SOURCE_DIR}/MacLibs/libboost_system-mt.a
-	${CMAKE_SOURCE_DIR}/MacLibs/libboost_thread-mt.a
-	${CMAKE_SOURCE_DIR}/MacLibs/libboost_serialization-mt.a
-	${CMAKE_SOURCE_DIR}/MacLibs/libopencv_core.dylib
-	${CMAKE_SOURCE_DIR}/MacLibs/libopencv_features2d.dylib
-	${CMAKE_SOURCE_DIR}/MacLibs/libopencv_flann.dylib
-	${CMAKE_SOURCE_DIR}/MacLibs/libopencv_highgui.dylib
-	${CMAKE_SOURCE_DIR}/MacLibs/libopencv_imgproc.dylib)
+	${CMAKE_SOURCE_DIR}/../ReRe-Client/MacLibs/libglfw.a
+	${CMAKE_SOURCE_DIR}/../ReRe-Client/MacLibs/libGLEW.a
+	${CMAKE_SOURCE_DIR}/../ReRe-Client/MacLibs/libKoRE.a
+	${CMAKE_SOURCE_DIR}/../ReRe-Client/MacLibs/libboost_system-mt.a
+	${CMAKE_SOURCE_DIR}/../ReRe-Client/MacLibs/libboost_thread-mt.a
+	${CMAKE_SOURCE_DIR}/../ReRe-Client/MacLibs/libboost_serialization-mt.a
+	${CMAKE_SOURCE_DIR}/../ReRe-Client/MacLibs/libopencv_core.dylib
+	${CMAKE_SOURCE_DIR}/../ReRe-Client/MacLibs/libopencv_features2d.dylib
+	${CMAKE_SOURCE_DIR}/../ReRe-Client/MacLibs/libopencv_flann.dylib
+	${CMAKE_SOURCE_DIR}/../ReRe-Client/MacLibs/libopencv_highgui.dylib
+	${CMAKE_SOURCE_DIR}/../ReRe-Client/MacLibs/libopencv_imgproc.dylib)
 
    add_library( assimp STATIC IMPORTED )
    set_target_properties( assimp PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/MacLibs/libassimp.a )
 
-   add_library( devil STATIC IMPORTED )
-   set_target_properties( devil PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/MacLibs/libIL.a )
-
    add_library( dyassimp SHARED IMPORTED )
    set_target_properties( assimp PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/MacLibs/libassimp.3.0.0.dylib )
 
-   add_library( dydevil SHARED IMPORTED )
-   set_target_properties( devil PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/MacLibs/libIL.1.dylib )
-
    		
-   target_link_libraries(ReReClient assimp)
-   target_link_libraries(ReReClient devil)
+   target_link_libraries(ReReServer assimp)
    
     set(EXT_LIBS ${CMAKE_SOURCE_DIR}/MacLibs)
-#    link_directories(${EXT_LIBS})
-#   	file(GLOB_RECURSE OpenCV_LIBS /opt/local/lib/*libopencv_*.dylib)
-#	file(GLOB_RECURSE Boost_LIBS /opt/local/lib/*libboost_*.a)
-#    MESSAGE(STATUS ${OpenCV_LIBS} ${Boost_LIBS})
-#	target_link_libraries( ReReClient ${OpenCV_LIBS} ${Boost_LIBS})
-    target_link_libraries(ReReClient ${EXTRA_LIBS})
+    target_link_libraries(ReReServer ${EXTRA_LIBS})
     
 else()
   if(MSVC)
@@ -82,7 +69,7 @@ else()
  	    $ENV{OPENCV_DIR}/x86/vc11/lib/opencv_imgproc245d.lib
  	    $ENV{OPENCV_DIR}/x86/vc11/lib/opencv_highgui245d.lib
 	  )
-	 target_link_libraries(ReReClient ${VS_LIBS})
+	 target_link_libraries(ReReServer ${VS_LIBS})
   else()
     set(EXT_LIBS ${CMAKE_SOURCE_DIR}/MinGWLibs)
     link_directories(${EXT_LIBS})
@@ -95,15 +82,6 @@ else()
     ${EXT_LIBS}/libglew32.dll.a
     ${EXT_LIBS}/libIL.dll.a
     )
-    target_link_libraries(ReReClient ${MINGW_LIBS})
+    target_link_libraries(ReReServer ${MINGW_LIBS})
   endif()
 endif()
-
-
-#aux_source_directory(./ReRe-Client SRC_LIST)
-#aux_header_directory(./ReRe-Client HEADER_LIST)
-
-#add_executable(${PROJECT_NAME} ${SRC_LIST} ${HEADER_LIST})
-
-
-#${GLFW_LIBRARY} 
