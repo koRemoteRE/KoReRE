@@ -156,7 +156,8 @@ void NoSerialServer::readHandler(const boost::system::error_code &e,
 			SerializableMatrix m;
 
 			if(data->str().size() > 0){
-				m.deserialize(data->str());	
+                std::string stbuffer= data->str();
+				m.deserialize(stbuffer);
 				matrixQueue->push(m);
 
 				//std::cout << m.mat[0][0] << std::endl;

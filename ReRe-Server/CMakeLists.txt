@@ -26,7 +26,7 @@ IF(APPLE)
 	${IOKIT}
 	${CMAKE_SOURCE_DIR}/../ReRe-Client/MacLibs/libglfw.a
 	${CMAKE_SOURCE_DIR}/../ReRe-Client/MacLibs/libGLEW.a
-	${CMAKE_SOURCE_DIR}/../ReRe-Client/MacLibs/libKoRE.a
+	${CMAKE_SOURCE_DIR}/MacLibs/libKoRE.a
 	${CMAKE_SOURCE_DIR}/../ReRe-Client/MacLibs/libboost_system-mt.a
 	${CMAKE_SOURCE_DIR}/../ReRe-Client/MacLibs/libboost_thread-mt.a
 	${CMAKE_SOURCE_DIR}/../ReRe-Client/MacLibs/libboost_serialization-mt.a
@@ -37,10 +37,10 @@ IF(APPLE)
 	${CMAKE_SOURCE_DIR}/../ReRe-Client/MacLibs/libopencv_imgproc.dylib)
 
    add_library( assimp STATIC IMPORTED )
-   set_target_properties( assimp PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/MacLibs/libassimp.a )
+   set_target_properties( assimp PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/../ReRe-Client/MacLibs/libassimp.a )
 
    add_library( dyassimp SHARED IMPORTED )
-   set_target_properties( assimp PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/MacLibs/libassimp.3.0.0.dylib )
+   set_target_properties( assimp PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/../ReRe-Client/MacLibs/libassimp.3.0.0.dylib )
 
    		
    target_link_libraries(ReReServer assimp)

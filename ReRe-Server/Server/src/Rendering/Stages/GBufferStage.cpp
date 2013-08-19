@@ -1,5 +1,5 @@
 #include "GBufferStage.h"
-#include "Rendering/DeferredPass.h"
+#include "../DeferredPass.h"
 
 GBufferStage::GBufferStage(kore::Camera* mainCamera,
                            std::vector<kore::SceneNode*>& vRenderNodes,

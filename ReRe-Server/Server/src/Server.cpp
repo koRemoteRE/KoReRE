@@ -56,7 +56,7 @@ void Server::readHandler(const boost::system::error_code &e,
 		for (std::size_t i = 0; i < mats.size(); ++i){
 			matrixQueue->push(mats[i]);
 
-			std::cout << "Got Matrix: " << mats[i].id << std::endl;
+			//std::cout << "Got Matrix: " << mats[i].id << std::endl;
 		}
 
 		mats.clear();

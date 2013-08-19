@@ -1,7 +1,7 @@
 #include "ShadowMapPass.h"
-#include "KoRE\RenderManager.h"
-#include "KoRE\SceneManager.h"
-#include "KoRE\Operations\Operations.h"
+#include "KoRE/RenderManager.h"
+#include "KoRE/SceneManager.h"
+#include "KoRE/Operations/Operations.h"
 
 
 ShadowMapPass::ShadowMapPass(std::vector<kore::SceneNode*>& vRenderNodes, kore::SceneNode* light, glm::uvec2 smSize)

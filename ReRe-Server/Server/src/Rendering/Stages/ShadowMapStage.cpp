@@ -1,5 +1,5 @@
 #include "ShadowMapStage.h"
-#include "Rendering/ShadowMapPass.h"
+#include "../ShadowMapPass.h"
 
 ShadowMapStage::ShadowMapStage(kore::SceneNode* lightNode,
                                std::vector<kore::SceneNode*>& vRenderNodes,

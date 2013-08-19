@@ -54,6 +54,7 @@ private:
     st_cameraMovementParameters stcmp_update;
     
     double d_LastTime;
+    double mouseDeltaX, mouseDeltaY;
     
     glm::mat4* m_viewMatrix;
     glm::mat4* m_projectionMatrix;
@@ -78,8 +79,6 @@ public:
         { return *m_projectionMatrix; };
     
     bool updateCameraView(float deltaTime);
-    
-    bool viewVisible(CSceneNode* sc_rootSceneNode);     // View Frustum Culling
     
 private:
     void setViewMatrix(glm::vec3 v_eyePosition, glm::vec3 v_eyeLookAt, glm::vec3 v_eyeUp)

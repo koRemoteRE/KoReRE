@@ -6,7 +6,7 @@
 #include "CCamera.h"
 
 
-CCamera::CCamera() : b_freeCamera(false)
+CCamera::CCamera() : b_freeCamera(true)
 {
     d_LastTime = glfwGetTime();
     
@@ -35,11 +35,6 @@ CCamera::CCamera() : b_freeCamera(false)
                   stcv_update.v_eyeUp);
 }
 
-glm::vec3 returnPosition()
-{
-    return glm::vec3(  );
-}
-
 bool CCamera::updateCameraView(float deltaTime)
 {
     bool cameraUpdated = false;
@@ -47,6 +42,16 @@ bool CCamera::updateCameraView(float deltaTime)
     // Get mouse position
     glfwGetMousePos(&stcmp_update.i_mouseX, &stcmp_update.i_mouseY);
     
+    mouseDeltaX += stcmp_update.i_mouseX;
+    mouseDeltaY += stcmp_update.i_mouseY;
+    
+    if (mouseDeltaX > 10 || mouseDeltaY > 10)
+    {
+        mouseDeltaX = 0;
+        mouseDeltaY = 0;
+        cameraUpdated = true;
+    }
+        
     // Compute new orientation
     stcmp_update.f_horizontalAngle  += stcmp_update.f_rotationSpeed * deltaTime * float( WIDTH/2 - stcmp_update.i_mouseX );
     stcmp_update.f_verticalAngle    += stcmp_update.f_rotationSpeed * deltaTime * float( HEIGHT/2 - stcmp_update.i_mouseY );
@@ -136,15 +141,6 @@ bool CCamera::updateCameraView(float deltaTime)
     // Reset mouse position for next frame
     glfwSetMousePos(WIDTH/2, HEIGHT/2);
     
-    if (cameraUpdated == true)
-        return true;
-    else
-        return false;
-}
-
-bool CCamera::viewVisible(CSceneNode* sc_rootSceneNode)
-{
-    //View Frustum Culling
-    return false;
+    return cameraUpdated;
 }
 

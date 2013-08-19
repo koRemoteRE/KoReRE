@@ -12,10 +12,10 @@ void FullscreenQuad::init() {
   _numVertices = 4;
   _primitiveType = GL_TRIANGLES;
 
-  const kore::uint LL = 0;
-  const kore::uint LR = 1;
-  const kore::uint UR = 2;
-  const kore::uint UL = 3;
+  const glm::uint LL = 0;
+  const glm::uint LR = 1;
+  const glm::uint UR = 2;
+  const glm::uint UL = 3;
 
   // Load vertex positions.
   glm::vec3* vertices = new glm::vec3[_numVertices];

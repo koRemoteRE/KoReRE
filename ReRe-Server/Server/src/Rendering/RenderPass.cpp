@@ -3,7 +3,7 @@
 #include "KoRE/Operations/Operations.h"
 #include "KoRE/RenderManager.h"
 #include "KoRE/SceneNode.h"
-#include "Scene.h"
+#include "../Scene.h"
 
 
 RenderPass::RenderPass(kore::FrameBuffer* gBuffer, kore::FrameBuffer* smBuffer,
