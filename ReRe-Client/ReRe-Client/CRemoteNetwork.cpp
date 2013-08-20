@@ -20,7 +20,6 @@ CRemoteNetwork::CRemoteNetwork() {
         io_service io_service;
         
         ip::tcp::resolver resolver(io_service);
-    
         ip::tcp::resolver::query query("141.26.88.55","12345");
         ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
         
@@ -35,24 +34,7 @@ CRemoteNetwork::CRemoteNetwork() {
         cout << "Sending data..." << endl;
         socket.send(buffer(matrixBuf));
         cout << "... finish" << endl;
-        
-        //recieve data
-        //ip::tcp::acceptor acceptor(io_service,ip::tcp::endpoint(ip::tcp::v4(),13));
-        //for(;;){
-        //    acceptor.accept(socket);
-            //boost::system::error_code errors;
-            //read(socket,)
-        //}
-        
-        //io_service.run();
             
     }catch (exception e){
         cerr<<"Server Exception thrown: "<< e.what() <<endl;}
-}
-
-
-void CRemoteNetwork::sendCameraMatrix()
-{
-
-
 }

@@ -49,9 +49,6 @@ CSceneManager::CSceneManager(std::string st_filename)
         
         // Alle Daten Vertex Array Object binden
         bindVAO();
-        
-        // Assimp-Szene löschen
-        delete ais_p_asImportScene;
     }
     else
     {
@@ -173,7 +170,6 @@ void CSceneManager::bindUniformTextureMaterial(GLuint& ui_meshNum, GLuint& glui_
     glUniform1i(gli_uniformMaterial, TEXTURE_ACTIVITY);
 }
 
-//
 void CSceneManager::bindVAO()
 {
     //Vertexliste für jedes Mesh in der Szene anlegen
@@ -246,7 +242,7 @@ void CSceneManager::bindVAO()
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
         
-        // Material oder Texture anbinden
+        // Material oder Textur anbinden
         st_material stm_matBuffer;
         aiString aistr_texPath;
         
@@ -285,9 +281,8 @@ void CSceneManager::loadTexture()
     
     // DevIL initialisieren
     ilInit();
-    
     // Szenen Material nach Texturen durchsuchen
-    for (int i_material = 0, i_texIndex; i_material < gli_numMaterial; i_material++, i_texIndex = 0)
+    for (int i_material = 0, i_texIndex = 0; i_material < gli_numMaterial; i_material++, i_texIndex = 0)
     {
         aiString aistr_path;
         while (aim_p_asMaterial[i_material]->GetTexture(aiTextureType_DIFFUSE, i_texIndex, &aistr_path) == AI_SUCCESS)

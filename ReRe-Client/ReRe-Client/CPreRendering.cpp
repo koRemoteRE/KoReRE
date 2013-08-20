@@ -17,6 +17,7 @@ CPreRendering::CPreRendering()
     
     glEnable(GL_CULL_FACE);
 
+    // Load scene
     sceneMgr = new CSceneManager(PATH "city_all.dae");
 }
 
@@ -25,7 +26,7 @@ CPreRendering::~CPreRendering()
     // Delete resources
     glDeleteTextures(1, &currentImgTexture);
     
-    // Delete Framebuffer
+    // Delete framebuffer
     glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
     glDeleteFramebuffersEXT(1, &currentImgFBO);
 }
@@ -270,9 +271,6 @@ void CPreRendering::initGLSL()
     glLinkProgram(currentImgShaderProgram);
     printProgramInfoLog(currentImgShaderProgram);
 
-
-
-
     // Initialize warping shaders
     warpingVertexShader = glCreateShader(GL_VERTEX_SHADER);
 
@@ -290,7 +288,6 @@ void CPreRendering::initGLSL()
     // Compile
     glCompileShader(warpingVertexShader);
     printShaderInfoLog(warpingVertexShader);
-
 
     // Create empty shader object (fragment shader)
     warpingFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -317,10 +314,9 @@ void CPreRendering::initGLSL()
     glAttachShader(warpingShaderProgram, warpingVertexShader);
     glAttachShader(warpingShaderProgram, warpingFragmentShader);
 
-    // Bind Attributes
+    // Bind attributes
     glBindAttribLocation(warpingShaderProgram, SHADER_POSITION_LOC, "v_position");
     glBindAttribLocation(warpingShaderProgram, SHADER_NORMAL_LOC, "v_normal");
-    //glBindAttribLocation(currentImgShaderProgram, SHADER_TEX_COORD_LOC, "v_texture");
 
     // Link program
     glLinkProgram(warpingShaderProgram);
@@ -346,10 +342,8 @@ void CPreRendering::testWarpDraw(glm::mat4 &oldView,glm::mat4 &oldProj)
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, currentImgTexture);
     glUniform1i(texLoc, 6);
-    glActiveTexture(GL_TEXTURE3);
     sceneMgr->drawScene(warpingShaderProgram);
- glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
     glUseProgram(0);
 }
-
-// -------------------------------------------------------------------
+ 

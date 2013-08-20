@@ -14,7 +14,7 @@
 #include <fstream>
 
 #include "CSceneManager.h"
-#include "CRemoteNetwork.h"
+//#include "CRemoteNetwork.h"
 
 using namespace std;
 

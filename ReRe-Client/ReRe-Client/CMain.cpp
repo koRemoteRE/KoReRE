@@ -5,28 +5,44 @@
 //  Created by Thomas Kipshagen on 23.04.13.
 //  Copyright (c) 2013 Thomas Kipshagen. All rights reserved.
 //
+#ifdef _WIN32 
+# define _WIN32_WINNT 0x0501 
+#endif 
 
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "CPreRendering.h"
+#include "NoSerialClient.h"
+#include "ImageQueue.h"
+#include "MatrixQueue.h"
 
 #include <GL/glew.h>
 #include <GL/glfw.h>
 #include <glm/glm.hpp>
 
+#include <boost/asio.hpp>
+#include <boost/thread.hpp>
+
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+
 glm::mat4 lastView;
 glm::mat4 lastProj;
 
+ImageQueue *imageQueue;
+MatrixQueue *matrixQueue;
+
 void MainLoop(void)
 {
+    
+    //create preRendering object with complete functionality
     CPreRendering* renderer = new CPreRendering();
-    CRemoteNetwork* network = new CRemoteNetwork();
     
     int frameCounter = 0;
+    //update at least every 5 frames
     int frameThreshold = 5;
-    
     
     do{
         // Update Camera Matrix
@@ -34,7 +50,7 @@ void MainLoop(void)
         
         if(frameCounter == 0){
             renderer->writeToFBO();
-            frameCounter =frameThreshold;
+            frameCounter = frameThreshold;
 
             lastView = renderer->getViewMatrix();
             lastProj = renderer->getProjectionMatrix();
@@ -46,14 +62,28 @@ void MainLoop(void)
 
         // Swap buffers
         glfwSwapBuffers();
-        
-    } // Check if the ESC key was pressed or the window was closed
-    while( glfwGetKey( GLFW_KEY_ESC ) != GLFW_PRESS &&
+
+    }
+    // Check if the ESC key was pressed or the window was closed
+    while(glfwGetKey( GLFW_KEY_ESC ) != GLFW_PRESS &&
            glfwGetWindowParam( GLFW_OPENED ) );
     
     delete renderer;
 }
 
+void serverThread(){
+	try{
+		const std::string host = "192.168.2.113";
+		const std::string port = "9999";
+
+		NoSerialClient client(host, port);
+
+	}catch (std::exception &e){
+
+		std::cerr << e.what() << std::endl;
+	}
+
+}
 
 int main(int argc, const char * argv[])
 {
@@ -84,7 +114,7 @@ int main(int argc, const char * argv[])
         return -1;
     }
 
-    glfwSetWindowTitle( "Hello World!" );
+    glfwSetWindowTitle( "KoRemoteRe" );
     
     // Ensure we can capture the escape key being pressed below
     glfwEnable( GLFW_STICKY_KEYS );
@@ -95,6 +125,12 @@ int main(int argc, const char * argv[])
     glfwDisable( GLFW_MOUSE_CURSOR);
     glfwSetMousePos(WIDTH/2, HEIGHT/2);
     
+    // Singletons of imageQueue and matrixQueue
+	imageQueue = ImageQueue::getInstance();
+	matrixQueue = MatrixQueue::getInstance();
+
+	boost::thread servThread = boost::thread(serverThread);
+
     try
     {
         MainLoop();
@@ -110,8 +146,6 @@ int main(int argc, const char * argv[])
     
     // Close window and terminate GLFW
     glfwTerminate();
-    
-    std::cout << "Hello, World!\n";
     return 0;
 }
 
