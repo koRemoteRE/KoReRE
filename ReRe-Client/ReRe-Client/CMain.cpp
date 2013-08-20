@@ -97,8 +97,6 @@ void MainLoop(void)
 			matrixQueue->push(mat);
 		}
         
-		//std::cout << mooving << std::endl;
-
 		renderer->writeToFBO();
         
         if (imageQueue->tryPop(image))
@@ -129,14 +127,9 @@ void serverThread(){
 		boost::asio::io_service io_service;
 		
 		const std::string host = "141.26.66.52";
-		//const std::string host = "192.168.1.68";
 		const std::string port = "9999";
         
-		clients c(new NoSerialClient(io_service, host, port));
-		//NoSerialClient client(host, port);
-
-		//io_service.run_one();
-        
+		clients c(new NoSerialClient(io_service, host, port));        
 	}catch (std::exception &e){
         
 		std::cerr << e.what() << std::endl;
@@ -156,8 +149,7 @@ int main(int argc, const char * argv[])
     glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 4); // 4x antialiasing
     glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 3); // OpenGL 3.2
     glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 2);
-    //glfwOpenWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //We don't want the old OpenGL
-
+    
     // Open a window and create its OpenGL context
     if( !glfwOpenWindow( WIDTH, HEIGHT, 0,0,0,0, 32,0, GLFW_WINDOW ) )
     {
@@ -173,7 +165,7 @@ int main(int argc, const char * argv[])
         return -1;
     }
 
-    glfwSetWindowTitle( "Hello World!" );
+    glfwSetWindowTitle( "KoRemoteRe - Client" );
     
     // Ensure we can capture the escape key being pressed below
     glfwEnable( GLFW_STICKY_KEYS );
