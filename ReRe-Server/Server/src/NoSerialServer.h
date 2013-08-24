@@ -30,22 +30,28 @@ public:
 	NoSerialServer(unsigned short port_);
 	~NoSerialServer(void);
 
+	/*1. Connectin accepted -> read HeaderData to get Size of sent Data*/
 	void acceptHandler(const boost::system::error_code &ec);
-	void writeHandler(const boost::system::error_code &ec, 
-		std::size_t bytes_transferred,
-		std::string *outHeader,
-		std::string *outBuff);
-	
+
+	/* 2. Read Header data to get size of sent Data. 
+	success -> read sent Data in multiple pases*/
 	void readHeaderHandler(const boost::system::error_code &e,
 		std::size_t bytes_transferred,
 		std::vector<char> *inHeader);
-	
+
+	/* 3. read sent Data packets in multiple passes.
+ 	success: switch to write mode and wait for a ready image*/
 	void readHandler(const boost::system::error_code &e, 
 		std::size_t bytes_transferred,
 		std::vector<char> *inBuff,
 		std::stringstream *data,
 		std::size_t inbound_data_size);
 
+	/* 4. If Data written to socket close connection and open another.*/
+	void writeHandler(const boost::system::error_code &ec, 
+		std::size_t bytes_transferred,
+		std::string *outHeader,
+		std::string *outBuff);
 };
 #endif
 

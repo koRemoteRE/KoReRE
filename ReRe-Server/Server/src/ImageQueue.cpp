@@ -1,5 +1,4 @@
 #include "ImageQueue.h"
-#include "logger.h"
 
 ImageQueue::ImageQueue(){}
 
@@ -30,7 +29,6 @@ bool ImageQueue::tryPop(SerializableImage &poppedValue){
 }
 
 void ImageQueue::waitAndPop(SerializableImage &poppedValue){
-	logger::printTime("Wait and pop()");
 	boost::mutex::scoped_lock lock(theMutex);
 	while(theQueue.empty()){
 		theConditionVariable.wait(lock);
@@ -39,7 +37,6 @@ void ImageQueue::waitAndPop(SerializableImage &poppedValue){
 	poppedValue = theQueue.front();
 	theQueue.pop();
 	lock.unlock();
-	logger::printTime("Popped image");
 }
 
 int ImageQueue::getLenght(){

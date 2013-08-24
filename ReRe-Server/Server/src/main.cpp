@@ -137,16 +137,18 @@ void renderOnDemand(Scene* scene, SerializableMatrix transformation){
   SerializableImage imPkt;
 
   //imPkt.id = id;
+  //write matrix and encoded image into queue
   imPkt.matrix = transformation;
   imPkt.image = encoder->encodeFrame();
 
   imageQueue->push(imPkt);
 
-  std::cout << "pushed Image size: " << imPkt.image->size() << std::endl;
+  //std::cout << "pushed Image size: " << imPkt.image->size() << std::endl;
 
   //std::cout << "queue: " << imageQueue->getLenght() << std::endl;
 }
 
+//start a server in an extra thread
 void serverThread(){
   try{
     unsigned short port = 9999;
@@ -241,6 +243,7 @@ int main(void) {
       _oldR = false;
     }
 
+  //check if a send matrix can be popped from queue
   SerializableMatrix transformMat;
 
   if(matrixQueue->tryPop(transformMat)){

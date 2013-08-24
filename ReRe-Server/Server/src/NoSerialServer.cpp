@@ -1,5 +1,4 @@
 #include "NoSerialServer.h"
-#include "logger.h"
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
@@ -8,9 +7,6 @@ NoSerialServer::NoSerialServer(unsigned short port_)
 		endpoint(boost::asio::ip::tcp::v4(), port_),
 		socketAcceptor(io_service, endpoint), 
 		sock(io_service){
-
-		/*cv::Mat m2 = cv::Mat(4,4,CV_32F, glm::value_ptr(imPkt.matrix->mat));
-		std::cout << "Bevor: " << m2 << std::endl;*/
 
 		boost::asio::ip::tcp::resolver::query query(boost::asio::ip::host_name(), "9999"); 
 		boost::asio::ip::tcp::resolver resolver(io_service); 
@@ -38,10 +34,9 @@ NoSerialServer::NoSerialServer(unsigned short port_)
 
 NoSerialServer::~NoSerialServer(){}
 
+/*1. Connection accepted -> read HeaderData to get Size of sent Data*/
 void NoSerialServer::acceptHandler(const boost::system::error_code &ec){
 	if(!ec){
-
-		std::cout << "read" << std::endl;
 
 		std::vector<char> *inHeader = new std::vector<char>(header_length);
 
@@ -51,6 +46,7 @@ void NoSerialServer::acceptHandler(const boost::system::error_code &ec){
 			boost::asio::placeholders::bytes_transferred,
 			inHeader));
 	}else{
+		//if error in connection -> restart
 		sock.close();
 		socketAcceptor.async_accept(sock, 
 			boost::bind(&NoSerialServer::acceptHandler, this,
@@ -58,34 +54,8 @@ void NoSerialServer::acceptHandler(const boost::system::error_code &ec){
 	}
 }
 
-void NoSerialServer::writeHandler(const boost::system::error_code &e, 
-	std::size_t bytes_transferred,
-	std::string *outHeader,
-	std::string *outBuff){
-
-	if(!e){
-		//logger::printTime("Write Data end.");
-
-		delete outHeader;
-		delete outBuff;
-
-		sock.close();
-		socketAcceptor.async_accept(sock, 
-			boost::bind(&NoSerialServer::acceptHandler, this,
-			boost::asio::placeholders::error));
-
-	}else{
-		std::cout << e.message() << std::endl;
-
-		sock.close();
-		socketAcceptor.async_accept(sock, 
-			boost::bind(&NoSerialServer::acceptHandler, this,
-			boost::asio::placeholders::error));
-
-	}
-
-}
-
+/* 2. Read Header data to get size of sent Data. 
+	success -> read sent Data in multiple pases*/
 void NoSerialServer::readHeaderHandler(const boost::system::error_code &e,
 									   std::size_t bytes_transferred,
 									   std::vector<char> *inHeader){
@@ -116,6 +86,7 @@ void NoSerialServer::readHeaderHandler(const boost::system::error_code &e,
 	}else{
 		std::cerr << e.message() << std::endl;
 
+		//error in reading Header -> restart connection
 		sock.close();
 		socketAcceptor.async_accept(sock, 
 			boost::bind(&NoSerialServer::acceptHandler, this,
@@ -124,6 +95,8 @@ void NoSerialServer::readHeaderHandler(const boost::system::error_code &e,
 
 }
 
+/* 3. read sent Data packets in multiple passes.
+ success: switch to write mode and wait for a ready image*/
 void NoSerialServer::readHandler(const boost::system::error_code &e, 
 								 std::size_t bytes_transferred, 
 								 std::vector<char> *inBuff,
@@ -131,9 +104,9 @@ void NoSerialServer::readHandler(const boost::system::error_code &e,
 								 std::size_t inbound_data_size){
 	if(!e || e == boost::asio::error::eof){
 		
-		if(bytes_transferred > 0){
+		/*if(bytes_transferred > 0){
 			std::cout << bytes_transferred << std::endl;
-		}
+		}*/
 
 		data->write(inBuff->data(), bytes_transferred);
 
@@ -159,15 +132,11 @@ void NoSerialServer::readHandler(const boost::system::error_code &e,
                 std::string stbuffer= data->str();
 				m.deserialize(stbuffer);
 				matrixQueue->push(m);
-
-				//std::cout << m.mat[0][0] << std::endl;
 			}
 
 			delete data;
 
 			/*********** WRITE ****************/
-
-			std::cout << "wait and pop" << std::endl;
 
 			SerializableImage img;
 			imageQueue->waitAndPop(img);
@@ -204,4 +173,31 @@ void NoSerialServer::readHandler(const boost::system::error_code &e,
 			boost::bind(&NoSerialServer::acceptHandler, this,
 			boost::asio::placeholders::error));
 	}
+
+/* 4. If Data written to socket close connection and open another.*/
+void NoSerialServer::writeHandler(const boost::system::error_code &e, 
+	std::size_t bytes_transferred,
+	std::string *outHeader,
+	std::string *outBuff){
+
+	if(!e){
+		delete outHeader;
+		delete outBuff;
+
+		sock.close();
+		socketAcceptor.async_accept(sock, 
+			boost::bind(&NoSerialServer::acceptHandler, this,
+			boost::asio::placeholders::error));
+
+	}else{
+		std::cout << e.message() << std::endl;
+
+		sock.close();
+		socketAcceptor.async_accept(sock, 
+			boost::bind(&NoSerialServer::acceptHandler, this,
+			boost::asio::placeholders::error));
+
+	}
+
+}
 }
