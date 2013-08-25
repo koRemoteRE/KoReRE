@@ -59,7 +59,8 @@ void MainLoop(void)
 		mooving = false;
 		bool sendMatrix = false;
 
-		//Fixed timestep animation/mat-update method as seen here: http://gafferongames.com/game-physics/fix-your-timestep/
+		//Fixed timestep animation/mat-update method as seen here: 
+        // http://gafferongames.com/game-physics/fix-your-timestep/
 		while(accumulator >= frameTime){
 
 			// Update Camera Matrix

@@ -10,15 +10,14 @@
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 #include <boost/lexical_cast.hpp>
-//#include <boost/serialization/vector.hpp>
 
 struct SerializableImage{
-	//unsigned int id;
 	SerializableMatrix matrix;
 	std::vector<uchar> *image;
 
 	std::string outBuf;
 	
+	/*Serianlizes an Image + Matrix into a new String*/
 	std::string *serialize(){
 		outBuf = matrix.serialize() + "IMAGE";
 		for (auto const &i: *image){
@@ -31,7 +30,7 @@ struct SerializableImage{
 
 		return &outBuf;
 	}
-
+	/*Serianlizes an Image + Matrix into a given String (recomended Method)*/
 	void serializeInto(std::string &outBuf){
 		outBuf += matrix.serialize() + "IMAGE";
 		for (auto const &i: *image){
@@ -41,12 +40,9 @@ struct SerializableImage{
 				std::cerr << "SerializableImage::serialize: Bad Lexical Cast" << std::endl;
 			}
 		}
-
-		//return outBuf;
 	}
-
+	/*Deserializes a String into this instance*/
 	void deserialize(std::string &input){
-		//image->clear();
 		image = new std::vector<uchar>();
 
 		int index = input.find("IMAGE");
@@ -58,7 +54,6 @@ struct SerializableImage{
 			auto i = boost::begin(ss);
 			i != boost::end(ss);
 			++i){
-		//for(size_t i = 0; i < ss.size(); i++){
 			try{
 				image->push_back(boost::lexical_cast<uchar>(*i));
 			}catch(boost::bad_lexical_cast const&){

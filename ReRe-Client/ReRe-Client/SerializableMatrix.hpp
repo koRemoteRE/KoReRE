@@ -11,6 +11,7 @@ struct SerializableMatrix{
 	double sendingTime;
 	glm::mat4 matrix;
 
+	/*Serializes this Matrix into a new String and returns it*/
 	std::string serialize(){
 		std::string output = "";
 		try{
@@ -31,7 +32,7 @@ struct SerializableMatrix{
 		}
 		return output;
 	}
-
+	/*Serializes this Matrix into a given String (recomended Method)*/
 	void serializeInto(std::string &outBuff){
 		outBuff = "";
 		try{
@@ -51,7 +52,7 @@ struct SerializableMatrix{
 			}
 		}
 	}
-
+	/*Deserializes a String into this instance*/
 	void deserialize(std::string &input){
 		std::string inString = input;
 

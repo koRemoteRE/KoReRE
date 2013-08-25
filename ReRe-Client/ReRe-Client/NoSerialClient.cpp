@@ -6,7 +6,6 @@ NoSerialClient::NoSerialClient(boost::asio::io_service &io_service, const std::s
 	sock(io_service),
 	query(host, port)
 {
-	//std::cout << "resolving query" << std::endl;
 	resolver.async_resolve(query,
 		boost::bind(&NoSerialClient::resolveHandler, this,
 		boost::asio::placeholders::error,
@@ -22,10 +21,10 @@ NoSerialClient::NoSerialClient(boost::asio::io_service &io_service, const std::s
 
 NoSerialClient::~NoSerialClient(void){}
 
+/* 1. Handle resolved query. Seccess: connect to adress*/
 void NoSerialClient::resolveHandler(const boost::system::error_code &ec, 
 									boost::asio::ip::tcp::resolver::iterator it){
 	if(!ec){
-		//std::cout << "resolving done...connecting" << std::endl;
 		sock.async_connect(*it, 
 			boost::bind(&NoSerialClient::connectHandler, this,
 			boost::asio::placeholders::error));
@@ -34,10 +33,10 @@ void NoSerialClient::resolveHandler(const boost::system::error_code &ec,
 	}
 }
 
+/* 2. Handle connection. Success: wait until a new matrix arrives in queue,
+	write stream-length into header, and write to socket.*/
 void NoSerialClient::connectHandler(const boost::system::error_code &ec){
 	if(!ec){
-		//std::cout << "connected" << std::endl;
-
 		SerializableMatrix m;
 		matrixQueue->waitAndPop(m);
 
@@ -63,16 +62,13 @@ void NoSerialClient::connectHandler(const boost::system::error_code &ec){
 			boost::asio::placeholders::bytes_transferred,
 			outHeader,
 			outBuff));
-
-		std::cout << "send mat" << std::endl;
-
 	}else{
 		std::cerr << "connectHandler error: " << ec << std::endl;
 
 	}
 }
 
-
+/* 3. Handle write Data. Seccess: switch to read-mode.*/
 void NoSerialClient::writeHandler(const boost::system::error_code &ec, 
 								  std::size_t bytesTransferred,
 								  std::string *outHeader,
@@ -81,8 +77,6 @@ void NoSerialClient::writeHandler(const boost::system::error_code &ec,
 
 		delete outHeader;
 		delete outBuff;
-
-		std::cout << "read" << std::endl;
 
 		std::vector<char> *inHeader = new std::vector<char>(header_length);
 
@@ -99,6 +93,7 @@ void NoSerialClient::writeHandler(const boost::system::error_code &ec,
 	}
 }
 
+/* 4. Read header data (send image-data size). Success: read send image data in multiple passes.*/
 void NoSerialClient::readHeaderHandler(const boost::system::error_code &ec, 
 								 std::size_t bytesTransferred,
 								 std::vector<char> *inHeader){
@@ -113,8 +108,6 @@ void NoSerialClient::readHeaderHandler(const boost::system::error_code &ec,
 		}
 
 		delete inHeader;
-
-		std::cout << "read" << std::endl;
 		std::vector<char> *inBuff = new std::vector<char>(inbound_data_size);
 
 		//multipass read
@@ -135,6 +128,7 @@ void NoSerialClient::readHeaderHandler(const boost::system::error_code &ec,
 	}
 }
 
+/* 5. Read image-data in multiple passes. Success: add new client to clients array and delete self.*/
 void NoSerialClient::readHandler(const boost::system::error_code &ec, 
 								 std::size_t bytesTransferred,
 								 std::vector<char> *inBuff,
@@ -149,8 +143,6 @@ void NoSerialClient::readHandler(const boost::system::error_code &ec,
 
 		if(inbound_data_size > 0){
 			inBuff->resize(inbound_data_size);
-
-			//std::cout << "schritt " << std::flush;
 
 			sock.async_read_some(boost::asio::buffer(*inBuff), 
 				boost::bind(&NoSerialClient::readHandler, this,
@@ -171,9 +163,6 @@ void NoSerialClient::readHandler(const boost::system::error_code &ec,
 				img.deserialize(strBuffer);
 
 				imageQueue->push(img);
-
-				//std::cout << "InStr Size:" << inString.str().size() << std::endl;
-				std::cout << "Image Size:" << img.image->size() << std::flush;
 			}
 
 			delete data;
