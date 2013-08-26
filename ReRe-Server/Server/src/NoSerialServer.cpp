@@ -1,6 +1,7 @@
 #include "NoSerialServer.h"
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
+#include "GL/glfw.h"
 
 NoSerialServer::NoSerialServer(unsigned short port_)
 	:	port(port_),
@@ -142,6 +143,7 @@ void NoSerialServer::readHandler(const boost::system::error_code &e,
 			imageQueue->waitAndPop(img);
 
 			//serializing
+      double serializeTime = glfwGetTime();
 			std::string *outBuff = new std::string();
 			img.serializeInto(*outBuff);
 
@@ -155,7 +157,7 @@ void NoSerialServer::readHandler(const boost::system::error_code &e,
 			std::vector<boost::asio::const_buffer> buffers;
 			buffers.push_back(boost::asio::buffer(*outHeader));
 			buffers.push_back(boost::asio::buffer(*outBuff));
-		
+		  std::cout << "serialize time: " << glfwGetTime()-serializeTime << std::endl;
 			//send data
 			sock.async_write_some(buffers,
 				boost::bind(&NoSerialServer::writeHandler, this,
@@ -173,7 +175,7 @@ void NoSerialServer::readHandler(const boost::system::error_code &e,
 			boost::bind(&NoSerialServer::acceptHandler, this,
 			boost::asio::placeholders::error));
 	}
-
+}
 /* 4. If Data written to socket close connection and open another.*/
 void NoSerialServer::writeHandler(const boost::system::error_code &e, 
 	std::size_t bytes_transferred,
@@ -199,5 +201,4 @@ void NoSerialServer::writeHandler(const boost::system::error_code &e,
 
 	}
 
-}
 }
