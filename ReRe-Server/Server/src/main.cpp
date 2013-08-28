@@ -173,7 +173,7 @@ int main(void) {
   double time = 0;
 
   kore::Camera* pCamera = scene.getCam();
-  pCamera->setProjectionPersp(60,(16.0/9.0),1,1000);
+  pCamera->setProjectionPersp(30,(16.0/9.0),1,1000);
   float cameraMoveSpeed = 4.0f;
 
   int oldMouseX = 0;

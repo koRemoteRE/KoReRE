@@ -1,10 +1,10 @@
-KoRE Log - Mon Aug 26 18:20:12 2013
+KoRE Log - Wed Aug 28 12:54:47 2013
 
 [DEBUG] added Framebuffer 'BACKBUFFER'
-Render Device: GeForce GTX 670/PCIe/SSE2
+Render Device: GeForce 8800 GTX/PCIe/SSE2
 Vendor: NVIDIA Corporation
-OpenGL version: 4.3.0
-GLSL version: 4.30 NVIDIA via Cg compiler
+OpenGL version: 3.3.0
+GLSL version: 3.30 NVIDIA via Cg compiler
 GLFW version 2.7.7
 GLEW version: 1.9.0
 [DEBUG] Texture 'sponza_thorn_diff.png' successfully loaded.

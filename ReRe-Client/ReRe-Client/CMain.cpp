@@ -36,7 +36,7 @@ void MainLoop(void)
     CPreRendering* renderer = new CPreRendering();
     
     lastView = renderer->getViewMatrix();
-	lastProj = glm::perspectiveFov(60.0 ,1280.0 ,720.0 ,1.0 ,1000.0);
+	lastProj = glm::perspectiveFov(30.0 ,1280.0 ,720.0 ,1.0 ,1000.0);
     SerializableImage image;
     SerializableMatrix mat;
     
@@ -107,6 +107,7 @@ void MainLoop(void)
 
 			//dynamically set maxUpdateTime to RTT + 10% for jitter
 			double newUpdateTime = glfwGetTime() - image.matrix.sendingTime;
+			std::cout << "RTT: " << newUpdateTime << std::endl;
 			maxUpdateTime = newUpdateTime + (newUpdateTime * 0.1); 
         }
 
