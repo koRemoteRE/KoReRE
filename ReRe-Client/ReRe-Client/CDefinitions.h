@@ -2,7 +2,6 @@
 //  CDefinitions.h
 //  ReReClient
 //
-//  Created by Martina Sekulla on 14.05.13.
 //
 //
 
