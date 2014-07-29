@@ -2,7 +2,6 @@
 //  CTransformAiToGlm.h
 //  ReReClient
 //
-//  Created by Thomas Kipshagen on 17.05.13.
 //
 //
 
